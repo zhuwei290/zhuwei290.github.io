@@ -3,7 +3,412 @@
     <id>https://zhuwei290.github.io</id>
     <title>ZW</title>
     <link href="https://zhuwei290.github.io" />
-    <updated>2024-05-01T11:07:20.000Z</updated>
+    <updated>2024-05-11T02:59:23.000Z</updated>
+    <entry>
+        <id>https://zhuwei290.github.io/%E6%A0%A1%E9%AA%8C%E6%A1%86%E6%9E%B6/</id>
+        <title>校验框架</title>
+        <link rel="alternate" href="https://zhuwei290.github.io/%E6%A0%A1%E9%AA%8C%E6%A1%86%E6%9E%B6/"/>
+        <content type="html">&lt;p&gt;1 校验框架&lt;/p&gt;
+&lt;p&gt;1.1 校验框架入门&lt;/p&gt;
+&lt;p&gt;1.1.1 表单校验的重要性&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;表单校验保障了数据有效性、安全性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20200505144306747.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;数据可以随意输入，导致错误的结果。后端表单校验的重要性。&lt;/p&gt;
+&lt;p&gt;1.1.2 表单校验分类&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;校验位置：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;客户端校验&lt;/li&gt;
+&lt;li&gt;服务端校验&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;校验内容与对应方式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;格式校验
+&lt;ul&gt;
+&lt;li&gt;客户端：使用 Js 技术，利用正则表达式校验&lt;/li&gt;
+&lt;li&gt;服务端：使用校验框架&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;逻辑校验
+&lt;ul&gt;
+&lt;li&gt;客户端：使用 ajax 发送要校验的数据，在服务端完成逻辑校验，返回校验结果&lt;/li&gt;
+&lt;li&gt;服务端：接收到完整的请求后，在执行业务操作前，完成逻辑校验&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1.1.3 表单校验规则&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;长度：例如用户名长度，评论字符数量&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;非法字符：例如用户名组成&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;数据格式：例如 Email 格式、 IP 地址格式&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;边界值：例如转账金额上限，年龄上下限&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重复性：例如用户名是否重复&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1.1.4 表单校验框架&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;JSR（Java Specification Requests）：Java 规范提案&lt;/p&gt;
+&lt;p&gt;303：提供 bean 属性相关校验规则&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;JSR 规范列表&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;企业应用技术&lt;br&gt;
+ Contexts and Dependency Injection for Java (Web Beans 1.0) (JSR 299)&lt;br&gt;
+ Dependency Injection for Java 1.0 (JSR 330)@postConstruct, @PreDestroy&lt;br&gt;
+ Bean Validation 1.0 (JSR 303)&lt;br&gt;
+ Enterprise JavaBeans 3.1 (includes Interceptors 1.1) (JSR 318)&lt;br&gt;
+ Java EE Connector Architecture 1.6 (JSR 322)&lt;br&gt;
+ Java Persistence 2.0 (JSR 317)&lt;br&gt;
+ Common Annotations for the Java Platform 1.1 (JSR 250)&lt;br&gt;
+ Java Message Service API 1.1 (JSR 914)&lt;br&gt;
+ Java Transaction API (JTA) 1.1 (JSR 907)&lt;br&gt;
+ JavaMail 1.4 (JSR 919)&lt;/li&gt;
+&lt;li&gt;Web 应用技术&lt;br&gt;
+ Java Servlet 3.0 (JSR 315)&lt;br&gt;
+ JavaServer Faces 2.0 (JSR 314)&lt;br&gt;
+ JavaServer Pages 2.2/Expression Language 2.2 (JSR 245)&lt;br&gt;
+ Standard Tag Library for JavaServer Pages (JSTL) 1.2 (JSR 52)&lt;br&gt;
+ Debugging Support for Other Languages 1.0 (JSR 45)&lt;br&gt;
+ 模块化 (JSR 294)&lt;br&gt;
+ Swing 应用框架 (JSR 296)&lt;br&gt;
+ JavaBeans Activation Framework (JAF) 1.1 (JSR 925)&lt;br&gt;
+ Streaming API for XML (StAX) 1.0 (JSR 173)&lt;/li&gt;
+&lt;li&gt;管理与安全技术&lt;br&gt;
+ Java Authentication Service Provider Interface for Containers (JSR 196)&lt;br&gt;
+ Java Authorization Contract for Containers 1.3 (JSR 115)&lt;br&gt;
+ Java EE Application Deployment 1.2 (JSR 88)&lt;br&gt;
+ J2EE Management 1.1 (JSR 77)&lt;br&gt;
+ Java SE 中与 Java EE 有关的规范&lt;br&gt;
+ JCache API (JSR 107)&lt;br&gt;
+ Java Memory Model (JSR 133)&lt;br&gt;
+ Concurrency Utilitie (JSR 166)&lt;br&gt;
+ Java API for XML Processing (JAXP) 1.3 (JSR 206)&lt;br&gt;
+ Java Database Connectivity 4.0 (JSR 221)&lt;br&gt;
+ Java Management Extensions (JMX) 2.0 (JSR 255)&lt;br&gt;
+ Java Portlet API (JSR 286)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Web Service 技术&lt;br&gt;
+ Java Date 与 Time API (JSR 310)&lt;br&gt;
+ Java API for RESTful Web Services (JAX-RS) 1.1 (JSR 311)&lt;br&gt;
+ Implementing Enterprise Web Services 1.3 (JSR 109)&lt;br&gt;
+ Java API for XML-Based Web Services (JAX-WS) 2.2 (JSR 224)&lt;br&gt;
+ Java Architecture for XML Binding (JAXB) 2.2 (JSR 222)&lt;br&gt;
+ Web Services Metadata for the Java Platform (JSR 181)&lt;br&gt;
+ Java API for XML-Based RPC (JAX-RPC) 1.1 (JSR 101)&lt;br&gt;
+ Java APIs for XML Messaging 1.3 (JSR 67)&lt;br&gt;
+ Java API for XML Registries (JAXR) 1.0 (JSR 93)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;JCP（Java Community Process）：Java 社区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Hibernate 框架中包含一套独立的校验框架 hibernate-validator&lt;/p&gt;
+&lt;p&gt;导入坐标&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+  &lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.hibernate&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;hibernate-validator&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;6.1.0.Final&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt;&lt;br&gt;
+tomcat7 ：搭配 hibernate-validator 版本 5.&lt;em&gt;.&lt;/em&gt;.Final&lt;br&gt;
+tomcat8.5↑ ：搭配 hibernate-validator 版本 6.&lt;em&gt;.&lt;/em&gt;.Final&lt;/p&gt;
+&lt;p&gt;1.2 快速使用&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1. 开启校验&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt; 名称：@Valid 、 @Validated&lt;br&gt;
+ 类型：形参注解&lt;br&gt;
+ 位置：处理器类中的实体类类型的方法形参前方&lt;br&gt;
+ 作用：设定对当前实体类类型参数进行校验&lt;br&gt;
+ 范例：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RequestMapping(value = &amp;quot;/addemployee&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; String &lt;span class=&#34;title function_&#34;&gt;addEmployee&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;meta&#34;&gt;@Valid&lt;/span&gt; Employee employee)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    System.out.println(employee);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;2. 设置校验规则&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt; 名称：@NotNull&lt;br&gt;
+ 类型：属性注解 等&lt;br&gt;
+ 位置：实体类属性上方&lt;br&gt;
+ 作用：设定当前属性校验规则&lt;br&gt;
+ 范例：&lt;br&gt;
+每个校验规则所携带的参数不同，根据校验规则进行相应的调整&lt;br&gt;
+具体的校验规则查看对应的校验框架进行获取&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Employee&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@NotNull(message = &amp;quot;姓名不能为空&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String name;&lt;span class=&#34;comment&#34;&gt;//员工姓名&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;  &lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;3. 获取错误信息&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RequestMapping(value = &amp;quot;/addemployee&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; String &lt;span class=&#34;title function_&#34;&gt;addEmployee&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;meta&#34;&gt;@Valid&lt;/span&gt; Employee employee, Errors errors, Model model)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    System.out.println(employee);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;if&lt;/span&gt;(errors.hasErrors())&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;for&lt;/span&gt;(FieldError error : errors.getFieldErrors())&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            model.addAttribute(error.getField(),error.getDefaultMessage());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;quot;addemployee.jsp&amp;quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;quot;success.jsp&amp;quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;  &lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;通过形参 Errors 获取校验结果数据，通过 Model 接口将数据封装后传递到页面显示&lt;/p&gt;
+&lt;figure class=&#34;highlight html&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;form&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;action&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;/addemployee&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;method&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;post&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    员工姓名：&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;input&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;type&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;text&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;span&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;style&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;color:red&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;$&amp;#123;name&amp;#125;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;span&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;br&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    员工年龄：&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;input&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;type&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;text&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;age&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;span&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;style&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;color:red&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;$&amp;#123;age&amp;#125;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;span&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;br&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;input&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;type&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;submit&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;value&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;提交&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;form&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;通过形参 Errors 获取校验结果数据，通过 Model 接口将数据封装后传递到页面显示&lt;br&gt;
+页面获取后台封装的校验结果信息&lt;/p&gt;
+&lt;p&gt;1.3 多规则校验&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;同一个属性可以添加多个校验器&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@NotNull(message = &amp;quot;请输入您的年龄&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Max(value = 60,message = &amp;quot;年龄最大值不允许超过60岁&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Min(value = 18,message = &amp;quot;年龄最小值不允许低于18岁&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; Integer age;&lt;span class=&#34;comment&#34;&gt;//员工年龄&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;3 种判定空校验器的区别&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20200506160725709.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.4 嵌套校验&lt;/p&gt;
+&lt;p&gt; 名称：@Valid&lt;br&gt;
+ 类型：属性注解&lt;br&gt;
+ 位置：实体类中的引用类型属性上方&lt;br&gt;
+ 作用：设定当前应用类型属性中的属性开启校验&lt;br&gt;
+ 范例：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Employee&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//实体类中的引用类型通过标注@Valid注解，设定开启当前引用类型字段中的属性参与校验&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Valid&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; Address address;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt; 注意：开启嵌套校验后，被校验对象内部需要添加对应的校验规则&lt;/p&gt;
+&lt;p&gt;1.5 分组校验&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;同一个模块，根据执行的业务不同，需要校验的属性会有不同
+&lt;ul&gt;
+&lt;li&gt;新增用户&lt;/li&gt;
+&lt;li&gt;修改用户&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;对不同种类的属性进行分组，在校验时可以指定参与校验的字段所属的组类别
+&lt;ul&gt;
+&lt;li&gt;定义组（通用）&lt;/li&gt;
+&lt;li&gt;为属性设置所属组，可以设置多个&lt;/li&gt;
+&lt;li&gt;开启组校验&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;GroupOne&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; String &lt;span class=&#34;title function_&#34;&gt;addEmployee&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;meta&#34;&gt;@Validated(&amp;#123;GroupOne.class&amp;#125;)&lt;/span&gt; Employee employee)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;  &lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@NotEmpty(message = &amp;quot;姓名不能为空&amp;quot;,groups = &amp;#123;GroupOne.class&amp;#125;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String name;&lt;span class=&#34;comment&#34;&gt;//员工姓名&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2 ssm 整合&lt;/p&gt;
+&lt;p&gt;2.1 整合流程简介&lt;/p&gt;
+&lt;p&gt;整合步骤分析&lt;/p&gt;
+&lt;p&gt;SSM（Spring+SpringMVC+MyBatis）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Spring&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;框架基础&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;MyBatis&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;mysql+druid+pagehelper&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Spring 整合 MyBatis&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;junit 测试业务层接口&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SpringMVC&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;rest 风格（postman 测试请求结果）&lt;/li&gt;
+&lt;li&gt;数据封装 json（jackson）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Spring 整合 SpringMVC&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Controller 调用 Service&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;其他&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;表现层数据封装&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;自定义异常&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;表结构&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20200506093609697.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;​    最重要的 5 个步骤&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Spring&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;MyBatis&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Spring 整合 MyBatis&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SpringMVC&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Spring 整合 SpringMVC&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;2.2 项目结构搭建&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Part0：&lt;/strong&gt;   项目基础结构搭建&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;创建项目，组织项目结构，创建包&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;创建表与实体类&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;创建三层架构对应的模块、接口与实体类，建立关联关系&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;数据层接口（代理自动创建实现类）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;业务层接口 + 业务层实现类&lt;/li&gt;
+&lt;li&gt;表现层类&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20200506094053535.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;UserDao&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;save&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(User user)&lt;/span&gt;;  &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;update&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(User user)&lt;/span&gt;;  &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;delete&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer uuid)&lt;/span&gt;;  &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; User &lt;span class=&#34;title function_&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer uuid)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; List&amp;lt;User&amp;gt; &lt;span class=&#34;title function_&#34;&gt;getAll&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; page,&lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; size)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;UserService&lt;/span&gt; &amp;#123;  &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;save&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(User user)&lt;/span&gt;;  &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;update&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(User user)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;delete&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer uuid)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; User &lt;span class=&#34;title function_&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer uuid)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; List&amp;lt;User&amp;gt; &lt;span class=&#34;title function_&#34;&gt;getAll&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; page, &lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; size)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;/**&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;        用户登录&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;        &lt;span class=&#34;doctag&#34;&gt;@param&lt;/span&gt; userName 用户名&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;        &lt;span class=&#34;doctag&#34;&gt;@param&lt;/span&gt; password 密码信息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;        &lt;span class=&#34;doctag&#34;&gt;@return&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;        */&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; User &lt;span class=&#34;title function_&#34;&gt;login&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String userName,String password)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2.3 Spring 整合 Mybatis（复习）&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Part1 :&lt;/strong&gt;  Spring 环境配置&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;&amp;lt;?xml version=&lt;span class=&#34;string&#34;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt; encoding=&lt;span class=&#34;string&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;?&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;beans&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.springframework.org/schema/beans&amp;quot;&lt;/span&gt;  &lt;span class=&#34;attr&#34;&gt;xmlns:context&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.springframework.org/schema/context&amp;quot;&lt;/span&gt;  &lt;span class=&#34;attr&#34;&gt;xmlns:tx&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.springframework.org/schema/tx&amp;quot;&lt;/span&gt;  &lt;span class=&#34;attr&#34;&gt;xmlns:xsi&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;  &lt;span class=&#34;attr&#34;&gt;xsi:schemaLocation&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd  http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd  http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx.xsd&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--开启bean注解扫描--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;context:component-scan&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;base-package&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;com.itheima&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;beans&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;Part1 :&lt;/strong&gt;  Mybatis 配置事务&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;MyBatis 映射&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;37&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;&amp;lt;?xml version=&lt;span class=&#34;string&#34;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt; encoding=&lt;span class=&#34;string&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;?&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;&amp;lt;!DOCTYPE &lt;span class=&#34;keyword&#34;&gt;mapper&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;PUBLIC&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;quot;-//mybatis.org//DTD Mapper 3.0//EN&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;        &lt;span class=&#34;string&#34;&gt;&amp;quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;mapper&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;namespace&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;com.itheima.dao.UserDao&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--添加--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;insert&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;id&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;save&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;parameterType&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;user&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        insert into user(userName,password,realName,gender,birthday)values(&amp;#123;userName&amp;#125;,&amp;#123;password&amp;#125;,&amp;#123;realName&amp;#125;,&amp;#123;gender&amp;#125;,&amp;#123;birthday&amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;insert&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--删除--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;delete&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;id&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;delete&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;parameterType&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;int&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        delete from user where uuid = &amp;#123;uuid&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;delete&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--修改--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;update&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;id&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;update&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;parameterType&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;user&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        update user set userName=&amp;#123;userName&amp;#125;,password=&amp;#123;password&amp;#125;,realName=&amp;#123;realName&amp;#125;,gender=&amp;#123;gender&amp;#125;,birthday=&amp;#123;birthday&amp;#125; where uuid=&amp;#123;uuid&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;update&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--查询单个--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;select&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;id&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;get&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;resultType&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;user&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;parameterType&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;int&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        select * from user where uuid = &amp;#123;uuid&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;select&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--分页查询--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;select&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;id&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;getAll&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;resultType&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;user&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        select * from user&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;select&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--登录--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;select&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;id&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;getByUserNameAndPassword&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;resultType&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;user&amp;quot;&lt;/span&gt; &amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        select * from user where userName=&amp;#123;userName&amp;#125; and password=&amp;#123;password&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;select&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;mapper&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Mybatis 核心配置&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;42&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!--开启注解式事务--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;tx:annotation-driven&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;transaction-manager&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;txManager&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!--加载properties文件--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;context:property-placeholder&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;location&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;classpath*:jdbc.properties&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!--数据源--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;id&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;dataSource&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;class&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;com.alibaba.druid.pool.DruidDataSource&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;driverClassName&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;value&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;$&amp;#123;jdbc.driver&amp;#125;&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;url&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;value&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;$&amp;#123;jdbc.url&amp;#125;&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;username&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;value&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;$&amp;#123;jdbc.username&amp;#125;&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;password&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;value&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;$&amp;#123;jdbc.password&amp;#125;&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!--整合mybatis到spring中--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;class&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;org.mybatis.spring.SqlSessionFactoryBean&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;dataSource&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;ref&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;dataSource&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;typeAliasesPackage&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;value&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;com.itheima.domain&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--分页插件--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;plugins&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;array&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;class&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;com.github.pagehelper.PageInterceptor&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;properties&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;props&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;prop&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;key&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;helperDialect&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;mysql&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;prop&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;prop&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;key&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;reasonable&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;true&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;prop&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;props&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;array&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!--映射扫描--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;class&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;org.mybatis.spring.mapper.MapperScannerConfigurer&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;basePackage&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;value&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;com.itheima.dao&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!--事务管理器--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;id&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;txManager&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;class&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;property&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;name&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;dataSource&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;ref&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;dataSource&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;bean&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.4 整合 junit&lt;/p&gt;
+&lt;p&gt;**Part2：** 单元测试整合 junit&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RunWith(SpringJUnit4ClassRunner.class)&lt;/span&gt;  &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@ContextConfiguration(locations = &amp;quot;classpath:applicationContext.xml&amp;quot;)&lt;/span&gt;  &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;UserServiceTest&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; UserService userService;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testDelete&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;  &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;User&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;user&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;User&lt;/span&gt;();  userService.delete(&lt;span class=&#34;number&#34;&gt;3&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2.5 Spring 整合 SpringMVC&lt;/p&gt;
+&lt;p&gt;**Part3：**SpringMVC&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;web.xml 配置&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;servlet&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;servlet-name&lt;/span&gt;&amp;gt;&lt;/span&gt;DispatcherServlet&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;servlet-name&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;servlet-class&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.web.servlet.DispatcherServlet&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;servlet-class&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;init-param&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;param-name&lt;/span&gt;&amp;gt;&lt;/span&gt;contextConfigLocation&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;param-name&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;param-value&lt;/span&gt;&amp;gt;&lt;/span&gt;classpath*:spring-mvc.xml&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;param-value&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;init-param&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;servlet&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;servlet-mapping&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;servlet-name&lt;/span&gt;&amp;gt;&lt;/span&gt;DispatcherServlet&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;servlet-name&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;url-pattern&lt;/span&gt;&amp;gt;&lt;/span&gt;/&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;url-pattern&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;servlet-mapping&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;spring-mvc.xml&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;&amp;lt;?xml version=&lt;span class=&#34;string&#34;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt; encoding=&lt;span class=&#34;string&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;?&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;beans&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.springframework.org/schema/beans&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;       &lt;span class=&#34;attr&#34;&gt;xmlns:context&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.springframework.org/schema/context&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;       &lt;span class=&#34;attr&#34;&gt;xmlns:mvc&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.springframework.org/schema/mvc&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;       &lt;span class=&#34;attr&#34;&gt;xmlns:xsi&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;       &lt;span class=&#34;attr&#34;&gt;xsi:schemaLocation&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;string&#34;&gt;&lt;span class=&#34;tag&#34;&gt;        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;string&#34;&gt;&lt;span class=&#34;tag&#34;&gt;        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;mvc:annotation-driven&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;context:component-scan&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;base-package&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;com.itheima.controller&amp;quot;&lt;/span&gt;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;beans&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;controller 层&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RestController&lt;/span&gt;  &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RequestMapping(&amp;quot;/user&amp;quot;)&lt;/span&gt;  &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;UserController&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@PostMapping&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;save&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(User user)&lt;/span&gt; &amp;#123;  &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(&lt;span class=&#34;string&#34;&gt;&amp;quot;save ...&amp;quot;&lt;/span&gt; + user);  &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@PostMapping(&amp;quot;/login&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; User &lt;span class=&#34;title function_&#34;&gt;login&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String userName,String password)&lt;/span&gt;&amp;#123;  &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(&lt;span class=&#34;string&#34;&gt;&amp;quot;login ...&amp;quot;&lt;/span&gt; + userName + &lt;span class=&#34;string&#34;&gt;&amp;quot; ,&amp;quot;&lt;/span&gt; +password);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;literal&#34;&gt;null&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;**Part4：**Spring 整合 SpringMVC&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;web.xml 加载 Spring 环境&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;context-param&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;param-name&lt;/span&gt;&amp;gt;&lt;/span&gt;contextConfigLocation&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;param-name&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;param-value&lt;/span&gt;&amp;gt;&lt;/span&gt;classpath*:applicationContext.xml&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;param-value&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;context-param&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!--启动服务器时，通过监听器加载spring运行环境--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;listener&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;listener-class&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.web.context.ContextLoaderListener&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;listener-class&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;listener&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Controller 调用 Service&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RestController&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RequestMapping(&amp;quot;/user&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;UserController&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; UserService userService;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@PostMapping&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;save&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(User user)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; userService.save(user);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.6 表现层数据封装&lt;/p&gt;
+&lt;p&gt;**Part5-1：** 表现层数据封装&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;前端接收表现层返回的数据种类&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;u 操作是否成功&lt;/th&gt;
+&lt;th&gt;true/false&lt;/th&gt;
+&lt;th&gt;格式 A&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;u 单个数据&lt;/td&gt;
+&lt;td&gt;1,100,true&lt;/td&gt;
+&lt;td&gt;格式 B&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;u 对象数据&lt;/td&gt;
+&lt;td&gt;json 对象&lt;/td&gt;
+&lt;td&gt;格式 C&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;u 集合数据&lt;/td&gt;
+&lt;td&gt;json 数组&lt;/td&gt;
+&lt;td&gt;格式 D&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20200506103851845.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;返回数据格式设计&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20200506104339019.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;代码&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Result&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 操作结果编码&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; Integer code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 操作数据结果&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; Object data;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String message;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;Result&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer code)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.code = code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;Result&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer code, Object data)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.code = code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.data = data;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;状态码常量可以根据自己的业务需求设定&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Code&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;Integer&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;SAVE_OK&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;20011&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;Integer&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;SAVE_ERROR&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;20010&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//其他编码&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;controller 调用&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RestController&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;UserController&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; UserService userService;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@PostMapping&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Result &lt;span class=&#34;title function_&#34;&gt;save&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(User user)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;flag&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; userService.save(user);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Result&lt;/span&gt;(flag ? Code.SAVE_OK:Code.SAVE_ERROR);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@GetMapping(&amp;quot;/&amp;#123;uuid&amp;#125;&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Result &lt;span class=&#34;title function_&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;meta&#34;&gt;@PathVariable&lt;/span&gt; Integer uuid)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;User&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;user&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; userService.get(uuid);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Result&lt;/span&gt;(&lt;span class=&#34;literal&#34;&gt;null&lt;/span&gt; != user ?Code.GET_OK: Code.GET_ERROR,user);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.7 自定义异常&lt;/p&gt;
+&lt;p&gt;**Part5-2：** 自定义异常&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;设定自定义异常，封装程序执行过程中出现的问题，便于表现层进行统一的异常拦截并进行处理&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BusinessException&lt;/li&gt;
+&lt;li&gt;SystemException&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;自定义异常消息返回时需要与业务正常执行的消息按照统一的格式进行处理&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;定义 BusinessException&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;37&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;BusinessException&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;RuntimeException&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//自定义异常中封装对应的错误编码，用于异常处理时获取对应的操作编码&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; Integer code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Integer &lt;span class=&#34;title function_&#34;&gt;getCode&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;setCode&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer code)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.code = code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;BusinessException&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer code)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.code = code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;BusinessException&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String message, Integer code)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;super&lt;/span&gt;(message);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.code = code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;BusinessException&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String message, Throwable cause,Integer code)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;super&lt;/span&gt;(message, cause);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.code = code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;BusinessException&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Throwable cause,Integer code)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;super&lt;/span&gt;(cause);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.code = code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;BusinessException&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String message, Throwable cause, &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; enableSuppression, &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; writableStackTrace,Integer code)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;super&lt;/span&gt;(message, cause, enableSuppression, writableStackTrace);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;built_in&#34;&gt;this&lt;/span&gt;.code = code;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@GetMapping(&amp;quot;/&amp;#123;uuid&amp;#125;&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Result &lt;span class=&#34;title function_&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;meta&#34;&gt;@PathVariable&lt;/span&gt; Integer uuid)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;User&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;user&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; userService.get(uuid);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//模拟出现异常，使用条件控制，便于测试结果&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;if&lt;/span&gt; (uuid == &lt;span class=&#34;number&#34;&gt;10&lt;/span&gt; ) &lt;span class=&#34;keyword&#34;&gt;throw&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;BusinessException&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;查询出错啦，请重试！&amp;quot;&lt;/span&gt;,Code.GET_ERROR);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Result&lt;/span&gt;(&lt;span class=&#34;literal&#34;&gt;null&lt;/span&gt; != user ?Code.GET_OK: Code.GET_ERROR,user);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;2.8 返回消息兼容异常信息&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Component&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@ControllerAdvice&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;ProjectExceptionAdivce&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@ExceptionHandler(BusinessException.class)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@ResponseBody&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//对出现异常的情况进行拦截，并将其处理成统一的页面数据结果格式&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Result &lt;span class=&#34;title function_&#34;&gt;doBusinessException&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(BusinessException e)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Result&lt;/span&gt;(e.getCode(),e.getMessage());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;3 纯注解开发 SSM&lt;/p&gt;
+&lt;p&gt;3.1 用注解替代 applicationContext.xml&lt;/p&gt;
+&lt;p&gt;同前期设置，添加事务注解驱动&lt;br&gt;
+ @Configuration&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;//扫描组件，排除SpringMVC对应的bean，等同于&amp;lt;context:component-scan /&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@ComponentScan(value = &amp;quot;com.itheima&amp;quot;,excludeFilters = &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;    @ComponentScan.Filter(type= FilterType.ANNOTATION,classes = &amp;#123;Controller.class&amp;#125;)&amp;#125;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@PropertySource(&amp;quot;classpath:jdbc.properties&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Import(&amp;#123;JdbcConfig.class,MyBatisConfig.class&amp;#125;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;//等同于&amp;lt;tx:annotation-driven transaction-manager=&amp;quot;txManager&amp;quot;/&amp;gt;，导入的默认名称为transactionManager&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@EnableTransactionManagement&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;SpringConfig&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//等同于&amp;lt;bean   class=&amp;quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&amp;quot;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Bean(&amp;quot;transactionManager&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; DataSourceTransactionManager &lt;span class=&#34;title function_&#34;&gt;getDataSourceTxManager&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt; DataSource dataSource)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;DataSourceTransactionManager&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;dtm&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;DataSourceTransactionManager&lt;/span&gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;//等同于&amp;lt;property name=&amp;quot;dataSource&amp;quot; ref=&amp;quot;dataSource&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        dtm.setDataSource(dataSource);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; dtm;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;  &lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;3.2 用注解替代 spring-mvc.xml&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;同前期设置，添加 @EnableWebMvc 注解&lt;/li&gt;
+&lt;/ul&gt;
+  &lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Configuration&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@ComponentScan(&amp;quot;com.itheima.controller&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@EnableWebMvc&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;SpringMvcConfig&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;implements&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;WebMvcConfigurer&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;EnableWebMvc&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;支持 ConversionService 的配置，可以方便配置自定义类型转换器&lt;/li&gt;
+&lt;li&gt;支持 @NumberFormat 注解格式化数字类型&lt;/li&gt;
+&lt;li&gt;支持 @DateTimeFormat 注解格式化日期数据，日期包括 Date,Calendar,JodaTime（JodaTime 要导包）&lt;/li&gt;
+&lt;li&gt;支持 @Valid 的参数校验 (需要导入 JSR-303 规范)&lt;/li&gt;
+&lt;li&gt;配合第三方 jar 包和 SpringMVC 提供的注解读写 XML 和 JSON 格式数据&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+        <updated>2024-05-11T02:59:23.000Z</updated>
+    </entry>
     <entry>
         <id>https://zhuwei290.github.io/2-SpringMVC/</id>
         <title>2 SpringMVC</title>
@@ -1198,6 +1603,286 @@ DI （ Dependency Injection ）依赖注入&lt;br&gt;
         <updated>2024-04-03T14:51:42.466Z</updated>
     </entry>
     <entry>
+        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</id>
+        <title>c++基础入门笔记(3)</title>
+        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/"/>
+        <content type="html">&lt;p&gt;​&lt;br&gt;
+3 运算符&lt;br&gt;
+ ** 作用：** 用于执行代码的运算&lt;/p&gt;
+&lt;p&gt;本章我们主要讲解以下几类运算符：&lt;/p&gt;
+&lt;p&gt;运算符类型	作用&lt;br&gt;
+算术运算符	用于处理四则运算&lt;br&gt;
+赋值运算符	用于将表达式的值赋给变量&lt;br&gt;
+比较运算符	用于表达式的比较，并返回一个真值或假值&lt;br&gt;
+逻辑运算符	用于根据表达式的值返回真值或假值&lt;br&gt;
+ 3.1 算术运算符&lt;br&gt;
+作用：用于处理四则运算&lt;/p&gt;
+&lt;p&gt;算术运算符包括以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;正号	+3	3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;负号	-3	-3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;加	10 + 5	15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;减	10 - 5	5&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;乘	10 * 5	50&lt;br&gt;
+/	除	10 / 5	2&lt;br&gt;
+%	取模 (取余)	10 % 3	1&lt;br&gt;
+++	前置递增	a=2; b=&lt;ins&gt;a;	a=3; b=3;&lt;br&gt;
+++	后置递增	a=2; b=a&lt;/ins&gt;;	a=3; b=2;&lt;br&gt;
+–	前置递减	a=2; b=–a;	a=1; b=1;&lt;br&gt;
+–	后置递减	a=2; b=a–;	a=1; b=2;&lt;br&gt;
+ 示例 1：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;// 加减乘除&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a1 = 10;
+int b1 = 3;
+
+cout &amp;lt;&amp;lt; a1 + b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 - b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 * b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 / b1 &amp;lt;&amp;lt; endl;  //两个整数相除结果依然是整数
+
+int a2 = 10;
+int b2 = 20;
+cout &amp;lt;&amp;lt; a2 / b2 &amp;lt;&amp;lt; endl; 
+
+int a3 = 10;
+int b3 = 0;
+//cout &amp;lt;&amp;lt; a3 / b3 &amp;lt;&amp;lt; endl; //报错，除数不可以为0
+
+
+//两个小数可以相除
+double d1 = 0.5;
+double d2 = 0.25;
+cout &amp;lt;&amp;lt; d1 / d2 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例 2：&lt;/p&gt;
+&lt;p&gt;// 取模&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a1 = 10;
+int b1 = 3;
+
+cout &amp;lt;&amp;lt; 10 % 3 &amp;lt;&amp;lt; endl;
+
+int a2 = 10;
+int b2 = 20;
+
+cout &amp;lt;&amp;lt; a2 % b2 &amp;lt;&amp;lt; endl;
+
+int a3 = 10;
+int b3 = 0;
+
+//cout &amp;lt;&amp;lt; a3 % b3 &amp;lt;&amp;lt; endl; //取模运算时，除数也不能为0
+
+//两个小数不可以取模
+double d1 = 3.14;
+double d2 = 1.1;
+
+//cout &amp;lt;&amp;lt; d1 % d2 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例 3：&lt;/p&gt;
+&lt;p&gt;// 递增&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//后置递增
+int a = 10;
+a++; //等价于a = a + 1
+cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl; // 11
+
+//前置递增
+int b = 10;
+++b;
+cout &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl; // 11
+
+//区别
+//前置递增先对变量进行++，再计算表达式
+int a2 = 10;
+int b2 = ++a2 * 10;
+cout &amp;lt;&amp;lt; b2 &amp;lt;&amp;lt; endl;
+
+//后置递增先计算表达式，后对变量进行++
+int a3 = 10;
+int b3 = a3++ * 10;
+cout &amp;lt;&amp;lt; b3 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;3.2 赋值运算符&lt;br&gt;
+ ** 作用：** 用于将表达式的值赋给变量&lt;/p&gt;
+&lt;p&gt;赋值运算符包括以下几个符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+ =	赋值	a=2; b=3;	a=2; b=3;&lt;br&gt;
++=	加等于	a=0; a+=2;	a=2;&lt;br&gt;
+-=	减等于	a=5; a-=3;	a=2;&lt;br&gt;
+&lt;em&gt;=	乘等于	a=2; a&lt;/em&gt;=2;	a=4;&lt;br&gt;
+/=	除等于	a=4; a/=2;	a=2;&lt;br&gt;
+%=	模等于	a=3; a%2;	a=1;&lt;br&gt;
+ 示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//赋值运算符
+
+// =
+int a = 10;
+a = 100;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// +=
+a = 10;
+a += 2; // a = a + 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// -=
+a = 10;
+a -= 2; // a = a - 2
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// *=
+a = 10;
+a *= 2; // a = a * 2
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// /=
+a = 10;
+a /= 2;  // a = a / 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// %=
+a = 10;
+a %= 2;  // a = a % 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 3.3 比较运算符&lt;br&gt;
+ ** 作用：** 用于表达式的比较，并返回一个真值或假值&lt;/p&gt;
+&lt;p&gt;比较运算符有以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+ ==	相等于	4 == 3	0&lt;br&gt;
+!=	不等于	4 != 3	1&lt;br&gt;
+&amp;lt;	小于	4 &amp;lt; 3	0&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;大于	4 &amp;gt; 3	1&lt;br&gt;
+&amp;lt;=	小于等于	4 &amp;lt;= 3	0&lt;br&gt;
+=	大于等于	4 &amp;gt;= 1	1&lt;br&gt;
+ 示例：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 20;
+
+cout &amp;lt;&amp;lt; (a == b) &amp;lt;&amp;lt; endl; // 0 
+
+cout &amp;lt;&amp;lt; (a != b) &amp;lt;&amp;lt; endl; // 1
+
+cout &amp;lt;&amp;lt; (a &amp;gt; b) &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; (a &amp;lt; b) &amp;lt;&amp;lt; endl; // 1
+
+cout &amp;lt;&amp;lt; (a &amp;gt;= b) &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; (a &amp;lt;= b) &amp;lt;&amp;lt; endl; // 1
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;3.4 逻辑运算符&lt;br&gt;
+ ** 作用：** 用于根据表达式的值返回真值或假值&lt;/p&gt;
+&lt;p&gt;逻辑运算符有以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+！	非	!a	如果 a 为假，则！a 为真； 如果 a 为真，则！a 为假。&lt;br&gt;
+&amp;amp;&amp;amp;	与	a &amp;amp;&amp;amp; b	如果 a 和 b 都为真，则结果为真，否则为假。&lt;br&gt;
+||	或	a || b	如果 a 和 b 有一个为真，则结果为真，二者都为假时，结果为假。&lt;br&gt;
+** 示例 1：** 逻辑非&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 非&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+
+cout &amp;lt;&amp;lt; !a &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; !!a &amp;lt;&amp;lt; endl; // 1
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;** 示例 2：** 逻辑与&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 与&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 1
+
+a = 10;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0 
+
+a = 0;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;** 示例 3：** 逻辑或&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 或&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1
+
+a = 10;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1 
+
+a = 0;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 0
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+</content>
+        <updated>2023-01-31T07:13:43.000Z</updated>
+    </entry>
+    <entry>
         <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</id>
         <title>c++基础入门笔记(2)</title>
         <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/"/>
@@ -1440,6 +2125,253 @@ system(&amp;quot;pause&amp;quot;);
 return EXIT_SUCCESS;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;}&lt;/p&gt;
+</content>
+        <updated>2023-01-31T07:13:43.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/</id>
+        <title>c++基础入门笔记(5)</title>
+        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/"/>
+        <content type="html">&lt;p&gt;​&lt;br&gt;
+5 数组&lt;br&gt;
+ 5.1 概述&lt;br&gt;
+所谓数组，就是一个集合，里面存放了相同类型的数据元素&lt;/p&gt;
+&lt;p&gt;** 特点 1：** 数组中的每个数据元素都是相同的数据类型&lt;/p&gt;
+&lt;p&gt;** 特点 2：** 数组是由连续的内存位置组成的&lt;/p&gt;
+&lt;p&gt;5.2 一维数组&lt;br&gt;
+ 5.2.1 一维数组定义方式&lt;/p&gt;
+&lt;p&gt;一维数组定义的三种方式：&lt;/p&gt;
+&lt;p&gt;数据类型 数组名 [数组长度];&lt;br&gt;
+ 数据类型 数组名 [数组长度] = { 值 1，值 2 …};&lt;br&gt;
+ 数据类型 数组名 [] = { 值 1，值 2 …};&lt;br&gt;
+ 示例&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//定义方式1
+//数据类型 数组名[元素个数];
+int score[10];
+
+//利用下标赋值
+score[0] = 100;
+score[1] = 99;
+score[2] = 85;
+
+//利用下标输出
+cout &amp;lt;&amp;lt; score[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; score[1] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; score[2] &amp;lt;&amp;lt; endl;
+
+
+//第二种定义方式
+//数据类型 数组名[元素个数] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
+//如果&amp;#123;&amp;#125;内不足10个数据，剩余数据用0补全
+int score2[10] = &amp;#123; 100, 90,80,70,60,50,40,30,20,10 &amp;#125;;
+
+//逐个输出
+//cout &amp;lt;&amp;lt; score2[0] &amp;lt;&amp;lt; endl;
+//cout &amp;lt;&amp;lt; score2[1] &amp;lt;&amp;lt; endl;
+
+//一个一个输出太麻烦，因此可以利用循环进行输出
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; score2[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+//定义方式3
+//数据类型 数组名[] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
+int score3[] = &amp;#123; 100,90,80,70,60,50,40,30,20,10 &amp;#125;;
+
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; score3[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.2.2 一维数组数组名&lt;/p&gt;
+&lt;p&gt;一维数组名称的用途：&lt;/p&gt;
+&lt;p&gt;可以统计整个数组在内存中的长度&lt;br&gt;
+可以获取数组在内存中的首地址&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//数组名用途
+//1、可以获取整个数组占用内存空间大小
+int arr[10] = &amp;#123; 1,2,3,4,5,6,7,8,9,10 &amp;#125;;
+
+cout &amp;lt;&amp;lt; &amp;quot;整个数组所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;每个元素所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组的元素个数为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+
+//2、可以通过数组名获取到数组首地址
+cout &amp;lt;&amp;lt; &amp;quot;数组首地址为： &amp;quot; &amp;lt;&amp;lt; (int)arr &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组中第一个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组中第二个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[1] &amp;lt;&amp;lt; endl;
+
+//arr = 100; 错误，数组名是常量，因此不可以赋值
+
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;练习案例 1：五只小猪称体重&lt;/p&gt;
+&lt;p&gt;案例描述：&lt;/p&gt;
+&lt;p&gt;在一个数组中记录了五只小猪的体重，如：int arr [5] = {300,350,200,400,250};&lt;/p&gt;
+&lt;p&gt;找出并打印最重的小猪体重。&lt;/p&gt;
+&lt;p&gt;** 练习案例 2：** 数组元素逆置&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 请声明一个 5 个元素的数组，并且将元素逆置.&lt;/p&gt;
+&lt;p&gt;(如原数组元素为：1,3,2,5,4; 逆置后输出结果为：4,5,2,3,1);&lt;/p&gt;
+&lt;p&gt;5.2.3 冒泡排序&lt;/p&gt;
+&lt;p&gt;作用： 最常用的排序算法，对数组内元素进行排序&lt;/p&gt;
+&lt;p&gt;比较相邻的元素。如果第一个比第二个大，就交换他们两个。&lt;br&gt;
+对每一对相邻元素做同样的工作，执行完毕后，找到第一个最大值。&lt;br&gt;
+重复以上的步骤，每次比较次数 - 1，直到不需要比较&lt;br&gt;
+示例： 将数组 {4,2,8,0,5,7,1,3,9} 进行升序排序&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int arr[9] = &amp;#123; 4,2,8,0,5,7,1,3,9 &amp;#125;;
+
+for (int i = 0; i &amp;lt; 9 - 1; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 9 - 1 - i; j++)
+	&amp;#123;
+		if (arr[j] &amp;gt; arr[j + 1])
+		&amp;#123;
+			int temp = arr[j];
+			arr[j] = arr[j + 1];
+			arr[j + 1] = temp;
+		&amp;#125;
+	&amp;#125;
+&amp;#125;
+
+for (int i = 0; i &amp;lt; 9; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; arr[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 5.3 二维数组&lt;br&gt;
+二维数组就是在一维数组上，多加一个维度。&lt;/p&gt;
+&lt;p&gt;5.3.1 二维数组定义方式&lt;/p&gt;
+&lt;p&gt;二维数组定义的四种方式：&lt;/p&gt;
+&lt;p&gt;数据类型 数组名 [行数][ 列数 ];&lt;br&gt;
+ 数据类型 数组名 [行数][ 列数 ] = { {数据 1，数据 2 } ，{数据 3，数据 4 } };&lt;br&gt;
+ 数据类型 数组名 [行数][ 列数 ] = { 数据 1，数据 2，数据 3，数据 4};&lt;br&gt;
+ 数据类型 数组名 [][ 列数] = { 数据 1，数据 2，数据 3，数据 4};&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//方式1  
+//数组类型 数组名 [行数][列数]
+int arr[2][3];
+arr[0][0] = 1;
+arr[0][1] = 2;
+arr[0][2] = 3;
+arr[1][0] = 4;
+arr[1][1] = 5;
+arr[1][2] = 6;
+
+for (int i = 0; i &amp;lt; 2; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 3; j++)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; arr[i][j] &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+//方式2 
+//数据类型 数组名[行数][列数] = &amp;#123; &amp;#123;数据1，数据2 &amp;#125; ，&amp;#123;数据3，数据4 &amp;#125; &amp;#125;;
+int arr2[2][3] =
+&amp;#123;
+	&amp;#123;1,2,3&amp;#125;,
+	&amp;#123;4,5,6&amp;#125;
+&amp;#125;;
+
+//方式3
+//数据类型 数组名[行数][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
+int arr3[2][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;; 
+
+//方式4 
+//数据类型 数组名[][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
+int arr4[][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.3.2 二维数组数组名&lt;/p&gt;
+&lt;p&gt;查看二维数组所占内存空间&lt;br&gt;
+获取二维数组首地址&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//二维数组数组名
+int arr[2][3] =
+&amp;#123;
+	&amp;#123;1,2,3&amp;#125;,
+	&amp;#123;4,5,6&amp;#125;
+&amp;#125;;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组一行大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组元素大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组行数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组列数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) / sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
+
+//地址
+cout &amp;lt;&amp;lt; &amp;quot;二维数组首地址：&amp;quot; &amp;lt;&amp;lt; arr &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第一行地址：&amp;quot; &amp;lt;&amp;lt; arr[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第二行地址：&amp;quot; &amp;lt;&amp;lt; arr[1] &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第一个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第二个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][1] &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.3.3 二维数组应用案例&lt;/p&gt;
+&lt;p&gt;考试成绩统计：&lt;/p&gt;
+&lt;p&gt;案例描述：有三名同学（张三，李四，王五），在一次考试中的成绩分别如下表，请分别输出三名同学的总成绩&lt;/p&gt;
+&lt;p&gt;语文	数学	英语&lt;br&gt;
+张三	100	100	100&lt;br&gt;
+ 李四	90	50	100&lt;br&gt;
+ 王五	60	70	80&lt;br&gt;
+ 参考答案：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int scores[3][3] =
+&amp;#123;
+	&amp;#123;100,100,100&amp;#125;,
+	&amp;#123;90,50,100&amp;#125;,
+	&amp;#123;60,70,80&amp;#125;,
+&amp;#125;;
+
+string names[3] = &amp;#123; &amp;quot;张三&amp;quot;,&amp;quot;李四&amp;quot;,&amp;quot;王五&amp;quot; &amp;#125;;
+
+for (int i = 0; i &amp;lt; 3; i++)
+&amp;#123;
+	int sum = 0;
+	for (int j = 0; j &amp;lt; 3; j++)
+	&amp;#123;
+		sum += scores[i][j];
+	&amp;#125;
+	cout &amp;lt;&amp;lt; names[i] &amp;lt;&amp;lt; &amp;quot;同学总成绩为： &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
 </content>
         <updated>2023-01-31T07:13:43.000Z</updated>
     </entry>
@@ -2055,533 +2987,6 @@ int main() {&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;int a = 100;
 int b = 200;
 swap(a, b);
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-</content>
-        <updated>2023-01-31T07:13:43.000Z</updated>
-    </entry>
-    <entry>
-        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/</id>
-        <title>c++基础入门笔记(5)</title>
-        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/"/>
-        <content type="html">&lt;p&gt;​&lt;br&gt;
-5 数组&lt;br&gt;
- 5.1 概述&lt;br&gt;
-所谓数组，就是一个集合，里面存放了相同类型的数据元素&lt;/p&gt;
-&lt;p&gt;** 特点 1：** 数组中的每个数据元素都是相同的数据类型&lt;/p&gt;
-&lt;p&gt;** 特点 2：** 数组是由连续的内存位置组成的&lt;/p&gt;
-&lt;p&gt;5.2 一维数组&lt;br&gt;
- 5.2.1 一维数组定义方式&lt;/p&gt;
-&lt;p&gt;一维数组定义的三种方式：&lt;/p&gt;
-&lt;p&gt;数据类型 数组名 [数组长度];&lt;br&gt;
- 数据类型 数组名 [数组长度] = { 值 1，值 2 …};&lt;br&gt;
- 数据类型 数组名 [] = { 值 1，值 2 …};&lt;br&gt;
- 示例&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//定义方式1
-//数据类型 数组名[元素个数];
-int score[10];
-
-//利用下标赋值
-score[0] = 100;
-score[1] = 99;
-score[2] = 85;
-
-//利用下标输出
-cout &amp;lt;&amp;lt; score[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; score[1] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; score[2] &amp;lt;&amp;lt; endl;
-
-
-//第二种定义方式
-//数据类型 数组名[元素个数] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
-//如果&amp;#123;&amp;#125;内不足10个数据，剩余数据用0补全
-int score2[10] = &amp;#123; 100, 90,80,70,60,50,40,30,20,10 &amp;#125;;
-
-//逐个输出
-//cout &amp;lt;&amp;lt; score2[0] &amp;lt;&amp;lt; endl;
-//cout &amp;lt;&amp;lt; score2[1] &amp;lt;&amp;lt; endl;
-
-//一个一个输出太麻烦，因此可以利用循环进行输出
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; score2[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-//定义方式3
-//数据类型 数组名[] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
-int score3[] = &amp;#123; 100,90,80,70,60,50,40,30,20,10 &amp;#125;;
-
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; score3[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.2.2 一维数组数组名&lt;/p&gt;
-&lt;p&gt;一维数组名称的用途：&lt;/p&gt;
-&lt;p&gt;可以统计整个数组在内存中的长度&lt;br&gt;
-可以获取数组在内存中的首地址&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//数组名用途
-//1、可以获取整个数组占用内存空间大小
-int arr[10] = &amp;#123; 1,2,3,4,5,6,7,8,9,10 &amp;#125;;
-
-cout &amp;lt;&amp;lt; &amp;quot;整个数组所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;每个元素所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组的元素个数为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-
-//2、可以通过数组名获取到数组首地址
-cout &amp;lt;&amp;lt; &amp;quot;数组首地址为： &amp;quot; &amp;lt;&amp;lt; (int)arr &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组中第一个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组中第二个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[1] &amp;lt;&amp;lt; endl;
-
-//arr = 100; 错误，数组名是常量，因此不可以赋值
-
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;练习案例 1：五只小猪称体重&lt;/p&gt;
-&lt;p&gt;案例描述：&lt;/p&gt;
-&lt;p&gt;在一个数组中记录了五只小猪的体重，如：int arr [5] = {300,350,200,400,250};&lt;/p&gt;
-&lt;p&gt;找出并打印最重的小猪体重。&lt;/p&gt;
-&lt;p&gt;** 练习案例 2：** 数组元素逆置&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 请声明一个 5 个元素的数组，并且将元素逆置.&lt;/p&gt;
-&lt;p&gt;(如原数组元素为：1,3,2,5,4; 逆置后输出结果为：4,5,2,3,1);&lt;/p&gt;
-&lt;p&gt;5.2.3 冒泡排序&lt;/p&gt;
-&lt;p&gt;作用： 最常用的排序算法，对数组内元素进行排序&lt;/p&gt;
-&lt;p&gt;比较相邻的元素。如果第一个比第二个大，就交换他们两个。&lt;br&gt;
-对每一对相邻元素做同样的工作，执行完毕后，找到第一个最大值。&lt;br&gt;
-重复以上的步骤，每次比较次数 - 1，直到不需要比较&lt;br&gt;
-示例： 将数组 {4,2,8,0,5,7,1,3,9} 进行升序排序&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int arr[9] = &amp;#123; 4,2,8,0,5,7,1,3,9 &amp;#125;;
-
-for (int i = 0; i &amp;lt; 9 - 1; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 9 - 1 - i; j++)
-	&amp;#123;
-		if (arr[j] &amp;gt; arr[j + 1])
-		&amp;#123;
-			int temp = arr[j];
-			arr[j] = arr[j + 1];
-			arr[j + 1] = temp;
-		&amp;#125;
-	&amp;#125;
-&amp;#125;
-
-for (int i = 0; i &amp;lt; 9; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; arr[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 5.3 二维数组&lt;br&gt;
-二维数组就是在一维数组上，多加一个维度。&lt;/p&gt;
-&lt;p&gt;5.3.1 二维数组定义方式&lt;/p&gt;
-&lt;p&gt;二维数组定义的四种方式：&lt;/p&gt;
-&lt;p&gt;数据类型 数组名 [行数][ 列数 ];&lt;br&gt;
- 数据类型 数组名 [行数][ 列数 ] = { {数据 1，数据 2 } ，{数据 3，数据 4 } };&lt;br&gt;
- 数据类型 数组名 [行数][ 列数 ] = { 数据 1，数据 2，数据 3，数据 4};&lt;br&gt;
- 数据类型 数组名 [][ 列数] = { 数据 1，数据 2，数据 3，数据 4};&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//方式1  
-//数组类型 数组名 [行数][列数]
-int arr[2][3];
-arr[0][0] = 1;
-arr[0][1] = 2;
-arr[0][2] = 3;
-arr[1][0] = 4;
-arr[1][1] = 5;
-arr[1][2] = 6;
-
-for (int i = 0; i &amp;lt; 2; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 3; j++)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; arr[i][j] &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-//方式2 
-//数据类型 数组名[行数][列数] = &amp;#123; &amp;#123;数据1，数据2 &amp;#125; ，&amp;#123;数据3，数据4 &amp;#125; &amp;#125;;
-int arr2[2][3] =
-&amp;#123;
-	&amp;#123;1,2,3&amp;#125;,
-	&amp;#123;4,5,6&amp;#125;
-&amp;#125;;
-
-//方式3
-//数据类型 数组名[行数][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
-int arr3[2][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;; 
-
-//方式4 
-//数据类型 数组名[][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
-int arr4[][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.3.2 二维数组数组名&lt;/p&gt;
-&lt;p&gt;查看二维数组所占内存空间&lt;br&gt;
-获取二维数组首地址&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//二维数组数组名
-int arr[2][3] =
-&amp;#123;
-	&amp;#123;1,2,3&amp;#125;,
-	&amp;#123;4,5,6&amp;#125;
-&amp;#125;;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组一行大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组元素大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组行数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组列数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) / sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
-
-//地址
-cout &amp;lt;&amp;lt; &amp;quot;二维数组首地址：&amp;quot; &amp;lt;&amp;lt; arr &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第一行地址：&amp;quot; &amp;lt;&amp;lt; arr[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第二行地址：&amp;quot; &amp;lt;&amp;lt; arr[1] &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第一个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第二个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][1] &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.3.3 二维数组应用案例&lt;/p&gt;
-&lt;p&gt;考试成绩统计：&lt;/p&gt;
-&lt;p&gt;案例描述：有三名同学（张三，李四，王五），在一次考试中的成绩分别如下表，请分别输出三名同学的总成绩&lt;/p&gt;
-&lt;p&gt;语文	数学	英语&lt;br&gt;
-张三	100	100	100&lt;br&gt;
- 李四	90	50	100&lt;br&gt;
- 王五	60	70	80&lt;br&gt;
- 参考答案：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int scores[3][3] =
-&amp;#123;
-	&amp;#123;100,100,100&amp;#125;,
-	&amp;#123;90,50,100&amp;#125;,
-	&amp;#123;60,70,80&amp;#125;,
-&amp;#125;;
-
-string names[3] = &amp;#123; &amp;quot;张三&amp;quot;,&amp;quot;李四&amp;quot;,&amp;quot;王五&amp;quot; &amp;#125;;
-
-for (int i = 0; i &amp;lt; 3; i++)
-&amp;#123;
-	int sum = 0;
-	for (int j = 0; j &amp;lt; 3; j++)
-	&amp;#123;
-		sum += scores[i][j];
-	&amp;#125;
-	cout &amp;lt;&amp;lt; names[i] &amp;lt;&amp;lt; &amp;quot;同学总成绩为： &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-</content>
-        <updated>2023-01-31T07:13:43.000Z</updated>
-    </entry>
-    <entry>
-        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</id>
-        <title>c++基础入门笔记(3)</title>
-        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/"/>
-        <content type="html">&lt;p&gt;​&lt;br&gt;
-3 运算符&lt;br&gt;
- ** 作用：** 用于执行代码的运算&lt;/p&gt;
-&lt;p&gt;本章我们主要讲解以下几类运算符：&lt;/p&gt;
-&lt;p&gt;运算符类型	作用&lt;br&gt;
-算术运算符	用于处理四则运算&lt;br&gt;
-赋值运算符	用于将表达式的值赋给变量&lt;br&gt;
-比较运算符	用于表达式的比较，并返回一个真值或假值&lt;br&gt;
-逻辑运算符	用于根据表达式的值返回真值或假值&lt;br&gt;
- 3.1 算术运算符&lt;br&gt;
-作用：用于处理四则运算&lt;/p&gt;
-&lt;p&gt;算术运算符包括以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;正号	+3	3&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;负号	-3	-3&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;加	10 + 5	15&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;减	10 - 5	5&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;乘	10 * 5	50&lt;br&gt;
-/	除	10 / 5	2&lt;br&gt;
-%	取模 (取余)	10 % 3	1&lt;br&gt;
-++	前置递增	a=2; b=&lt;ins&gt;a;	a=3; b=3;&lt;br&gt;
-++	后置递增	a=2; b=a&lt;/ins&gt;;	a=3; b=2;&lt;br&gt;
-–	前置递减	a=2; b=–a;	a=1; b=1;&lt;br&gt;
-–	后置递减	a=2; b=a–;	a=1; b=2;&lt;br&gt;
- 示例 1：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;// 加减乘除&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a1 = 10;
-int b1 = 3;
-
-cout &amp;lt;&amp;lt; a1 + b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 - b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 * b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 / b1 &amp;lt;&amp;lt; endl;  //两个整数相除结果依然是整数
-
-int a2 = 10;
-int b2 = 20;
-cout &amp;lt;&amp;lt; a2 / b2 &amp;lt;&amp;lt; endl; 
-
-int a3 = 10;
-int b3 = 0;
-//cout &amp;lt;&amp;lt; a3 / b3 &amp;lt;&amp;lt; endl; //报错，除数不可以为0
-
-
-//两个小数可以相除
-double d1 = 0.5;
-double d2 = 0.25;
-cout &amp;lt;&amp;lt; d1 / d2 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例 2：&lt;/p&gt;
-&lt;p&gt;// 取模&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a1 = 10;
-int b1 = 3;
-
-cout &amp;lt;&amp;lt; 10 % 3 &amp;lt;&amp;lt; endl;
-
-int a2 = 10;
-int b2 = 20;
-
-cout &amp;lt;&amp;lt; a2 % b2 &amp;lt;&amp;lt; endl;
-
-int a3 = 10;
-int b3 = 0;
-
-//cout &amp;lt;&amp;lt; a3 % b3 &amp;lt;&amp;lt; endl; //取模运算时，除数也不能为0
-
-//两个小数不可以取模
-double d1 = 3.14;
-double d2 = 1.1;
-
-//cout &amp;lt;&amp;lt; d1 % d2 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例 3：&lt;/p&gt;
-&lt;p&gt;// 递增&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//后置递增
-int a = 10;
-a++; //等价于a = a + 1
-cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl; // 11
-
-//前置递增
-int b = 10;
-++b;
-cout &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl; // 11
-
-//区别
-//前置递增先对变量进行++，再计算表达式
-int a2 = 10;
-int b2 = ++a2 * 10;
-cout &amp;lt;&amp;lt; b2 &amp;lt;&amp;lt; endl;
-
-//后置递增先计算表达式，后对变量进行++
-int a3 = 10;
-int b3 = a3++ * 10;
-cout &amp;lt;&amp;lt; b3 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;3.2 赋值运算符&lt;br&gt;
- ** 作用：** 用于将表达式的值赋给变量&lt;/p&gt;
-&lt;p&gt;赋值运算符包括以下几个符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
- =	赋值	a=2; b=3;	a=2; b=3;&lt;br&gt;
-+=	加等于	a=0; a+=2;	a=2;&lt;br&gt;
--=	减等于	a=5; a-=3;	a=2;&lt;br&gt;
-&lt;em&gt;=	乘等于	a=2; a&lt;/em&gt;=2;	a=4;&lt;br&gt;
-/=	除等于	a=4; a/=2;	a=2;&lt;br&gt;
-%=	模等于	a=3; a%2;	a=1;&lt;br&gt;
- 示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//赋值运算符
-
-// =
-int a = 10;
-a = 100;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// +=
-a = 10;
-a += 2; // a = a + 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// -=
-a = 10;
-a -= 2; // a = a - 2
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// *=
-a = 10;
-a *= 2; // a = a * 2
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// /=
-a = 10;
-a /= 2;  // a = a / 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// %=
-a = 10;
-a %= 2;  // a = a % 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 3.3 比较运算符&lt;br&gt;
- ** 作用：** 用于表达式的比较，并返回一个真值或假值&lt;/p&gt;
-&lt;p&gt;比较运算符有以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
- ==	相等于	4 == 3	0&lt;br&gt;
-!=	不等于	4 != 3	1&lt;br&gt;
-&amp;lt;	小于	4 &amp;lt; 3	0&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;大于	4 &amp;gt; 3	1&lt;br&gt;
-&amp;lt;=	小于等于	4 &amp;lt;= 3	0&lt;br&gt;
-=	大于等于	4 &amp;gt;= 1	1&lt;br&gt;
- 示例：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 20;
-
-cout &amp;lt;&amp;lt; (a == b) &amp;lt;&amp;lt; endl; // 0 
-
-cout &amp;lt;&amp;lt; (a != b) &amp;lt;&amp;lt; endl; // 1
-
-cout &amp;lt;&amp;lt; (a &amp;gt; b) &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; (a &amp;lt; b) &amp;lt;&amp;lt; endl; // 1
-
-cout &amp;lt;&amp;lt; (a &amp;gt;= b) &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; (a &amp;lt;= b) &amp;lt;&amp;lt; endl; // 1
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;3.4 逻辑运算符&lt;br&gt;
- ** 作用：** 用于根据表达式的值返回真值或假值&lt;/p&gt;
-&lt;p&gt;逻辑运算符有以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
-！	非	!a	如果 a 为假，则！a 为真； 如果 a 为真，则！a 为假。&lt;br&gt;
-&amp;amp;&amp;amp;	与	a &amp;amp;&amp;amp; b	如果 a 和 b 都为真，则结果为真，否则为假。&lt;br&gt;
-||	或	a || b	如果 a 和 b 有一个为真，则结果为真，二者都为假时，结果为假。&lt;br&gt;
-** 示例 1：** 逻辑非&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 非&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-
-cout &amp;lt;&amp;lt; !a &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; !!a &amp;lt;&amp;lt; endl; // 1
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;** 示例 2：** 逻辑与&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 与&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 1
-
-a = 10;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0 
-
-a = 0;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;** 示例 3：** 逻辑或&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 或&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1
-
-a = 10;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1 
-
-a = 0;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 0
 
 system(&amp;quot;pause&amp;quot;);
 
