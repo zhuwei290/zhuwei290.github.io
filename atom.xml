@@ -3,7 +3,376 @@
     <id>https://zhuwei290.github.io</id>
     <title>ZW</title>
     <link href="https://zhuwei290.github.io" />
-    <updated>2024-05-11T02:59:23.000Z</updated>
+    <updated>2024-05-18T16:57:16.000Z</updated>
+    <entry>
+        <id>https://zhuwei290.github.io/SpringBoot/</id>
+        <title>SpringBoot</title>
+        <link rel="alternate" href="https://zhuwei290.github.io/SpringBoot/"/>
+        <content type="html">&lt;p&gt;学习目标&lt;/p&gt;
+&lt;ul class=&#34;task-list&#34;&gt;
+&lt;li class=&#34;task-list-item&#34;&gt;&lt;input type=&#34;checkbox&#34; id=&#34;cbx_0&#34; disabled=&#34;true&#34;&gt;&lt;label for=&#34;cbx_0&#34;&gt; 基于 SpringBoot 框架的程序开发步骤&lt;/label&gt;&lt;/li&gt;
+&lt;li class=&#34;task-list-item&#34;&gt;&lt;input type=&#34;checkbox&#34; id=&#34;cbx_1&#34; disabled=&#34;true&#34;&gt;&lt;label for=&#34;cbx_1&#34;&gt; 熟练使用 SpringBoot 配置信息修改服务器配置&lt;/label&gt;&lt;/li&gt;
+&lt;li class=&#34;task-list-item&#34;&gt;&lt;input type=&#34;checkbox&#34; id=&#34;cbx_2&#34; disabled=&#34;true&#34;&gt;&lt;label for=&#34;cbx_2&#34;&gt; 基于 SpringBoot 的完成 SSM 整合项目开发&lt;/label&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一、SpringBoot 简介&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;入门案例&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;问题导入&lt;/p&gt;
+&lt;p&gt;SpringMVC 的 HelloWord 程序大家还记得吗？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;SpringBoot 是由 Pivotal 团队提供的全新框架，其设计目的是用来简化 Spring 应用的初始搭建以及开发过程&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;原生开发 SpringMVC 程序过程&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811205020792.png&#34; alt=&#34;image-20210811205020792&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.1 入门案例开发步骤&lt;/p&gt;
+&lt;p&gt;①：创建新模块，选择 Spring 初始化，并配置模块相关基础信息&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811183922621.png&#34; alt=&#34;image-20210811183922621&#34;&gt;&lt;/p&gt;
+&lt;p&gt;②：选择当前模块需要使用的技术集&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811183956586.png&#34; alt=&#34;image-20210811183956586&#34;&gt;&lt;/p&gt;
+&lt;p&gt;③：开发控制器类&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RestController&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RequestMapping(&amp;quot;/books&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;BookController&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@GetMapping(&amp;quot;/&amp;#123;id&amp;#125;&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; String &lt;span class=&#34;title function_&#34;&gt;getById&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;meta&#34;&gt;@PathVariable&lt;/span&gt; Integer id)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(&lt;span class=&#34;string&#34;&gt;&amp;quot;id ==&amp;gt; &amp;quot;&lt;/span&gt; + id);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;quot;hello , spring boot! &amp;quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;④：运行自动生成的 Application 类&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811184126747.png&#34; alt=&#34;image-20210811184126747&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;最简 SpringBoot 程序所包含的基础文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;&amp;lt;?xml version=&lt;span class=&#34;string&#34;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt; encoding=&lt;span class=&#34;string&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;?&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns:xsi&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;         &lt;span class=&#34;attr&#34;&gt;xsi:schemaLocation&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;modelVersion&lt;/span&gt;&amp;gt;&lt;/span&gt;4.0.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;modelVersion&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;parent&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-parent&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;2.5.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;parent&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;com.itheima&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;springboot-01-quickstart&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;0.0.1-SNAPSHOT&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependencies&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-web&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependencies&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@SpringBootApplication&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Application&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String[] args)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        SpringApplication.run(Application.class, args);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;Spring 程序与 SpringBoot 程序对比&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811184326884.png&#34; alt=&#34;image-20210811184326884&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意事项：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;基于 idea 开发 SpringBoot 程序需要确保联网且能够加载到程序框架结构&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;1.2 基于 SpringBoot 官网创建项目&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811184424903.png&#34; alt=&#34;image-20210811184424903&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.3 SpringBoot 项目快速启动&lt;/p&gt;
+&lt;p&gt;① 对 SpringBoot 项目打包（执行 Maven 构建指令 package）&lt;/p&gt;
+&lt;p&gt;② 执行启动指令&lt;/p&gt;
+&lt;figure class=&#34;highlight cmd&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;java -jar springboot_01_quickstart.jar	 项目的名称根据实际情况修改&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;注意事项：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;jar 支持命令行启动需要依赖 maven 插件支持，请确认打包时是否具有 SpringBoot 对应的 maven 插件。&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;build&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;plugins&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;plugin&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-maven-plugin&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;plugin&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;plugins&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;build&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;SpringBoot 概述&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;问题导入&lt;/p&gt;
+&lt;p&gt;学习了 SpringBoot 入门案例之后，感觉对比 SpringMVC 哪一个更加方便简洁？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SpringBoot 是由 Pivotal 团队提供的全新框架，其设计目的是用来&lt;strong&gt;简化&lt;/strong&gt; Spring 应用的&lt;strong&gt;初始搭建&lt;/strong&gt;以及&lt;strong&gt;开发过程&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Spring 程序缺点
+&lt;ul&gt;
+&lt;li&gt;配置繁琐&lt;/li&gt;
+&lt;li&gt;依赖设置繁琐&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;SpringBoot 程序优点
+&lt;ul&gt;
+&lt;li&gt;自动配置&lt;/li&gt;
+&lt;li&gt;起步依赖（简化依赖配置）&lt;/li&gt;
+&lt;li&gt;辅助功能（内置服务器，……）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.1 起步依赖&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;starter
+&lt;ul&gt;
+&lt;li&gt;SpringBoot 中常见项目名称，定义了当前项目使用的所有项目坐标，以达到减少依赖配置的目的&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;&amp;lt;?xml version=&lt;span class=&#34;string&#34;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt; encoding=&lt;span class=&#34;string&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;?&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns:xsi&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;         &lt;span class=&#34;attr&#34;&gt;xsi:schemaLocation&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;modelVersion&lt;/span&gt;&amp;gt;&lt;/span&gt;4.0.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;modelVersion&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;parent&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-parent&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;2.5.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;parent&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;com.itheima&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;springboot-01-quickstart&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;0.0.1-SNAPSHOT&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependencies&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-web&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependencies&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;         &lt;span class=&#34;attr&#34;&gt;xsi:schemaLocation&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;         &lt;span class=&#34;attr&#34;&gt;xmlns:xsi&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;modelVersion&lt;/span&gt;&amp;gt;&lt;/span&gt;4.0.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;modelVersion&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-dependencies&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;2.5.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;packaging&lt;/span&gt;&amp;gt;&lt;/span&gt;pom&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;packaging&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;properties&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;servlet-api.version&lt;/span&gt;&amp;gt;&lt;/span&gt;4.0.1&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;servlet-api.version&lt;/span&gt;&amp;gt;&lt;/span&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        ...&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;properties&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;parent
+&lt;ul&gt;
+&lt;li&gt;所有 SpringBoot 项目要继承的项目，定义了若干个坐标版本号（依赖管理，而非依赖），以达到减少依赖冲突的目的&lt;/li&gt;
+&lt;li&gt;spring-boot-starter-parent（2.5.0）与 spring-boot-starter-parent（2.4.6）共计 57 处坐标版本不同&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;&amp;lt;?xml version=&lt;span class=&#34;string&#34;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt; encoding=&lt;span class=&#34;string&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;?&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;         &lt;span class=&#34;attr&#34;&gt;xsi:schemaLocation&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;         &lt;span class=&#34;attr&#34;&gt;xmlns:xsi&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;modelVersion&lt;/span&gt;&amp;gt;&lt;/span&gt;4.0.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;modelVersion&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;parent&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-dependencies&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;2.5.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;parent&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-parent&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;packaging&lt;/span&gt;&amp;gt;&lt;/span&gt;pom&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;packaging&lt;/span&gt;&amp;gt;&lt;/span&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    ...&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;实际开发
+&lt;ul&gt;
+&lt;li&gt;使用任意坐标时，仅书写 GAV 中的 G 和 A，V 由 SpringBoot 提供&lt;/li&gt;
+&lt;li&gt;如发生坐标错误，再指定 version（要小心版本冲突）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;junit&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;junit&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;$&amp;#123;junit.version&amp;#125;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;javax.servlet&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;javax.servlet-api&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;$&amp;#123;servlet-api.version&amp;#125;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;&amp;lt;?xml version=&lt;span class=&#34;string&#34;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt; encoding=&lt;span class=&#34;string&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;?&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot;&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;xmlns:xsi&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;         &lt;span class=&#34;attr&#34;&gt;xsi:schemaLocation&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&amp;quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;parent&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-parent&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;2.5.0&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;parent&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependencies&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-web&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-test&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;scope&lt;/span&gt;&amp;gt;&lt;/span&gt;test&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;scope&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependencies&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;project&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2.2 辅助功能&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SpringBoot 程序启动&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@SpringBootApplication&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Springboot01QuickstartApplication&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String[] args)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        SpringApplication.run(Springboot01QuickstartApplication.class, args);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;SpringBoot 在创建项目时，采用 jar 的打包方式&lt;/li&gt;
+&lt;li&gt;SpringBoot 的引导类是项目的入口，运行 main 方法就可以启动项目&lt;/li&gt;
+&lt;li&gt;使用 maven 依赖管理变更起步依赖项&lt;/li&gt;
+&lt;li&gt;Jetty 比 Tomcat 更轻量级，可扩展性更强（相较于 Tomcat），谷歌应用引擎（GAE）已经全面切换为 Jetty&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependencies&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-web&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--web起步依赖环境中，排除Tomcat起步依赖--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;exclusions&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;exclusion&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-tomcat&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;exclusion&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;exclusions&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--添加Jetty起步依赖，版本由SpringBoot的starter控制--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-jetty&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependencies&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;二、基础配置&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;配置文件格式&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;问题导入&lt;/p&gt;
+&lt;p&gt;框架常见的配置文件有哪几种形式？&lt;/p&gt;
+&lt;p&gt;1.1 修改服务器端口&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://localhost:8080/books/1&#34;&gt;http://localhost:8080/books/1&lt;/a&gt;		&amp;gt;&amp;gt;&amp;gt;		&lt;a href=&#34;http://localhost/books/1&#34;&gt;http://localhost/books/1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;SpringBoot 提供了多种属性配置方式&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;application.properties&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;server.port&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;80&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;application.yml&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;server:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;port:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;81&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;application.yaml&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;server:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;port:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;82&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;1.2 自动提示功能消失解决方案&lt;/p&gt;
+&lt;p&gt;操作步骤：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811211456419.png&#34; alt=&#34;image-20210811211456419&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811211507840.png&#34; alt=&#34;image-20210811211507840&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811211516197.png&#34; alt=&#34;image-20210811211516197&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811211525671.png&#34; alt=&#34;image-20210811211525671&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811211548589.png&#34; alt=&#34;image-20210811211548589&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811211556445.png&#34; alt=&#34;image-20210811211556445&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.3 SpringBoot 配置文件加载顺序（了解）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;application.&lt;strong&gt;properties&lt;/strong&gt; &amp;gt; application.&lt;strong&gt;yml&lt;/strong&gt; &amp;gt; application.&lt;strong&gt;yaml&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;注意事项：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;SpringBoot 核心配置文件名为 application&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;SpringBoot 内置属性过多，且所有属性集中在一起修改，在使用时，通过提示键 + 关键字修改属性&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;yaml&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;问题导入&lt;/p&gt;
+&lt;p&gt;什么是 yaml，和 properties 有什么区别？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;YAML（YAML Ain’t Markup Language），一种数据序列化格式&lt;/li&gt;
+&lt;li&gt;优点：
+&lt;ul&gt;
+&lt;li&gt;容易阅读&lt;/li&gt;
+&lt;li&gt;容易与脚本语言交互&lt;/li&gt;
+&lt;li&gt;以数据为核心，重数据轻格式&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;YAML 文件扩展名
+&lt;ul&gt;
+&lt;li&gt;.yml（主流）&lt;/li&gt;
+&lt;li&gt;.yaml&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.1 yaml 语法规则&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;大小写敏感&lt;/li&gt;
+&lt;li&gt;属性层级关系使用多行描述，每行结尾使用冒号结束&lt;/li&gt;
+&lt;li&gt;使用缩进表示层级关系，同层级左侧对齐，只允许使用空格（不允许使用 Tab 键）&lt;/li&gt;
+&lt;li&gt;属性值前面添加空格（属性名与属性值之间使用冒号 + 空格作为分隔）&lt;/li&gt;
+&lt;li&gt;表示注释&lt;/li&gt;
+&lt;li&gt;核心规则：&lt;strong&gt;数据前面要加空格与冒号隔开&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.2 yaml 数组数据&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;数组数据在数据书写位置的下方使用减号作为数据开始符号，每行书写一个数据，减号与数据间空格分隔&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811195722156.png&#34; alt=&#34;image-20210811195722156&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.3 yaml 数据读取&lt;/p&gt;
+&lt;ul&gt;
+&lt;li 一级属性名.二级属性名……=&#34;&#34;&gt;使用 @Value 读取单个数据，属性名引用方式：$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811195801430.png&#34; alt=&#34;image-20210811195801430&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;封装全部数据到 Environment 对象&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811195823054.png&#34; alt=&#34;image-20210811195823054&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;mark&gt;&lt;strong&gt;自定义对象封装指定数据【常用】&lt;/strong&gt;&lt;/mark&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Enterprise&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String name;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; Integer age;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String tel;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String[] subject;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//自行添加getter、setter、toString()等方法&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811195844691.png&#34; alt=&#34;image-20210811195844691&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;自定义对象封装数据警告解决方案&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210815102251887.png&#34; alt=&#34;image-20210815102251887&#34;&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-configuration-processor&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;optional&lt;/span&gt;&amp;gt;&lt;/span&gt;true&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;optional&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;多环境开发配置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;问题导入&lt;/p&gt;
+&lt;p&gt;在实际开发中，项目的开发环境、测试环境、生产环境的配置信息是否会一致？如何快速切换？&lt;/p&gt;
+&lt;p&gt;3.1 多环境启动配置&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;yaml 文件多环境启动&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811195942997.png&#34; alt=&#34;image-20210811195942997&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811200002937.png&#34; alt=&#34;image-20210811200002937&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811200030710.png&#34; alt=&#34;image-20210811200030710&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;properties 文件多环境启动&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;主启动配置文件&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;application.properties&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;spring.profiles.active&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;pro&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;环境分类配置文件&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;application-pro.properties&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;server.port&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;80&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;环境分类配置文件&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;application-dev.properties&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;server.port&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;81&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;环境分类配置文件application-test.properties&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;server.port&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;82&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;3.2 多环境启动命令格式&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;带参数启动 SpringBoot&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;java&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;–jar springboot.jar --spring.profiles.active=test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;java&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;–jar springboot.jar --server.port=88&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;java&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;–jar springboot.jar --server.port=88 --spring.profiles.active=test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;参数加载优先顺序
+&lt;ul&gt;
+&lt;li&gt;参看文档：&lt;a href=&#34;https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html&#34;&gt;https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.htmlboot-features-external-config&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811200354075.png&#34; alt=&#34;image-20210811200354075&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.3 多环境开发控制&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Maven 与 SpringBoot 多环境兼容（步骤）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;①：Maven 中设置多环境属性&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;profiles&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;profile&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;id&lt;/span&gt;&amp;gt;&lt;/span&gt;dev_env&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;id&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;properties&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;profile.active&lt;/span&gt;&amp;gt;&lt;/span&gt;dev&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;profile.active&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;properties&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;activation&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;activeByDefault&lt;/span&gt;&amp;gt;&lt;/span&gt;true&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;activeByDefault&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;activation&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;profile&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;profile&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;id&lt;/span&gt;&amp;gt;&lt;/span&gt;pro_env&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;id&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;properties&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;profile.active&lt;/span&gt;&amp;gt;&lt;/span&gt;pro&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;profile.active&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;properties&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;profile&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;profile&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;id&lt;/span&gt;&amp;gt;&lt;/span&gt;test_env&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;id&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;properties&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;profile.active&lt;/span&gt;&amp;gt;&lt;/span&gt;test&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;profile.active&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;properties&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;profile&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;profiles&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;②：SpringBoot 中引用 Maven 属性&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811200516648.png&#34; alt=&#34;image-20210811200516648&#34;&gt;&lt;/p&gt;
+&lt;p&gt;③：执行 Maven 打包指令&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maven 指令执行完毕后，生成了对应的包，其中类参与编译，但是配置文件并没有编译，而是复制到包中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811200646189.png&#34; alt=&#34;image-20210811200646189&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;解决思路：对于源码中非 java 类的操作要求加载 Maven 对应的属性，解析 ${} 占位符&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;④：对资源文件开启对默认占位符的解析&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;build&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;plugins&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;plugin&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;maven-resources-plugin&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;configuration&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;encoding&lt;/span&gt;&amp;gt;&lt;/span&gt;utf-8&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;encoding&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;useDefaultDelimiters&lt;/span&gt;&amp;gt;&lt;/span&gt;true&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;useDefaultDelimiters&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;configuration&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;plugin&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;plugins&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;build&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;Maven 打包加载到属性，打包顺利通过&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811200628431.png&#34; alt=&#34;image-20210811200628431&#34;&gt;&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;配置文件分类&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;问题导入&lt;/p&gt;
+&lt;p&gt;SpringBoot 的配置文件可以放在项目的哪些地方？&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811200723514.png&#34; alt=&#34;image-20210811200723514&#34;&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;java&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;–jar springboot.jar --spring.profiles.active=test --server.port=85 --server.servlet.context-path=/heima --server.tomcat.connection-timeout=-1 ... ...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;SpringBoot 中 4 级配置文件&lt;/p&gt;
+&lt;p&gt;1 级： file ：config/application.yml 【最高】&lt;/p&gt;
+&lt;p&gt;2 级： file ：application.yml&lt;/p&gt;
+&lt;p&gt;3 级：classpath：config/application.yml&lt;/p&gt;
+&lt;p&gt;4 级：classpath：application.yml  【最低】&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;作用：&lt;/p&gt;
+&lt;p&gt;1 级与 2 级留做系统打包后设置通用属性&lt;/p&gt;
+&lt;p&gt;3 级与 4 级用于系统开发阶段设置通用属性&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;三、整合第三方技术&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;整合 JUnit&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;问题导入&lt;/p&gt;
+&lt;p&gt;回忆一下 Spring 整合 JUnit 的步骤？&lt;/p&gt;
+&lt;p&gt;1.1 Spring 整合 JUnit（复习）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811200833143.png&#34; alt=&#34;image-20210811200833143&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.2 SpringBoot 整合 JUnit&lt;/p&gt;
+&lt;p&gt;【第一步】添加整合 junit 起步依赖 (可以直接勾选)&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-test&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;scope&lt;/span&gt;&amp;gt;&lt;/span&gt;test&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;scope&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;【第二步】编写测试类，默认自动生成了一个&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@SpringBootTest&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Springboot07JunitApplicationTests&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; BookService bookService;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testSave&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        bookService.save();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;基于 SpringBoot 实现 SSM 整合&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;问题导入&lt;/p&gt;
+&lt;p&gt;回忆一下 Spring 整合 MyBatis 的核心思想？&lt;/p&gt;
+&lt;p&gt;2.1 Spring 整合 MyBatis（复习）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SpringConfig
+&lt;ul&gt;
+&lt;li&gt;导入 JdbcConfig&lt;/li&gt;
+&lt;li&gt;导入 MyBatisConfig&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Configuration&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@ComponentScan(&amp;quot;com.itheima&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@PropertySource(&amp;quot;classpath:jdbc.properties&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Import(&amp;#123;JdbcConfig.class, MyBatisConfig.class&amp;#125;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;SpringConfig&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;JDBCConfig
+&lt;ul&gt;
+&lt;li&gt;定义数据源（加载 properties 配置项：driver、url、username、password）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;jdbc.properties&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;jdbc.driver&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;com.mysql.jdbc.Driver&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;jdbc.url&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;jdbc:mysql://localhost:3306/spring_db&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;jdbc.username&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;root&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;jdbc.password&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;itheima&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;JdbcConfig&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Value(&amp;quot;$&amp;#123;jdbc.driver&amp;#125;&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String driver;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Value(&amp;quot;$&amp;#123;jdbc.url&amp;#125;&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String url;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Value(&amp;quot;$&amp;#123;jdbc.username&amp;#125;&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String userName;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Value(&amp;quot;$&amp;#123;jdbc.password&amp;#125;&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; String password;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; DataSource &lt;span class=&#34;title function_&#34;&gt;getDataSource&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;DruidDataSource&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;ds&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;DruidDataSource&lt;/span&gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        ds.setDriverClassName(driver);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        ds.setUrl(url);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        ds.setUsername(userName);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        ds.setPassword(password);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; ds;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;MyBatisConfig
+&lt;ul&gt;
+&lt;li&gt;定义 SqlSessionFactoryBean&lt;/li&gt;
+&lt;li&gt;定义映射配置&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; SqlSessionFactoryBean &lt;span class=&#34;title function_&#34;&gt;getSqlSessionFactoryBean&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(DataSource dataSource)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;SqlSessionFactoryBean&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;ssfb&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;SqlSessionFactoryBean&lt;/span&gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    ssfb.setTypeAliasesPackage(&lt;span class=&#34;string&#34;&gt;&amp;quot;com.itheima.domain&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    ssfb.setDataSource(dataSource);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; ssfb;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; MapperScannerConfigurer &lt;span class=&#34;title function_&#34;&gt;getMapperScannerConfigurer&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;MapperScannerConfigurer&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;msc&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;MapperScannerConfigurer&lt;/span&gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    msc.setBasePackage(&lt;span class=&#34;string&#34;&gt;&amp;quot;com.itheima.dao&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; msc;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2.2 SpringBoot 整合 MyBatis&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SpringBoot 整合 Spring（不存在）&lt;/li&gt;
+&lt;li&gt;SpringBoot 整合 SpringMVC（不存在）&lt;/li&gt;
+&lt;li&gt;SpringBoot 整合 MyBatis（主要）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;①：创建新模块，选择 Spring 初始化，并配置模块相关基础信息&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811201314649.png&#34; alt=&#34;image-20210811201314649&#34;&gt;&lt;/p&gt;
+&lt;p&gt;②：选择当前模块需要使用的技术集（MyBatis、MySQL）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210811201328652.png&#34; alt=&#34;image-20210811201328652&#34;&gt;&lt;/p&gt;
+&lt;p&gt;③：设置数据源参数&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;spring:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;datasource:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;driver-class-name:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;com.mysql.cj.jdbc.Driver&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;url:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;jdbc:mysql://localhost:3306/ssm_db?serverTimezone=UTC&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;username:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;root&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;password:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;root&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;type:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;com.alibaba.druid.pool.DruidDataSource&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;注意事项：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;SpringBoot 版本低于 2.4.3 (不含)，Mysql 驱动版本大于 8.0 时，需要在 url 连接串中配置时区，或在 MySQL 数据库端配置时区解决此问题&lt;/li&gt;
+&lt;/ol&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;jdbc&lt;/span&gt;:&lt;span class=&#34;string&#34;&gt;mysql://localhost:3306/ssm_db?serverTimezone=UTC&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;④：定义数据层接口与映射配置&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Mapper&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;UserDao&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Select(&amp;quot;select * from tbl_book where id=&amp;#123;id&amp;#125;&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    Book &lt;span class=&#34;title function_&#34;&gt;getById&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Integer id)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;⑤：测试类中注入 dao 接口，测试功能&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@SpringBootTest&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Springboot08MybatisApplicationTests&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; BookDao bookDao;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testGetById&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;Book&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;book&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; bookDao.getById(&lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(book);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2.3 案例 - SpringBoot 实现 ssm 整合&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;【第一步】创建 SpringBoot 工程，添加 druid 依赖&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!-- todo 1 添加druid连接池依赖--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;com.alibaba&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;druid&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;1.2.6&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;【第二步】复制 springmvc_11_page 工程各种资源 (主 java 类、页面、测试类)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;【第三步】删除 config 包中的所有配置，在 BookDao 接口上加 @Mapper 注解&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;//todo 3 在BookDao接口上加@Mapper注解，让SpringBoot给接口创建代理对象&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Mapper&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;BookDao&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;【第四步】将 application.properties 修改成 application.yml，配置端口号和连接参数&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;server:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;port:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;80&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;string&#34;&gt;todo&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;配置数据库连接参数&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;spring:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;datasource:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;driver-class-name:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;com.mysql.cj.jdbc.Driver&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;url:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;jdbc:mysql://localhost:3306/ssm_db&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;username:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;root&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;password:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;root&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;type:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;com.alibaba.druid.pool.DruidDataSource&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;【第五步】修改 BookServiceTest 配置类，进行配置&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;// todo 5 修改单元测试类，添加@SpringBootTest主键，修复@Test注解导包&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@SpringBootTest&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;BookServiceTest&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; BookService bookService;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testGetById&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;Book&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;book&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; bookService.getById(&lt;span class=&#34;number&#34;&gt;2&lt;/span&gt;); &lt;span class=&#34;comment&#34;&gt;//传递参数1会抛出异常&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(book);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testGetAll&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        List&amp;lt;Book&amp;gt; all = bookService.getAll();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(all);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;【第六步】在 static 目录中提供 index.html 页面，跳转到 &amp;quot;pages/books.html&amp;quot;&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&#34;highlight html&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;script&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;language-javascript&#34;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;language-javascript&#34;&gt;    location.&lt;span class=&#34;property&#34;&gt;href&lt;/span&gt;=&lt;span class=&#34;string&#34;&gt;&amp;quot;pages/books.html&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;language-javascript&#34;&gt;&lt;/span&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;script&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;strong&gt;最后：运行引导类即可访问&lt;/strong&gt;&lt;/p&gt;
+</content>
+        <updated>2024-05-18T16:57:16.000Z</updated>
+    </entry>
     <entry>
         <id>https://zhuwei290.github.io/%E6%A0%A1%E9%AA%8C%E6%A1%86%E6%9E%B6/</id>
         <title>校验框架</title>
@@ -1603,533 +1972,6 @@ DI （ Dependency Injection ）依赖注入&lt;br&gt;
         <updated>2024-04-03T14:51:42.466Z</updated>
     </entry>
     <entry>
-        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</id>
-        <title>c++基础入门笔记(3)</title>
-        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/"/>
-        <content type="html">&lt;p&gt;​&lt;br&gt;
-3 运算符&lt;br&gt;
- ** 作用：** 用于执行代码的运算&lt;/p&gt;
-&lt;p&gt;本章我们主要讲解以下几类运算符：&lt;/p&gt;
-&lt;p&gt;运算符类型	作用&lt;br&gt;
-算术运算符	用于处理四则运算&lt;br&gt;
-赋值运算符	用于将表达式的值赋给变量&lt;br&gt;
-比较运算符	用于表达式的比较，并返回一个真值或假值&lt;br&gt;
-逻辑运算符	用于根据表达式的值返回真值或假值&lt;br&gt;
- 3.1 算术运算符&lt;br&gt;
-作用：用于处理四则运算&lt;/p&gt;
-&lt;p&gt;算术运算符包括以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;正号	+3	3&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;负号	-3	-3&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;加	10 + 5	15&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;减	10 - 5	5&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;乘	10 * 5	50&lt;br&gt;
-/	除	10 / 5	2&lt;br&gt;
-%	取模 (取余)	10 % 3	1&lt;br&gt;
-++	前置递增	a=2; b=&lt;ins&gt;a;	a=3; b=3;&lt;br&gt;
-++	后置递增	a=2; b=a&lt;/ins&gt;;	a=3; b=2;&lt;br&gt;
-–	前置递减	a=2; b=–a;	a=1; b=1;&lt;br&gt;
-–	后置递减	a=2; b=a–;	a=1; b=2;&lt;br&gt;
- 示例 1：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;// 加减乘除&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a1 = 10;
-int b1 = 3;
-
-cout &amp;lt;&amp;lt; a1 + b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 - b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 * b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 / b1 &amp;lt;&amp;lt; endl;  //两个整数相除结果依然是整数
-
-int a2 = 10;
-int b2 = 20;
-cout &amp;lt;&amp;lt; a2 / b2 &amp;lt;&amp;lt; endl; 
-
-int a3 = 10;
-int b3 = 0;
-//cout &amp;lt;&amp;lt; a3 / b3 &amp;lt;&amp;lt; endl; //报错，除数不可以为0
-
-
-//两个小数可以相除
-double d1 = 0.5;
-double d2 = 0.25;
-cout &amp;lt;&amp;lt; d1 / d2 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例 2：&lt;/p&gt;
-&lt;p&gt;// 取模&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a1 = 10;
-int b1 = 3;
-
-cout &amp;lt;&amp;lt; 10 % 3 &amp;lt;&amp;lt; endl;
-
-int a2 = 10;
-int b2 = 20;
-
-cout &amp;lt;&amp;lt; a2 % b2 &amp;lt;&amp;lt; endl;
-
-int a3 = 10;
-int b3 = 0;
-
-//cout &amp;lt;&amp;lt; a3 % b3 &amp;lt;&amp;lt; endl; //取模运算时，除数也不能为0
-
-//两个小数不可以取模
-double d1 = 3.14;
-double d2 = 1.1;
-
-//cout &amp;lt;&amp;lt; d1 % d2 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例 3：&lt;/p&gt;
-&lt;p&gt;// 递增&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//后置递增
-int a = 10;
-a++; //等价于a = a + 1
-cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl; // 11
-
-//前置递增
-int b = 10;
-++b;
-cout &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl; // 11
-
-//区别
-//前置递增先对变量进行++，再计算表达式
-int a2 = 10;
-int b2 = ++a2 * 10;
-cout &amp;lt;&amp;lt; b2 &amp;lt;&amp;lt; endl;
-
-//后置递增先计算表达式，后对变量进行++
-int a3 = 10;
-int b3 = a3++ * 10;
-cout &amp;lt;&amp;lt; b3 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;3.2 赋值运算符&lt;br&gt;
- ** 作用：** 用于将表达式的值赋给变量&lt;/p&gt;
-&lt;p&gt;赋值运算符包括以下几个符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
- =	赋值	a=2; b=3;	a=2; b=3;&lt;br&gt;
-+=	加等于	a=0; a+=2;	a=2;&lt;br&gt;
--=	减等于	a=5; a-=3;	a=2;&lt;br&gt;
-&lt;em&gt;=	乘等于	a=2; a&lt;/em&gt;=2;	a=4;&lt;br&gt;
-/=	除等于	a=4; a/=2;	a=2;&lt;br&gt;
-%=	模等于	a=3; a%2;	a=1;&lt;br&gt;
- 示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//赋值运算符
-
-// =
-int a = 10;
-a = 100;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// +=
-a = 10;
-a += 2; // a = a + 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// -=
-a = 10;
-a -= 2; // a = a - 2
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// *=
-a = 10;
-a *= 2; // a = a * 2
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// /=
-a = 10;
-a /= 2;  // a = a / 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// %=
-a = 10;
-a %= 2;  // a = a % 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 3.3 比较运算符&lt;br&gt;
- ** 作用：** 用于表达式的比较，并返回一个真值或假值&lt;/p&gt;
-&lt;p&gt;比较运算符有以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
- ==	相等于	4 == 3	0&lt;br&gt;
-!=	不等于	4 != 3	1&lt;br&gt;
-&amp;lt;	小于	4 &amp;lt; 3	0&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;大于	4 &amp;gt; 3	1&lt;br&gt;
-&amp;lt;=	小于等于	4 &amp;lt;= 3	0&lt;br&gt;
-=	大于等于	4 &amp;gt;= 1	1&lt;br&gt;
- 示例：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 20;
-
-cout &amp;lt;&amp;lt; (a == b) &amp;lt;&amp;lt; endl; // 0 
-
-cout &amp;lt;&amp;lt; (a != b) &amp;lt;&amp;lt; endl; // 1
-
-cout &amp;lt;&amp;lt; (a &amp;gt; b) &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; (a &amp;lt; b) &amp;lt;&amp;lt; endl; // 1
-
-cout &amp;lt;&amp;lt; (a &amp;gt;= b) &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; (a &amp;lt;= b) &amp;lt;&amp;lt; endl; // 1
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;3.4 逻辑运算符&lt;br&gt;
- ** 作用：** 用于根据表达式的值返回真值或假值&lt;/p&gt;
-&lt;p&gt;逻辑运算符有以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
-！	非	!a	如果 a 为假，则！a 为真； 如果 a 为真，则！a 为假。&lt;br&gt;
-&amp;amp;&amp;amp;	与	a &amp;amp;&amp;amp; b	如果 a 和 b 都为真，则结果为真，否则为假。&lt;br&gt;
-||	或	a || b	如果 a 和 b 有一个为真，则结果为真，二者都为假时，结果为假。&lt;br&gt;
-** 示例 1：** 逻辑非&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 非&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-
-cout &amp;lt;&amp;lt; !a &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; !!a &amp;lt;&amp;lt; endl; // 1
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;** 示例 2：** 逻辑与&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 与&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 1
-
-a = 10;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0 
-
-a = 0;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;** 示例 3：** 逻辑或&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 或&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1
-
-a = 10;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1 
-
-a = 0;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 0
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-</content>
-        <updated>2023-01-31T07:13:43.000Z</updated>
-    </entry>
-    <entry>
-        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/</id>
-        <title>c++基础入门笔记(5)</title>
-        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/"/>
-        <content type="html">&lt;p&gt;​&lt;br&gt;
-5 数组&lt;br&gt;
- 5.1 概述&lt;br&gt;
-所谓数组，就是一个集合，里面存放了相同类型的数据元素&lt;/p&gt;
-&lt;p&gt;** 特点 1：** 数组中的每个数据元素都是相同的数据类型&lt;/p&gt;
-&lt;p&gt;** 特点 2：** 数组是由连续的内存位置组成的&lt;/p&gt;
-&lt;p&gt;5.2 一维数组&lt;br&gt;
- 5.2.1 一维数组定义方式&lt;/p&gt;
-&lt;p&gt;一维数组定义的三种方式：&lt;/p&gt;
-&lt;p&gt;数据类型 数组名 [数组长度];&lt;br&gt;
- 数据类型 数组名 [数组长度] = { 值 1，值 2 …};&lt;br&gt;
- 数据类型 数组名 [] = { 值 1，值 2 …};&lt;br&gt;
- 示例&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//定义方式1
-//数据类型 数组名[元素个数];
-int score[10];
-
-//利用下标赋值
-score[0] = 100;
-score[1] = 99;
-score[2] = 85;
-
-//利用下标输出
-cout &amp;lt;&amp;lt; score[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; score[1] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; score[2] &amp;lt;&amp;lt; endl;
-
-
-//第二种定义方式
-//数据类型 数组名[元素个数] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
-//如果&amp;#123;&amp;#125;内不足10个数据，剩余数据用0补全
-int score2[10] = &amp;#123; 100, 90,80,70,60,50,40,30,20,10 &amp;#125;;
-
-//逐个输出
-//cout &amp;lt;&amp;lt; score2[0] &amp;lt;&amp;lt; endl;
-//cout &amp;lt;&amp;lt; score2[1] &amp;lt;&amp;lt; endl;
-
-//一个一个输出太麻烦，因此可以利用循环进行输出
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; score2[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-//定义方式3
-//数据类型 数组名[] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
-int score3[] = &amp;#123; 100,90,80,70,60,50,40,30,20,10 &amp;#125;;
-
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; score3[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.2.2 一维数组数组名&lt;/p&gt;
-&lt;p&gt;一维数组名称的用途：&lt;/p&gt;
-&lt;p&gt;可以统计整个数组在内存中的长度&lt;br&gt;
-可以获取数组在内存中的首地址&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//数组名用途
-//1、可以获取整个数组占用内存空间大小
-int arr[10] = &amp;#123; 1,2,3,4,5,6,7,8,9,10 &amp;#125;;
-
-cout &amp;lt;&amp;lt; &amp;quot;整个数组所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;每个元素所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组的元素个数为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-
-//2、可以通过数组名获取到数组首地址
-cout &amp;lt;&amp;lt; &amp;quot;数组首地址为： &amp;quot; &amp;lt;&amp;lt; (int)arr &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组中第一个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组中第二个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[1] &amp;lt;&amp;lt; endl;
-
-//arr = 100; 错误，数组名是常量，因此不可以赋值
-
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;练习案例 1：五只小猪称体重&lt;/p&gt;
-&lt;p&gt;案例描述：&lt;/p&gt;
-&lt;p&gt;在一个数组中记录了五只小猪的体重，如：int arr [5] = {300,350,200,400,250};&lt;/p&gt;
-&lt;p&gt;找出并打印最重的小猪体重。&lt;/p&gt;
-&lt;p&gt;** 练习案例 2：** 数组元素逆置&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 请声明一个 5 个元素的数组，并且将元素逆置.&lt;/p&gt;
-&lt;p&gt;(如原数组元素为：1,3,2,5,4; 逆置后输出结果为：4,5,2,3,1);&lt;/p&gt;
-&lt;p&gt;5.2.3 冒泡排序&lt;/p&gt;
-&lt;p&gt;作用： 最常用的排序算法，对数组内元素进行排序&lt;/p&gt;
-&lt;p&gt;比较相邻的元素。如果第一个比第二个大，就交换他们两个。&lt;br&gt;
-对每一对相邻元素做同样的工作，执行完毕后，找到第一个最大值。&lt;br&gt;
-重复以上的步骤，每次比较次数 - 1，直到不需要比较&lt;br&gt;
-示例： 将数组 {4,2,8,0,5,7,1,3,9} 进行升序排序&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int arr[9] = &amp;#123; 4,2,8,0,5,7,1,3,9 &amp;#125;;
-
-for (int i = 0; i &amp;lt; 9 - 1; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 9 - 1 - i; j++)
-	&amp;#123;
-		if (arr[j] &amp;gt; arr[j + 1])
-		&amp;#123;
-			int temp = arr[j];
-			arr[j] = arr[j + 1];
-			arr[j + 1] = temp;
-		&amp;#125;
-	&amp;#125;
-&amp;#125;
-
-for (int i = 0; i &amp;lt; 9; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; arr[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 5.3 二维数组&lt;br&gt;
-二维数组就是在一维数组上，多加一个维度。&lt;/p&gt;
-&lt;p&gt;5.3.1 二维数组定义方式&lt;/p&gt;
-&lt;p&gt;二维数组定义的四种方式：&lt;/p&gt;
-&lt;p&gt;数据类型 数组名 [行数][ 列数 ];&lt;br&gt;
- 数据类型 数组名 [行数][ 列数 ] = { {数据 1，数据 2 } ，{数据 3，数据 4 } };&lt;br&gt;
- 数据类型 数组名 [行数][ 列数 ] = { 数据 1，数据 2，数据 3，数据 4};&lt;br&gt;
- 数据类型 数组名 [][ 列数] = { 数据 1，数据 2，数据 3，数据 4};&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//方式1  
-//数组类型 数组名 [行数][列数]
-int arr[2][3];
-arr[0][0] = 1;
-arr[0][1] = 2;
-arr[0][2] = 3;
-arr[1][0] = 4;
-arr[1][1] = 5;
-arr[1][2] = 6;
-
-for (int i = 0; i &amp;lt; 2; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 3; j++)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; arr[i][j] &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-//方式2 
-//数据类型 数组名[行数][列数] = &amp;#123; &amp;#123;数据1，数据2 &amp;#125; ，&amp;#123;数据3，数据4 &amp;#125; &amp;#125;;
-int arr2[2][3] =
-&amp;#123;
-	&amp;#123;1,2,3&amp;#125;,
-	&amp;#123;4,5,6&amp;#125;
-&amp;#125;;
-
-//方式3
-//数据类型 数组名[行数][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
-int arr3[2][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;; 
-
-//方式4 
-//数据类型 数组名[][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
-int arr4[][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.3.2 二维数组数组名&lt;/p&gt;
-&lt;p&gt;查看二维数组所占内存空间&lt;br&gt;
-获取二维数组首地址&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//二维数组数组名
-int arr[2][3] =
-&amp;#123;
-	&amp;#123;1,2,3&amp;#125;,
-	&amp;#123;4,5,6&amp;#125;
-&amp;#125;;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组一行大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组元素大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组行数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组列数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) / sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
-
-//地址
-cout &amp;lt;&amp;lt; &amp;quot;二维数组首地址：&amp;quot; &amp;lt;&amp;lt; arr &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第一行地址：&amp;quot; &amp;lt;&amp;lt; arr[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第二行地址：&amp;quot; &amp;lt;&amp;lt; arr[1] &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第一个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第二个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][1] &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.3.3 二维数组应用案例&lt;/p&gt;
-&lt;p&gt;考试成绩统计：&lt;/p&gt;
-&lt;p&gt;案例描述：有三名同学（张三，李四，王五），在一次考试中的成绩分别如下表，请分别输出三名同学的总成绩&lt;/p&gt;
-&lt;p&gt;语文	数学	英语&lt;br&gt;
-张三	100	100	100&lt;br&gt;
- 李四	90	50	100&lt;br&gt;
- 王五	60	70	80&lt;br&gt;
- 参考答案：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int scores[3][3] =
-&amp;#123;
-	&amp;#123;100,100,100&amp;#125;,
-	&amp;#123;90,50,100&amp;#125;,
-	&amp;#123;60,70,80&amp;#125;,
-&amp;#125;;
-
-string names[3] = &amp;#123; &amp;quot;张三&amp;quot;,&amp;quot;李四&amp;quot;,&amp;quot;王五&amp;quot; &amp;#125;;
-
-for (int i = 0; i &amp;lt; 3; i++)
-&amp;#123;
-	int sum = 0;
-	for (int j = 0; j &amp;lt; 3; j++)
-	&amp;#123;
-		sum += scores[i][j];
-	&amp;#125;
-	cout &amp;lt;&amp;lt; names[i] &amp;lt;&amp;lt; &amp;quot;同学总成绩为： &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-</content>
-        <updated>2023-01-31T07:13:43.000Z</updated>
-    </entry>
-    <entry>
         <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</id>
         <title>c++基础入门笔记(4)</title>
         <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/"/>
@@ -2556,202 +2398,6 @@ return 0;
         <updated>2023-01-31T07:13:43.000Z</updated>
     </entry>
     <entry>
-        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</id>
-        <title>c++基础入门笔记(6)</title>
-        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/"/>
-        <content type="html">&lt;p&gt;​&lt;br&gt;
-6 函数&lt;br&gt;
- 6.1 概述&lt;br&gt;
- ** 作用：** 将一段经常使用的代码封装起来，减少重复代码&lt;/p&gt;
-&lt;p&gt;一个较大的程序，一般分为若干个程序块，每个模块实现特定的功能。&lt;/p&gt;
-&lt;p&gt;6.2 函数的定义&lt;br&gt;
-函数的定义一般主要有 5 个步骤：&lt;/p&gt;
-&lt;p&gt;1、返回值类型&lt;/p&gt;
-&lt;p&gt;2、函数名&lt;/p&gt;
-&lt;p&gt;3、参数表列&lt;/p&gt;
-&lt;p&gt;4、函数体语句&lt;/p&gt;
-&lt;p&gt;5、return 表达式&lt;/p&gt;
-&lt;p&gt;语法：&lt;/p&gt;
-&lt;p&gt;返回值类型 函数名 （参数列表）&lt;br&gt;
-{&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;   函数体语句
-
-   return表达式
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 返回值类型 ：一个函数可以返回一个值。在函数定义中&lt;br&gt;
-函数名：给函数起个名称&lt;br&gt;
-参数列表：使用该函数时，传入的数据&lt;br&gt;
-函数体语句：花括号内的代码，函数内需要执行的语句&lt;br&gt;
- return 表达式： 和返回值类型挂钩，函数执行完后，返回相应的数据&lt;br&gt;
- ** 示例：** 定义一个加法函数，实现两个数相加&lt;/p&gt;
-&lt;p&gt;// 函数定义&lt;br&gt;
- int add (int num1, int num2)&lt;br&gt;
-{&lt;br&gt;
-int sum = num1 + num2;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;br&gt;
- 6.3 函数的调用&lt;br&gt;
- ** 功能：** 使用定义好的函数&lt;/p&gt;
-&lt;p&gt;语法：函数名（参数）&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;// 函数定义&lt;br&gt;
- int add (int num1, int num2) // 定义中的 num1,num2 称为形式参数，简称形参&lt;br&gt;
- {&lt;br&gt;
-int sum = num1 + num2;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-//调用add函数
-int sum = add(a, b);//调用时的a，b称为实际参数，简称实参
-cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-
-a = 100;
-b = 100;
-
-sum = add(a, b);
-cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;6.4 值传递&lt;br&gt;
-所谓值传递，就是函数调用时实参将数值传入给形参&lt;br&gt;
-值传递时，如果形参发生，并不会影响实参&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;void swap(int num1, int num2)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; “交换前：” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int temp = num1;
-num1 = num2;
-num2 = temp;
-
-cout &amp;lt;&amp;lt; &amp;quot;交换后：&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;
-
-//return ; 当函数声明时候，不需要返回值，可以不写return
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 20;
-
-swap(a, b);
-
-cout &amp;lt;&amp;lt; &amp;quot;mian中的 a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;mian中的 b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;6.5 函数的常见样式&lt;br&gt;
-常见的函数样式有 4 种&lt;/p&gt;
-&lt;p&gt;无参无返&lt;br&gt;
-有参无返&lt;br&gt;
-无参有返&lt;br&gt;
-有参有返&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;// 函数常见样式&lt;br&gt;
- //1、 无参无返&lt;br&gt;
- void test01 ()&lt;br&gt;
-{&lt;br&gt;
-//void a = 10; // 无类型不可以创建变量，原因无法分配内存&lt;br&gt;
- cout &amp;lt;&amp;lt;“this is test01” &amp;lt;&amp;lt; endl;&lt;br&gt;
-//test01 (); 函数调用&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//2、 有参无返&lt;br&gt;
- void test02 (int a)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; “this is test02” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//3、无参有返&lt;br&gt;
- int test03 ()&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;this is test03 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
-return 10;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//4、有参有返&lt;br&gt;
- int test04 (int a, int b)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;this is test04 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
-int sum = a + b;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;br&gt;
- 6.6 函数的声明&lt;br&gt;
-作用： 告诉编译器函数名称及如何调用函数。函数的实际主体可以单独定义。&lt;/p&gt;
-&lt;p&gt;函数的声明可以多次，但是函数的定义只能有一次&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;// 声明可以多次，定义只能一次&lt;br&gt;
- // 声明&lt;br&gt;
- int max (int a, int b);&lt;br&gt;
-int max(int a, int b);&lt;br&gt;
-// 定义&lt;br&gt;
- int max (int a, int b)&lt;br&gt;
-{&lt;br&gt;
-return a &amp;gt; b ? a : b;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 100;
-int b = 200;
-
-cout &amp;lt;&amp;lt; max(a, b) &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 6.7 函数的分文件编写&lt;br&gt;
- ** 作用：** 让代码结构更加清晰&lt;/p&gt;
-&lt;p&gt;函数分文件编写一般有 4 个步骤&lt;/p&gt;
-&lt;p&gt;创建后缀名为.h 的头文件&lt;br&gt;
-创建后缀名为.cpp 的源文件&lt;br&gt;
-在头文件中写函数的声明&lt;br&gt;
-在源文件中写函数的定义&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;//swap.xn--h-216a053e&#34;&gt;//swap.h 文件&lt;/a&gt;&lt;br&gt;
- #include&lt;iostream&gt;&lt;br&gt;
-using namespace std;&lt;/p&gt;
-&lt;p&gt;// 实现两个数字交换的函数声明&lt;br&gt;
- void swap (int a, int b);&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;//swap.xn--cpp-wu9dq54h&#34;&gt;//swap.cpp 文件&lt;/a&gt;&lt;br&gt;
- #include “swap.h”&lt;/p&gt;
-&lt;p&gt;void swap(int a, int b)&lt;br&gt;
-{&lt;br&gt;
-int temp = a;&lt;br&gt;
-a = b;&lt;br&gt;
-b = temp;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-//main 函数文件&lt;br&gt;
- #include “swap.h”&lt;br&gt;
-int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 100;
-int b = 200;
-swap(a, b);
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-</content>
-        <updated>2023-01-31T07:13:43.000Z</updated>
-    </entry>
-    <entry>
         <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</id>
         <title>c++基础入门笔记(2)</title>
         <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/"/>
@@ -2994,6 +2640,729 @@ system(&amp;quot;pause&amp;quot;);
 return EXIT_SUCCESS;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;}&lt;/p&gt;
+</content>
+        <updated>2023-01-31T07:13:43.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/</id>
+        <title>c++基础入门笔记(5)</title>
+        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/"/>
+        <content type="html">&lt;p&gt;​&lt;br&gt;
+5 数组&lt;br&gt;
+ 5.1 概述&lt;br&gt;
+所谓数组，就是一个集合，里面存放了相同类型的数据元素&lt;/p&gt;
+&lt;p&gt;** 特点 1：** 数组中的每个数据元素都是相同的数据类型&lt;/p&gt;
+&lt;p&gt;** 特点 2：** 数组是由连续的内存位置组成的&lt;/p&gt;
+&lt;p&gt;5.2 一维数组&lt;br&gt;
+ 5.2.1 一维数组定义方式&lt;/p&gt;
+&lt;p&gt;一维数组定义的三种方式：&lt;/p&gt;
+&lt;p&gt;数据类型 数组名 [数组长度];&lt;br&gt;
+ 数据类型 数组名 [数组长度] = { 值 1，值 2 …};&lt;br&gt;
+ 数据类型 数组名 [] = { 值 1，值 2 …};&lt;br&gt;
+ 示例&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//定义方式1
+//数据类型 数组名[元素个数];
+int score[10];
+
+//利用下标赋值
+score[0] = 100;
+score[1] = 99;
+score[2] = 85;
+
+//利用下标输出
+cout &amp;lt;&amp;lt; score[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; score[1] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; score[2] &amp;lt;&amp;lt; endl;
+
+
+//第二种定义方式
+//数据类型 数组名[元素个数] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
+//如果&amp;#123;&amp;#125;内不足10个数据，剩余数据用0补全
+int score2[10] = &amp;#123; 100, 90,80,70,60,50,40,30,20,10 &amp;#125;;
+
+//逐个输出
+//cout &amp;lt;&amp;lt; score2[0] &amp;lt;&amp;lt; endl;
+//cout &amp;lt;&amp;lt; score2[1] &amp;lt;&amp;lt; endl;
+
+//一个一个输出太麻烦，因此可以利用循环进行输出
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; score2[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+//定义方式3
+//数据类型 数组名[] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
+int score3[] = &amp;#123; 100,90,80,70,60,50,40,30,20,10 &amp;#125;;
+
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; score3[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.2.2 一维数组数组名&lt;/p&gt;
+&lt;p&gt;一维数组名称的用途：&lt;/p&gt;
+&lt;p&gt;可以统计整个数组在内存中的长度&lt;br&gt;
+可以获取数组在内存中的首地址&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//数组名用途
+//1、可以获取整个数组占用内存空间大小
+int arr[10] = &amp;#123; 1,2,3,4,5,6,7,8,9,10 &amp;#125;;
+
+cout &amp;lt;&amp;lt; &amp;quot;整个数组所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;每个元素所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组的元素个数为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+
+//2、可以通过数组名获取到数组首地址
+cout &amp;lt;&amp;lt; &amp;quot;数组首地址为： &amp;quot; &amp;lt;&amp;lt; (int)arr &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组中第一个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组中第二个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[1] &amp;lt;&amp;lt; endl;
+
+//arr = 100; 错误，数组名是常量，因此不可以赋值
+
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;练习案例 1：五只小猪称体重&lt;/p&gt;
+&lt;p&gt;案例描述：&lt;/p&gt;
+&lt;p&gt;在一个数组中记录了五只小猪的体重，如：int arr [5] = {300,350,200,400,250};&lt;/p&gt;
+&lt;p&gt;找出并打印最重的小猪体重。&lt;/p&gt;
+&lt;p&gt;** 练习案例 2：** 数组元素逆置&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 请声明一个 5 个元素的数组，并且将元素逆置.&lt;/p&gt;
+&lt;p&gt;(如原数组元素为：1,3,2,5,4; 逆置后输出结果为：4,5,2,3,1);&lt;/p&gt;
+&lt;p&gt;5.2.3 冒泡排序&lt;/p&gt;
+&lt;p&gt;作用： 最常用的排序算法，对数组内元素进行排序&lt;/p&gt;
+&lt;p&gt;比较相邻的元素。如果第一个比第二个大，就交换他们两个。&lt;br&gt;
+对每一对相邻元素做同样的工作，执行完毕后，找到第一个最大值。&lt;br&gt;
+重复以上的步骤，每次比较次数 - 1，直到不需要比较&lt;br&gt;
+示例： 将数组 {4,2,8,0,5,7,1,3,9} 进行升序排序&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int arr[9] = &amp;#123; 4,2,8,0,5,7,1,3,9 &amp;#125;;
+
+for (int i = 0; i &amp;lt; 9 - 1; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 9 - 1 - i; j++)
+	&amp;#123;
+		if (arr[j] &amp;gt; arr[j + 1])
+		&amp;#123;
+			int temp = arr[j];
+			arr[j] = arr[j + 1];
+			arr[j + 1] = temp;
+		&amp;#125;
+	&amp;#125;
+&amp;#125;
+
+for (int i = 0; i &amp;lt; 9; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; arr[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 5.3 二维数组&lt;br&gt;
+二维数组就是在一维数组上，多加一个维度。&lt;/p&gt;
+&lt;p&gt;5.3.1 二维数组定义方式&lt;/p&gt;
+&lt;p&gt;二维数组定义的四种方式：&lt;/p&gt;
+&lt;p&gt;数据类型 数组名 [行数][ 列数 ];&lt;br&gt;
+ 数据类型 数组名 [行数][ 列数 ] = { {数据 1，数据 2 } ，{数据 3，数据 4 } };&lt;br&gt;
+ 数据类型 数组名 [行数][ 列数 ] = { 数据 1，数据 2，数据 3，数据 4};&lt;br&gt;
+ 数据类型 数组名 [][ 列数] = { 数据 1，数据 2，数据 3，数据 4};&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//方式1  
+//数组类型 数组名 [行数][列数]
+int arr[2][3];
+arr[0][0] = 1;
+arr[0][1] = 2;
+arr[0][2] = 3;
+arr[1][0] = 4;
+arr[1][1] = 5;
+arr[1][2] = 6;
+
+for (int i = 0; i &amp;lt; 2; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 3; j++)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; arr[i][j] &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+//方式2 
+//数据类型 数组名[行数][列数] = &amp;#123; &amp;#123;数据1，数据2 &amp;#125; ，&amp;#123;数据3，数据4 &amp;#125; &amp;#125;;
+int arr2[2][3] =
+&amp;#123;
+	&amp;#123;1,2,3&amp;#125;,
+	&amp;#123;4,5,6&amp;#125;
+&amp;#125;;
+
+//方式3
+//数据类型 数组名[行数][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
+int arr3[2][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;; 
+
+//方式4 
+//数据类型 数组名[][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
+int arr4[][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.3.2 二维数组数组名&lt;/p&gt;
+&lt;p&gt;查看二维数组所占内存空间&lt;br&gt;
+获取二维数组首地址&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//二维数组数组名
+int arr[2][3] =
+&amp;#123;
+	&amp;#123;1,2,3&amp;#125;,
+	&amp;#123;4,5,6&amp;#125;
+&amp;#125;;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组一行大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组元素大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组行数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组列数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) / sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
+
+//地址
+cout &amp;lt;&amp;lt; &amp;quot;二维数组首地址：&amp;quot; &amp;lt;&amp;lt; arr &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第一行地址：&amp;quot; &amp;lt;&amp;lt; arr[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第二行地址：&amp;quot; &amp;lt;&amp;lt; arr[1] &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第一个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第二个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][1] &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.3.3 二维数组应用案例&lt;/p&gt;
+&lt;p&gt;考试成绩统计：&lt;/p&gt;
+&lt;p&gt;案例描述：有三名同学（张三，李四，王五），在一次考试中的成绩分别如下表，请分别输出三名同学的总成绩&lt;/p&gt;
+&lt;p&gt;语文	数学	英语&lt;br&gt;
+张三	100	100	100&lt;br&gt;
+ 李四	90	50	100&lt;br&gt;
+ 王五	60	70	80&lt;br&gt;
+ 参考答案：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int scores[3][3] =
+&amp;#123;
+	&amp;#123;100,100,100&amp;#125;,
+	&amp;#123;90,50,100&amp;#125;,
+	&amp;#123;60,70,80&amp;#125;,
+&amp;#125;;
+
+string names[3] = &amp;#123; &amp;quot;张三&amp;quot;,&amp;quot;李四&amp;quot;,&amp;quot;王五&amp;quot; &amp;#125;;
+
+for (int i = 0; i &amp;lt; 3; i++)
+&amp;#123;
+	int sum = 0;
+	for (int j = 0; j &amp;lt; 3; j++)
+	&amp;#123;
+		sum += scores[i][j];
+	&amp;#125;
+	cout &amp;lt;&amp;lt; names[i] &amp;lt;&amp;lt; &amp;quot;同学总成绩为： &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+</content>
+        <updated>2023-01-31T07:13:43.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</id>
+        <title>c++基础入门笔记(6)</title>
+        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/"/>
+        <content type="html">&lt;p&gt;​&lt;br&gt;
+6 函数&lt;br&gt;
+ 6.1 概述&lt;br&gt;
+ ** 作用：** 将一段经常使用的代码封装起来，减少重复代码&lt;/p&gt;
+&lt;p&gt;一个较大的程序，一般分为若干个程序块，每个模块实现特定的功能。&lt;/p&gt;
+&lt;p&gt;6.2 函数的定义&lt;br&gt;
+函数的定义一般主要有 5 个步骤：&lt;/p&gt;
+&lt;p&gt;1、返回值类型&lt;/p&gt;
+&lt;p&gt;2、函数名&lt;/p&gt;
+&lt;p&gt;3、参数表列&lt;/p&gt;
+&lt;p&gt;4、函数体语句&lt;/p&gt;
+&lt;p&gt;5、return 表达式&lt;/p&gt;
+&lt;p&gt;语法：&lt;/p&gt;
+&lt;p&gt;返回值类型 函数名 （参数列表）&lt;br&gt;
+{&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;   函数体语句
+
+   return表达式
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 返回值类型 ：一个函数可以返回一个值。在函数定义中&lt;br&gt;
+函数名：给函数起个名称&lt;br&gt;
+参数列表：使用该函数时，传入的数据&lt;br&gt;
+函数体语句：花括号内的代码，函数内需要执行的语句&lt;br&gt;
+ return 表达式： 和返回值类型挂钩，函数执行完后，返回相应的数据&lt;br&gt;
+ ** 示例：** 定义一个加法函数，实现两个数相加&lt;/p&gt;
+&lt;p&gt;// 函数定义&lt;br&gt;
+ int add (int num1, int num2)&lt;br&gt;
+{&lt;br&gt;
+int sum = num1 + num2;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;br&gt;
+ 6.3 函数的调用&lt;br&gt;
+ ** 功能：** 使用定义好的函数&lt;/p&gt;
+&lt;p&gt;语法：函数名（参数）&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;// 函数定义&lt;br&gt;
+ int add (int num1, int num2) // 定义中的 num1,num2 称为形式参数，简称形参&lt;br&gt;
+ {&lt;br&gt;
+int sum = num1 + num2;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+//调用add函数
+int sum = add(a, b);//调用时的a，b称为实际参数，简称实参
+cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+
+a = 100;
+b = 100;
+
+sum = add(a, b);
+cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;6.4 值传递&lt;br&gt;
+所谓值传递，就是函数调用时实参将数值传入给形参&lt;br&gt;
+值传递时，如果形参发生，并不会影响实参&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;void swap(int num1, int num2)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; “交换前：” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int temp = num1;
+num1 = num2;
+num2 = temp;
+
+cout &amp;lt;&amp;lt; &amp;quot;交换后：&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;
+
+//return ; 当函数声明时候，不需要返回值，可以不写return
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 20;
+
+swap(a, b);
+
+cout &amp;lt;&amp;lt; &amp;quot;mian中的 a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;mian中的 b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;6.5 函数的常见样式&lt;br&gt;
+常见的函数样式有 4 种&lt;/p&gt;
+&lt;p&gt;无参无返&lt;br&gt;
+有参无返&lt;br&gt;
+无参有返&lt;br&gt;
+有参有返&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;// 函数常见样式&lt;br&gt;
+ //1、 无参无返&lt;br&gt;
+ void test01 ()&lt;br&gt;
+{&lt;br&gt;
+//void a = 10; // 无类型不可以创建变量，原因无法分配内存&lt;br&gt;
+ cout &amp;lt;&amp;lt;“this is test01” &amp;lt;&amp;lt; endl;&lt;br&gt;
+//test01 (); 函数调用&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//2、 有参无返&lt;br&gt;
+ void test02 (int a)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; “this is test02” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//3、无参有返&lt;br&gt;
+ int test03 ()&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;this is test03 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
+return 10;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//4、有参有返&lt;br&gt;
+ int test04 (int a, int b)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;this is test04 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
+int sum = a + b;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;br&gt;
+ 6.6 函数的声明&lt;br&gt;
+作用： 告诉编译器函数名称及如何调用函数。函数的实际主体可以单独定义。&lt;/p&gt;
+&lt;p&gt;函数的声明可以多次，但是函数的定义只能有一次&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;// 声明可以多次，定义只能一次&lt;br&gt;
+ // 声明&lt;br&gt;
+ int max (int a, int b);&lt;br&gt;
+int max(int a, int b);&lt;br&gt;
+// 定义&lt;br&gt;
+ int max (int a, int b)&lt;br&gt;
+{&lt;br&gt;
+return a &amp;gt; b ? a : b;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 100;
+int b = 200;
+
+cout &amp;lt;&amp;lt; max(a, b) &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 6.7 函数的分文件编写&lt;br&gt;
+ ** 作用：** 让代码结构更加清晰&lt;/p&gt;
+&lt;p&gt;函数分文件编写一般有 4 个步骤&lt;/p&gt;
+&lt;p&gt;创建后缀名为.h 的头文件&lt;br&gt;
+创建后缀名为.cpp 的源文件&lt;br&gt;
+在头文件中写函数的声明&lt;br&gt;
+在源文件中写函数的定义&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;//swap.xn--h-216a053e&#34;&gt;//swap.h 文件&lt;/a&gt;&lt;br&gt;
+ #include&lt;iostream&gt;&lt;br&gt;
+using namespace std;&lt;/p&gt;
+&lt;p&gt;// 实现两个数字交换的函数声明&lt;br&gt;
+ void swap (int a, int b);&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;//swap.xn--cpp-wu9dq54h&#34;&gt;//swap.cpp 文件&lt;/a&gt;&lt;br&gt;
+ #include “swap.h”&lt;/p&gt;
+&lt;p&gt;void swap(int a, int b)&lt;br&gt;
+{&lt;br&gt;
+int temp = a;&lt;br&gt;
+a = b;&lt;br&gt;
+b = temp;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+//main 函数文件&lt;br&gt;
+ #include “swap.h”&lt;br&gt;
+int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 100;
+int b = 200;
+swap(a, b);
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+</content>
+        <updated>2023-01-31T07:13:43.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</id>
+        <title>c++基础入门笔记(3)</title>
+        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/"/>
+        <content type="html">&lt;p&gt;​&lt;br&gt;
+3 运算符&lt;br&gt;
+ ** 作用：** 用于执行代码的运算&lt;/p&gt;
+&lt;p&gt;本章我们主要讲解以下几类运算符：&lt;/p&gt;
+&lt;p&gt;运算符类型	作用&lt;br&gt;
+算术运算符	用于处理四则运算&lt;br&gt;
+赋值运算符	用于将表达式的值赋给变量&lt;br&gt;
+比较运算符	用于表达式的比较，并返回一个真值或假值&lt;br&gt;
+逻辑运算符	用于根据表达式的值返回真值或假值&lt;br&gt;
+ 3.1 算术运算符&lt;br&gt;
+作用：用于处理四则运算&lt;/p&gt;
+&lt;p&gt;算术运算符包括以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;正号	+3	3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;负号	-3	-3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;加	10 + 5	15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;减	10 - 5	5&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;乘	10 * 5	50&lt;br&gt;
+/	除	10 / 5	2&lt;br&gt;
+%	取模 (取余)	10 % 3	1&lt;br&gt;
+++	前置递增	a=2; b=&lt;ins&gt;a;	a=3; b=3;&lt;br&gt;
+++	后置递增	a=2; b=a&lt;/ins&gt;;	a=3; b=2;&lt;br&gt;
+–	前置递减	a=2; b=–a;	a=1; b=1;&lt;br&gt;
+–	后置递减	a=2; b=a–;	a=1; b=2;&lt;br&gt;
+ 示例 1：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;// 加减乘除&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a1 = 10;
+int b1 = 3;
+
+cout &amp;lt;&amp;lt; a1 + b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 - b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 * b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 / b1 &amp;lt;&amp;lt; endl;  //两个整数相除结果依然是整数
+
+int a2 = 10;
+int b2 = 20;
+cout &amp;lt;&amp;lt; a2 / b2 &amp;lt;&amp;lt; endl; 
+
+int a3 = 10;
+int b3 = 0;
+//cout &amp;lt;&amp;lt; a3 / b3 &amp;lt;&amp;lt; endl; //报错，除数不可以为0
+
+
+//两个小数可以相除
+double d1 = 0.5;
+double d2 = 0.25;
+cout &amp;lt;&amp;lt; d1 / d2 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例 2：&lt;/p&gt;
+&lt;p&gt;// 取模&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a1 = 10;
+int b1 = 3;
+
+cout &amp;lt;&amp;lt; 10 % 3 &amp;lt;&amp;lt; endl;
+
+int a2 = 10;
+int b2 = 20;
+
+cout &amp;lt;&amp;lt; a2 % b2 &amp;lt;&amp;lt; endl;
+
+int a3 = 10;
+int b3 = 0;
+
+//cout &amp;lt;&amp;lt; a3 % b3 &amp;lt;&amp;lt; endl; //取模运算时，除数也不能为0
+
+//两个小数不可以取模
+double d1 = 3.14;
+double d2 = 1.1;
+
+//cout &amp;lt;&amp;lt; d1 % d2 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例 3：&lt;/p&gt;
+&lt;p&gt;// 递增&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//后置递增
+int a = 10;
+a++; //等价于a = a + 1
+cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl; // 11
+
+//前置递增
+int b = 10;
+++b;
+cout &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl; // 11
+
+//区别
+//前置递增先对变量进行++，再计算表达式
+int a2 = 10;
+int b2 = ++a2 * 10;
+cout &amp;lt;&amp;lt; b2 &amp;lt;&amp;lt; endl;
+
+//后置递增先计算表达式，后对变量进行++
+int a3 = 10;
+int b3 = a3++ * 10;
+cout &amp;lt;&amp;lt; b3 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;3.2 赋值运算符&lt;br&gt;
+ ** 作用：** 用于将表达式的值赋给变量&lt;/p&gt;
+&lt;p&gt;赋值运算符包括以下几个符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+ =	赋值	a=2; b=3;	a=2; b=3;&lt;br&gt;
++=	加等于	a=0; a+=2;	a=2;&lt;br&gt;
+-=	减等于	a=5; a-=3;	a=2;&lt;br&gt;
+&lt;em&gt;=	乘等于	a=2; a&lt;/em&gt;=2;	a=4;&lt;br&gt;
+/=	除等于	a=4; a/=2;	a=2;&lt;br&gt;
+%=	模等于	a=3; a%2;	a=1;&lt;br&gt;
+ 示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//赋值运算符
+
+// =
+int a = 10;
+a = 100;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// +=
+a = 10;
+a += 2; // a = a + 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// -=
+a = 10;
+a -= 2; // a = a - 2
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// *=
+a = 10;
+a *= 2; // a = a * 2
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// /=
+a = 10;
+a /= 2;  // a = a / 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// %=
+a = 10;
+a %= 2;  // a = a % 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 3.3 比较运算符&lt;br&gt;
+ ** 作用：** 用于表达式的比较，并返回一个真值或假值&lt;/p&gt;
+&lt;p&gt;比较运算符有以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+ ==	相等于	4 == 3	0&lt;br&gt;
+!=	不等于	4 != 3	1&lt;br&gt;
+&amp;lt;	小于	4 &amp;lt; 3	0&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;大于	4 &amp;gt; 3	1&lt;br&gt;
+&amp;lt;=	小于等于	4 &amp;lt;= 3	0&lt;br&gt;
+=	大于等于	4 &amp;gt;= 1	1&lt;br&gt;
+ 示例：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 20;
+
+cout &amp;lt;&amp;lt; (a == b) &amp;lt;&amp;lt; endl; // 0 
+
+cout &amp;lt;&amp;lt; (a != b) &amp;lt;&amp;lt; endl; // 1
+
+cout &amp;lt;&amp;lt; (a &amp;gt; b) &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; (a &amp;lt; b) &amp;lt;&amp;lt; endl; // 1
+
+cout &amp;lt;&amp;lt; (a &amp;gt;= b) &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; (a &amp;lt;= b) &amp;lt;&amp;lt; endl; // 1
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;3.4 逻辑运算符&lt;br&gt;
+ ** 作用：** 用于根据表达式的值返回真值或假值&lt;/p&gt;
+&lt;p&gt;逻辑运算符有以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+！	非	!a	如果 a 为假，则！a 为真； 如果 a 为真，则！a 为假。&lt;br&gt;
+&amp;amp;&amp;amp;	与	a &amp;amp;&amp;amp; b	如果 a 和 b 都为真，则结果为真，否则为假。&lt;br&gt;
+||	或	a || b	如果 a 和 b 有一个为真，则结果为真，二者都为假时，结果为假。&lt;br&gt;
+** 示例 1：** 逻辑非&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 非&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+
+cout &amp;lt;&amp;lt; !a &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; !!a &amp;lt;&amp;lt; endl; // 1
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;** 示例 2：** 逻辑与&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 与&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 1
+
+a = 10;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0 
+
+a = 0;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;** 示例 3：** 逻辑或&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 或&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1
+
+a = 10;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1 
+
+a = 0;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 0
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
 </content>
         <updated>2023-01-31T07:13:43.000Z</updated>
     </entry>
