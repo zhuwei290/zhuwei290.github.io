@@ -2952,286 +2952,6 @@ return EXIT_SUCCESS;
  ]]></description>
         </item>
         <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</guid>
-            <title>c++基础入门笔记(3)</title>
-            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</link>
-            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
-            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
-3 运算符&lt;br&gt;
- ** 作用：** 用于执行代码的运算&lt;/p&gt;
-&lt;p&gt;本章我们主要讲解以下几类运算符：&lt;/p&gt;
-&lt;p&gt;运算符类型	作用&lt;br&gt;
-算术运算符	用于处理四则运算&lt;br&gt;
-赋值运算符	用于将表达式的值赋给变量&lt;br&gt;
-比较运算符	用于表达式的比较，并返回一个真值或假值&lt;br&gt;
-逻辑运算符	用于根据表达式的值返回真值或假值&lt;br&gt;
- 3.1 算术运算符&lt;br&gt;
-作用：用于处理四则运算&lt;/p&gt;
-&lt;p&gt;算术运算符包括以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;正号	+3	3&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;负号	-3	-3&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;加	10 + 5	15&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;减	10 - 5	5&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;乘	10 * 5	50&lt;br&gt;
-/	除	10 / 5	2&lt;br&gt;
-%	取模 (取余)	10 % 3	1&lt;br&gt;
-++	前置递增	a=2; b=&lt;ins&gt;a;	a=3; b=3;&lt;br&gt;
-++	后置递增	a=2; b=a&lt;/ins&gt;;	a=3; b=2;&lt;br&gt;
-–	前置递减	a=2; b=–a;	a=1; b=1;&lt;br&gt;
-–	后置递减	a=2; b=a–;	a=1; b=2;&lt;br&gt;
- 示例 1：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;// 加减乘除&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a1 = 10;
-int b1 = 3;
-
-cout &amp;lt;&amp;lt; a1 + b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 - b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 * b1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; a1 / b1 &amp;lt;&amp;lt; endl;  //两个整数相除结果依然是整数
-
-int a2 = 10;
-int b2 = 20;
-cout &amp;lt;&amp;lt; a2 / b2 &amp;lt;&amp;lt; endl; 
-
-int a3 = 10;
-int b3 = 0;
-//cout &amp;lt;&amp;lt; a3 / b3 &amp;lt;&amp;lt; endl; //报错，除数不可以为0
-
-
-//两个小数可以相除
-double d1 = 0.5;
-double d2 = 0.25;
-cout &amp;lt;&amp;lt; d1 / d2 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例 2：&lt;/p&gt;
-&lt;p&gt;// 取模&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a1 = 10;
-int b1 = 3;
-
-cout &amp;lt;&amp;lt; 10 % 3 &amp;lt;&amp;lt; endl;
-
-int a2 = 10;
-int b2 = 20;
-
-cout &amp;lt;&amp;lt; a2 % b2 &amp;lt;&amp;lt; endl;
-
-int a3 = 10;
-int b3 = 0;
-
-//cout &amp;lt;&amp;lt; a3 % b3 &amp;lt;&amp;lt; endl; //取模运算时，除数也不能为0
-
-//两个小数不可以取模
-double d1 = 3.14;
-double d2 = 1.1;
-
-//cout &amp;lt;&amp;lt; d1 % d2 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例 3：&lt;/p&gt;
-&lt;p&gt;// 递增&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//后置递增
-int a = 10;
-a++; //等价于a = a + 1
-cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl; // 11
-
-//前置递增
-int b = 10;
-++b;
-cout &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl; // 11
-
-//区别
-//前置递增先对变量进行++，再计算表达式
-int a2 = 10;
-int b2 = ++a2 * 10;
-cout &amp;lt;&amp;lt; b2 &amp;lt;&amp;lt; endl;
-
-//后置递增先计算表达式，后对变量进行++
-int a3 = 10;
-int b3 = a3++ * 10;
-cout &amp;lt;&amp;lt; b3 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;3.2 赋值运算符&lt;br&gt;
- ** 作用：** 用于将表达式的值赋给变量&lt;/p&gt;
-&lt;p&gt;赋值运算符包括以下几个符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
- =	赋值	a=2; b=3;	a=2; b=3;&lt;br&gt;
-+=	加等于	a=0; a+=2;	a=2;&lt;br&gt;
--=	减等于	a=5; a-=3;	a=2;&lt;br&gt;
-&lt;em&gt;=	乘等于	a=2; a&lt;/em&gt;=2;	a=4;&lt;br&gt;
-/=	除等于	a=4; a/=2;	a=2;&lt;br&gt;
-%=	模等于	a=3; a%2;	a=1;&lt;br&gt;
- 示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//赋值运算符
-
-// =
-int a = 10;
-a = 100;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// +=
-a = 10;
-a += 2; // a = a + 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// -=
-a = 10;
-a -= 2; // a = a - 2
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// *=
-a = 10;
-a *= 2; // a = a * 2
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// /=
-a = 10;
-a /= 2;  // a = a / 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-// %=
-a = 10;
-a %= 2;  // a = a % 2;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 3.3 比较运算符&lt;br&gt;
- ** 作用：** 用于表达式的比较，并返回一个真值或假值&lt;/p&gt;
-&lt;p&gt;比较运算符有以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
- ==	相等于	4 == 3	0&lt;br&gt;
-!=	不等于	4 != 3	1&lt;br&gt;
-&amp;lt;	小于	4 &amp;lt; 3	0&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;大于	4 &amp;gt; 3	1&lt;br&gt;
-&amp;lt;=	小于等于	4 &amp;lt;= 3	0&lt;br&gt;
-=	大于等于	4 &amp;gt;= 1	1&lt;br&gt;
- 示例：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 20;
-
-cout &amp;lt;&amp;lt; (a == b) &amp;lt;&amp;lt; endl; // 0 
-
-cout &amp;lt;&amp;lt; (a != b) &amp;lt;&amp;lt; endl; // 1
-
-cout &amp;lt;&amp;lt; (a &amp;gt; b) &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; (a &amp;lt; b) &amp;lt;&amp;lt; endl; // 1
-
-cout &amp;lt;&amp;lt; (a &amp;gt;= b) &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; (a &amp;lt;= b) &amp;lt;&amp;lt; endl; // 1
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;3.4 逻辑运算符&lt;br&gt;
- ** 作用：** 用于根据表达式的值返回真值或假值&lt;/p&gt;
-&lt;p&gt;逻辑运算符有以下符号：&lt;/p&gt;
-&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
-！	非	!a	如果 a 为假，则！a 为真； 如果 a 为真，则！a 为假。&lt;br&gt;
-&amp;amp;&amp;amp;	与	a &amp;amp;&amp;amp; b	如果 a 和 b 都为真，则结果为真，否则为假。&lt;br&gt;
-||	或	a || b	如果 a 和 b 有一个为真，则结果为真，二者都为假时，结果为假。&lt;br&gt;
-** 示例 1：** 逻辑非&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 非&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-
-cout &amp;lt;&amp;lt; !a &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; !!a &amp;lt;&amp;lt; endl; // 1
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;** 示例 2：** 逻辑与&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 与&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 1
-
-a = 10;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0 
-
-a = 0;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;** 示例 3：** 逻辑或&lt;/p&gt;
-&lt;p&gt;// 逻辑运算符  — 或&lt;br&gt;
- int main () {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1
-
-a = 10;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1 
-
-a = 0;
-b = 0;
-
-cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 0
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
- ]]></description>
-        </item>
-        <item>
             <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</guid>
             <title>c++基础入门笔记(4)</title>
             <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</link>
@@ -3648,6 +3368,286 @@ cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
 FLAG:
 
 cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+ ]]></description>
+        </item>
+        <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</guid>
+            <title>c++基础入门笔记(3)</title>
+            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</link>
+            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
+3 运算符&lt;br&gt;
+ ** 作用：** 用于执行代码的运算&lt;/p&gt;
+&lt;p&gt;本章我们主要讲解以下几类运算符：&lt;/p&gt;
+&lt;p&gt;运算符类型	作用&lt;br&gt;
+算术运算符	用于处理四则运算&lt;br&gt;
+赋值运算符	用于将表达式的值赋给变量&lt;br&gt;
+比较运算符	用于表达式的比较，并返回一个真值或假值&lt;br&gt;
+逻辑运算符	用于根据表达式的值返回真值或假值&lt;br&gt;
+ 3.1 算术运算符&lt;br&gt;
+作用：用于处理四则运算&lt;/p&gt;
+&lt;p&gt;算术运算符包括以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;正号	+3	3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;负号	-3	-3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;加	10 + 5	15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;减	10 - 5	5&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;乘	10 * 5	50&lt;br&gt;
+/	除	10 / 5	2&lt;br&gt;
+%	取模 (取余)	10 % 3	1&lt;br&gt;
+++	前置递增	a=2; b=&lt;ins&gt;a;	a=3; b=3;&lt;br&gt;
+++	后置递增	a=2; b=a&lt;/ins&gt;;	a=3; b=2;&lt;br&gt;
+–	前置递减	a=2; b=–a;	a=1; b=1;&lt;br&gt;
+–	后置递减	a=2; b=a–;	a=1; b=2;&lt;br&gt;
+ 示例 1：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;// 加减乘除&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a1 = 10;
+int b1 = 3;
+
+cout &amp;lt;&amp;lt; a1 + b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 - b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 * b1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; a1 / b1 &amp;lt;&amp;lt; endl;  //两个整数相除结果依然是整数
+
+int a2 = 10;
+int b2 = 20;
+cout &amp;lt;&amp;lt; a2 / b2 &amp;lt;&amp;lt; endl; 
+
+int a3 = 10;
+int b3 = 0;
+//cout &amp;lt;&amp;lt; a3 / b3 &amp;lt;&amp;lt; endl; //报错，除数不可以为0
+
+
+//两个小数可以相除
+double d1 = 0.5;
+double d2 = 0.25;
+cout &amp;lt;&amp;lt; d1 / d2 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例 2：&lt;/p&gt;
+&lt;p&gt;// 取模&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a1 = 10;
+int b1 = 3;
+
+cout &amp;lt;&amp;lt; 10 % 3 &amp;lt;&amp;lt; endl;
+
+int a2 = 10;
+int b2 = 20;
+
+cout &amp;lt;&amp;lt; a2 % b2 &amp;lt;&amp;lt; endl;
+
+int a3 = 10;
+int b3 = 0;
+
+//cout &amp;lt;&amp;lt; a3 % b3 &amp;lt;&amp;lt; endl; //取模运算时，除数也不能为0
+
+//两个小数不可以取模
+double d1 = 3.14;
+double d2 = 1.1;
+
+//cout &amp;lt;&amp;lt; d1 % d2 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例 3：&lt;/p&gt;
+&lt;p&gt;// 递增&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//后置递增
+int a = 10;
+a++; //等价于a = a + 1
+cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl; // 11
+
+//前置递增
+int b = 10;
+++b;
+cout &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl; // 11
+
+//区别
+//前置递增先对变量进行++，再计算表达式
+int a2 = 10;
+int b2 = ++a2 * 10;
+cout &amp;lt;&amp;lt; b2 &amp;lt;&amp;lt; endl;
+
+//后置递增先计算表达式，后对变量进行++
+int a3 = 10;
+int b3 = a3++ * 10;
+cout &amp;lt;&amp;lt; b3 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;3.2 赋值运算符&lt;br&gt;
+ ** 作用：** 用于将表达式的值赋给变量&lt;/p&gt;
+&lt;p&gt;赋值运算符包括以下几个符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+ =	赋值	a=2; b=3;	a=2; b=3;&lt;br&gt;
++=	加等于	a=0; a+=2;	a=2;&lt;br&gt;
+-=	减等于	a=5; a-=3;	a=2;&lt;br&gt;
+&lt;em&gt;=	乘等于	a=2; a&lt;/em&gt;=2;	a=4;&lt;br&gt;
+/=	除等于	a=4; a/=2;	a=2;&lt;br&gt;
+%=	模等于	a=3; a%2;	a=1;&lt;br&gt;
+ 示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//赋值运算符
+
+// =
+int a = 10;
+a = 100;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// +=
+a = 10;
+a += 2; // a = a + 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// -=
+a = 10;
+a -= 2; // a = a - 2
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// *=
+a = 10;
+a *= 2; // a = a * 2
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// /=
+a = 10;
+a /= 2;  // a = a / 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+// %=
+a = 10;
+a %= 2;  // a = a % 2;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 3.3 比较运算符&lt;br&gt;
+ ** 作用：** 用于表达式的比较，并返回一个真值或假值&lt;/p&gt;
+&lt;p&gt;比较运算符有以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+ ==	相等于	4 == 3	0&lt;br&gt;
+!=	不等于	4 != 3	1&lt;br&gt;
+&amp;lt;	小于	4 &amp;lt; 3	0&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;大于	4 &amp;gt; 3	1&lt;br&gt;
+&amp;lt;=	小于等于	4 &amp;lt;= 3	0&lt;br&gt;
+=	大于等于	4 &amp;gt;= 1	1&lt;br&gt;
+ 示例：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 20;
+
+cout &amp;lt;&amp;lt; (a == b) &amp;lt;&amp;lt; endl; // 0 
+
+cout &amp;lt;&amp;lt; (a != b) &amp;lt;&amp;lt; endl; // 1
+
+cout &amp;lt;&amp;lt; (a &amp;gt; b) &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; (a &amp;lt; b) &amp;lt;&amp;lt; endl; // 1
+
+cout &amp;lt;&amp;lt; (a &amp;gt;= b) &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; (a &amp;lt;= b) &amp;lt;&amp;lt; endl; // 1
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;3.4 逻辑运算符&lt;br&gt;
+ ** 作用：** 用于根据表达式的值返回真值或假值&lt;/p&gt;
+&lt;p&gt;逻辑运算符有以下符号：&lt;/p&gt;
+&lt;p&gt;运算符	术语	示例	结果&lt;br&gt;
+！	非	!a	如果 a 为假，则！a 为真； 如果 a 为真，则！a 为假。&lt;br&gt;
+&amp;amp;&amp;amp;	与	a &amp;amp;&amp;amp; b	如果 a 和 b 都为真，则结果为真，否则为假。&lt;br&gt;
+||	或	a || b	如果 a 和 b 有一个为真，则结果为真，二者都为假时，结果为假。&lt;br&gt;
+** 示例 1：** 逻辑非&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 非&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+
+cout &amp;lt;&amp;lt; !a &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; !!a &amp;lt;&amp;lt; endl; // 1
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;** 示例 2：** 逻辑与&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 与&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 1
+
+a = 10;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0 
+
+a = 0;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a &amp;amp;&amp;amp; b) &amp;lt;&amp;lt; endl;// 0
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;** 示例 3：** 逻辑或&lt;/p&gt;
+&lt;p&gt;// 逻辑运算符  — 或&lt;br&gt;
+ int main () {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1
+
+a = 10;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 1 
+
+a = 0;
+b = 0;
+
+cout &amp;lt;&amp;lt; (a || b) &amp;lt;&amp;lt; endl;// 0
 
 system(&amp;quot;pause&amp;quot;);
 
