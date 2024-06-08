@@ -3221,253 +3221,6 @@ DI （ Dependency Injection ）依赖注入&lt;br&gt;
         <updated>2024-04-03T14:51:42.466Z</updated>
     </entry>
     <entry>
-        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/</id>
-        <title>c++基础入门笔记(5)</title>
-        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/"/>
-        <content type="html">&lt;p&gt;​&lt;br&gt;
-5 数组&lt;br&gt;
- 5.1 概述&lt;br&gt;
-所谓数组，就是一个集合，里面存放了相同类型的数据元素&lt;/p&gt;
-&lt;p&gt;** 特点 1：** 数组中的每个数据元素都是相同的数据类型&lt;/p&gt;
-&lt;p&gt;** 特点 2：** 数组是由连续的内存位置组成的&lt;/p&gt;
-&lt;p&gt;5.2 一维数组&lt;br&gt;
- 5.2.1 一维数组定义方式&lt;/p&gt;
-&lt;p&gt;一维数组定义的三种方式：&lt;/p&gt;
-&lt;p&gt;数据类型 数组名 [数组长度];&lt;br&gt;
- 数据类型 数组名 [数组长度] = { 值 1，值 2 …};&lt;br&gt;
- 数据类型 数组名 [] = { 值 1，值 2 …};&lt;br&gt;
- 示例&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//定义方式1
-//数据类型 数组名[元素个数];
-int score[10];
-
-//利用下标赋值
-score[0] = 100;
-score[1] = 99;
-score[2] = 85;
-
-//利用下标输出
-cout &amp;lt;&amp;lt; score[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; score[1] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; score[2] &amp;lt;&amp;lt; endl;
-
-
-//第二种定义方式
-//数据类型 数组名[元素个数] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
-//如果&amp;#123;&amp;#125;内不足10个数据，剩余数据用0补全
-int score2[10] = &amp;#123; 100, 90,80,70,60,50,40,30,20,10 &amp;#125;;
-
-//逐个输出
-//cout &amp;lt;&amp;lt; score2[0] &amp;lt;&amp;lt; endl;
-//cout &amp;lt;&amp;lt; score2[1] &amp;lt;&amp;lt; endl;
-
-//一个一个输出太麻烦，因此可以利用循环进行输出
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; score2[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-//定义方式3
-//数据类型 数组名[] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
-int score3[] = &amp;#123; 100,90,80,70,60,50,40,30,20,10 &amp;#125;;
-
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; score3[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.2.2 一维数组数组名&lt;/p&gt;
-&lt;p&gt;一维数组名称的用途：&lt;/p&gt;
-&lt;p&gt;可以统计整个数组在内存中的长度&lt;br&gt;
-可以获取数组在内存中的首地址&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//数组名用途
-//1、可以获取整个数组占用内存空间大小
-int arr[10] = &amp;#123; 1,2,3,4,5,6,7,8,9,10 &amp;#125;;
-
-cout &amp;lt;&amp;lt; &amp;quot;整个数组所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;每个元素所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组的元素个数为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-
-//2、可以通过数组名获取到数组首地址
-cout &amp;lt;&amp;lt; &amp;quot;数组首地址为： &amp;quot; &amp;lt;&amp;lt; (int)arr &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组中第一个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;数组中第二个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[1] &amp;lt;&amp;lt; endl;
-
-//arr = 100; 错误，数组名是常量，因此不可以赋值
-
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;练习案例 1：五只小猪称体重&lt;/p&gt;
-&lt;p&gt;案例描述：&lt;/p&gt;
-&lt;p&gt;在一个数组中记录了五只小猪的体重，如：int arr [5] = {300,350,200,400,250};&lt;/p&gt;
-&lt;p&gt;找出并打印最重的小猪体重。&lt;/p&gt;
-&lt;p&gt;** 练习案例 2：** 数组元素逆置&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 请声明一个 5 个元素的数组，并且将元素逆置.&lt;/p&gt;
-&lt;p&gt;(如原数组元素为：1,3,2,5,4; 逆置后输出结果为：4,5,2,3,1);&lt;/p&gt;
-&lt;p&gt;5.2.3 冒泡排序&lt;/p&gt;
-&lt;p&gt;作用： 最常用的排序算法，对数组内元素进行排序&lt;/p&gt;
-&lt;p&gt;比较相邻的元素。如果第一个比第二个大，就交换他们两个。&lt;br&gt;
-对每一对相邻元素做同样的工作，执行完毕后，找到第一个最大值。&lt;br&gt;
-重复以上的步骤，每次比较次数 - 1，直到不需要比较&lt;br&gt;
-示例： 将数组 {4,2,8,0,5,7,1,3,9} 进行升序排序&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int arr[9] = &amp;#123; 4,2,8,0,5,7,1,3,9 &amp;#125;;
-
-for (int i = 0; i &amp;lt; 9 - 1; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 9 - 1 - i; j++)
-	&amp;#123;
-		if (arr[j] &amp;gt; arr[j + 1])
-		&amp;#123;
-			int temp = arr[j];
-			arr[j] = arr[j + 1];
-			arr[j + 1] = temp;
-		&amp;#125;
-	&amp;#125;
-&amp;#125;
-
-for (int i = 0; i &amp;lt; 9; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; arr[i] &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 5.3 二维数组&lt;br&gt;
-二维数组就是在一维数组上，多加一个维度。&lt;/p&gt;
-&lt;p&gt;5.3.1 二维数组定义方式&lt;/p&gt;
-&lt;p&gt;二维数组定义的四种方式：&lt;/p&gt;
-&lt;p&gt;数据类型 数组名 [行数][ 列数 ];&lt;br&gt;
- 数据类型 数组名 [行数][ 列数 ] = { {数据 1，数据 2 } ，{数据 3，数据 4 } };&lt;br&gt;
- 数据类型 数组名 [行数][ 列数 ] = { 数据 1，数据 2，数据 3，数据 4};&lt;br&gt;
- 数据类型 数组名 [][ 列数] = { 数据 1，数据 2，数据 3，数据 4};&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//方式1  
-//数组类型 数组名 [行数][列数]
-int arr[2][3];
-arr[0][0] = 1;
-arr[0][1] = 2;
-arr[0][2] = 3;
-arr[1][0] = 4;
-arr[1][1] = 5;
-arr[1][2] = 6;
-
-for (int i = 0; i &amp;lt; 2; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 3; j++)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; arr[i][j] &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-//方式2 
-//数据类型 数组名[行数][列数] = &amp;#123; &amp;#123;数据1，数据2 &amp;#125; ，&amp;#123;数据3，数据4 &amp;#125; &amp;#125;;
-int arr2[2][3] =
-&amp;#123;
-	&amp;#123;1,2,3&amp;#125;,
-	&amp;#123;4,5,6&amp;#125;
-&amp;#125;;
-
-//方式3
-//数据类型 数组名[行数][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
-int arr3[2][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;; 
-
-//方式4 
-//数据类型 数组名[][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
-int arr4[][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.3.2 二维数组数组名&lt;/p&gt;
-&lt;p&gt;查看二维数组所占内存空间&lt;br&gt;
-获取二维数组首地址&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//二维数组数组名
-int arr[2][3] =
-&amp;#123;
-	&amp;#123;1,2,3&amp;#125;,
-	&amp;#123;4,5,6&amp;#125;
-&amp;#125;;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组一行大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组元素大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组行数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组列数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) / sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
-
-//地址
-cout &amp;lt;&amp;lt; &amp;quot;二维数组首地址：&amp;quot; &amp;lt;&amp;lt; arr &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第一行地址：&amp;quot; &amp;lt;&amp;lt; arr[0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第二行地址：&amp;quot; &amp;lt;&amp;lt; arr[1] &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第一个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][0] &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;二维数组第二个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][1] &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;5.3.3 二维数组应用案例&lt;/p&gt;
-&lt;p&gt;考试成绩统计：&lt;/p&gt;
-&lt;p&gt;案例描述：有三名同学（张三，李四，王五），在一次考试中的成绩分别如下表，请分别输出三名同学的总成绩&lt;/p&gt;
-&lt;p&gt;语文	数学	英语&lt;br&gt;
-张三	100	100	100&lt;br&gt;
- 李四	90	50	100&lt;br&gt;
- 王五	60	70	80&lt;br&gt;
- 参考答案：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int scores[3][3] =
-&amp;#123;
-	&amp;#123;100,100,100&amp;#125;,
-	&amp;#123;90,50,100&amp;#125;,
-	&amp;#123;60,70,80&amp;#125;,
-&amp;#125;;
-
-string names[3] = &amp;#123; &amp;quot;张三&amp;quot;,&amp;quot;李四&amp;quot;,&amp;quot;王五&amp;quot; &amp;#125;;
-
-for (int i = 0; i &amp;lt; 3; i++)
-&amp;#123;
-	int sum = 0;
-	for (int j = 0; j &amp;lt; 3; j++)
-	&amp;#123;
-		sum += scores[i][j];
-	&amp;#125;
-	cout &amp;lt;&amp;lt; names[i] &amp;lt;&amp;lt; &amp;quot;同学总成绩为： &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-</content>
-        <updated>2023-01-31T07:13:43.000Z</updated>
-    </entry>
-    <entry>
         <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</id>
         <title>c++基础入门笔记(2)</title>
         <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/"/>
@@ -4409,6 +4162,253 @@ cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
 FLAG:
 
 cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+</content>
+        <updated>2023-01-31T07:13:43.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/</id>
+        <title>c++基础入门笔记(5)</title>
+        <link rel="alternate" href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/"/>
+        <content type="html">&lt;p&gt;​&lt;br&gt;
+5 数组&lt;br&gt;
+ 5.1 概述&lt;br&gt;
+所谓数组，就是一个集合，里面存放了相同类型的数据元素&lt;/p&gt;
+&lt;p&gt;** 特点 1：** 数组中的每个数据元素都是相同的数据类型&lt;/p&gt;
+&lt;p&gt;** 特点 2：** 数组是由连续的内存位置组成的&lt;/p&gt;
+&lt;p&gt;5.2 一维数组&lt;br&gt;
+ 5.2.1 一维数组定义方式&lt;/p&gt;
+&lt;p&gt;一维数组定义的三种方式：&lt;/p&gt;
+&lt;p&gt;数据类型 数组名 [数组长度];&lt;br&gt;
+ 数据类型 数组名 [数组长度] = { 值 1，值 2 …};&lt;br&gt;
+ 数据类型 数组名 [] = { 值 1，值 2 …};&lt;br&gt;
+ 示例&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//定义方式1
+//数据类型 数组名[元素个数];
+int score[10];
+
+//利用下标赋值
+score[0] = 100;
+score[1] = 99;
+score[2] = 85;
+
+//利用下标输出
+cout &amp;lt;&amp;lt; score[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; score[1] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; score[2] &amp;lt;&amp;lt; endl;
+
+
+//第二种定义方式
+//数据类型 数组名[元素个数] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
+//如果&amp;#123;&amp;#125;内不足10个数据，剩余数据用0补全
+int score2[10] = &amp;#123; 100, 90,80,70,60,50,40,30,20,10 &amp;#125;;
+
+//逐个输出
+//cout &amp;lt;&amp;lt; score2[0] &amp;lt;&amp;lt; endl;
+//cout &amp;lt;&amp;lt; score2[1] &amp;lt;&amp;lt; endl;
+
+//一个一个输出太麻烦，因此可以利用循环进行输出
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; score2[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+//定义方式3
+//数据类型 数组名[] =  &amp;#123;值1，值2 ，值3 ...&amp;#125;;
+int score3[] = &amp;#123; 100,90,80,70,60,50,40,30,20,10 &amp;#125;;
+
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; score3[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.2.2 一维数组数组名&lt;/p&gt;
+&lt;p&gt;一维数组名称的用途：&lt;/p&gt;
+&lt;p&gt;可以统计整个数组在内存中的长度&lt;br&gt;
+可以获取数组在内存中的首地址&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//数组名用途
+//1、可以获取整个数组占用内存空间大小
+int arr[10] = &amp;#123; 1,2,3,4,5,6,7,8,9,10 &amp;#125;;
+
+cout &amp;lt;&amp;lt; &amp;quot;整个数组所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;每个元素所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组的元素个数为： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+
+//2、可以通过数组名获取到数组首地址
+cout &amp;lt;&amp;lt; &amp;quot;数组首地址为： &amp;quot; &amp;lt;&amp;lt; (int)arr &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组中第一个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;数组中第二个元素地址为： &amp;quot; &amp;lt;&amp;lt; (int)&amp;amp;arr[1] &amp;lt;&amp;lt; endl;
+
+//arr = 100; 错误，数组名是常量，因此不可以赋值
+
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;练习案例 1：五只小猪称体重&lt;/p&gt;
+&lt;p&gt;案例描述：&lt;/p&gt;
+&lt;p&gt;在一个数组中记录了五只小猪的体重，如：int arr [5] = {300,350,200,400,250};&lt;/p&gt;
+&lt;p&gt;找出并打印最重的小猪体重。&lt;/p&gt;
+&lt;p&gt;** 练习案例 2：** 数组元素逆置&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 请声明一个 5 个元素的数组，并且将元素逆置.&lt;/p&gt;
+&lt;p&gt;(如原数组元素为：1,3,2,5,4; 逆置后输出结果为：4,5,2,3,1);&lt;/p&gt;
+&lt;p&gt;5.2.3 冒泡排序&lt;/p&gt;
+&lt;p&gt;作用： 最常用的排序算法，对数组内元素进行排序&lt;/p&gt;
+&lt;p&gt;比较相邻的元素。如果第一个比第二个大，就交换他们两个。&lt;br&gt;
+对每一对相邻元素做同样的工作，执行完毕后，找到第一个最大值。&lt;br&gt;
+重复以上的步骤，每次比较次数 - 1，直到不需要比较&lt;br&gt;
+示例： 将数组 {4,2,8,0,5,7,1,3,9} 进行升序排序&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int arr[9] = &amp;#123; 4,2,8,0,5,7,1,3,9 &amp;#125;;
+
+for (int i = 0; i &amp;lt; 9 - 1; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 9 - 1 - i; j++)
+	&amp;#123;
+		if (arr[j] &amp;gt; arr[j + 1])
+		&amp;#123;
+			int temp = arr[j];
+			arr[j] = arr[j + 1];
+			arr[j + 1] = temp;
+		&amp;#125;
+	&amp;#125;
+&amp;#125;
+
+for (int i = 0; i &amp;lt; 9; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; arr[i] &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 5.3 二维数组&lt;br&gt;
+二维数组就是在一维数组上，多加一个维度。&lt;/p&gt;
+&lt;p&gt;5.3.1 二维数组定义方式&lt;/p&gt;
+&lt;p&gt;二维数组定义的四种方式：&lt;/p&gt;
+&lt;p&gt;数据类型 数组名 [行数][ 列数 ];&lt;br&gt;
+ 数据类型 数组名 [行数][ 列数 ] = { {数据 1，数据 2 } ，{数据 3，数据 4 } };&lt;br&gt;
+ 数据类型 数组名 [行数][ 列数 ] = { 数据 1，数据 2，数据 3，数据 4};&lt;br&gt;
+ 数据类型 数组名 [][ 列数] = { 数据 1，数据 2，数据 3，数据 4};&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//方式1  
+//数组类型 数组名 [行数][列数]
+int arr[2][3];
+arr[0][0] = 1;
+arr[0][1] = 2;
+arr[0][2] = 3;
+arr[1][0] = 4;
+arr[1][1] = 5;
+arr[1][2] = 6;
+
+for (int i = 0; i &amp;lt; 2; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 3; j++)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; arr[i][j] &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+//方式2 
+//数据类型 数组名[行数][列数] = &amp;#123; &amp;#123;数据1，数据2 &amp;#125; ，&amp;#123;数据3，数据4 &amp;#125; &amp;#125;;
+int arr2[2][3] =
+&amp;#123;
+	&amp;#123;1,2,3&amp;#125;,
+	&amp;#123;4,5,6&amp;#125;
+&amp;#125;;
+
+//方式3
+//数据类型 数组名[行数][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
+int arr3[2][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;; 
+
+//方式4 
+//数据类型 数组名[][列数] = &amp;#123; 数据1，数据2 ,数据3，数据4  &amp;#125;;
+int arr4[][3] = &amp;#123; 1,2,3,4,5,6 &amp;#125;;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.3.2 二维数组数组名&lt;/p&gt;
+&lt;p&gt;查看二维数组所占内存空间&lt;br&gt;
+获取二维数组首地址&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//二维数组数组名
+int arr[2][3] =
+&amp;#123;
+	&amp;#123;1,2,3&amp;#125;,
+	&amp;#123;4,5,6&amp;#125;
+&amp;#125;;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组一行大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组元素大小： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组行数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr) / sizeof(arr[0]) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组列数： &amp;quot; &amp;lt;&amp;lt; sizeof(arr[0]) / sizeof(arr[0][0]) &amp;lt;&amp;lt; endl;
+
+//地址
+cout &amp;lt;&amp;lt; &amp;quot;二维数组首地址：&amp;quot; &amp;lt;&amp;lt; arr &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第一行地址：&amp;quot; &amp;lt;&amp;lt; arr[0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第二行地址：&amp;quot; &amp;lt;&amp;lt; arr[1] &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第一个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][0] &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;二维数组第二个元素地址：&amp;quot; &amp;lt;&amp;lt; &amp;amp;arr[0][1] &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;5.3.3 二维数组应用案例&lt;/p&gt;
+&lt;p&gt;考试成绩统计：&lt;/p&gt;
+&lt;p&gt;案例描述：有三名同学（张三，李四，王五），在一次考试中的成绩分别如下表，请分别输出三名同学的总成绩&lt;/p&gt;
+&lt;p&gt;语文	数学	英语&lt;br&gt;
+张三	100	100	100&lt;br&gt;
+ 李四	90	50	100&lt;br&gt;
+ 王五	60	70	80&lt;br&gt;
+ 参考答案：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int scores[3][3] =
+&amp;#123;
+	&amp;#123;100,100,100&amp;#125;,
+	&amp;#123;90,50,100&amp;#125;,
+	&amp;#123;60,70,80&amp;#125;,
+&amp;#125;;
+
+string names[3] = &amp;#123; &amp;quot;张三&amp;quot;,&amp;quot;李四&amp;quot;,&amp;quot;王五&amp;quot; &amp;#125;;
+
+for (int i = 0; i &amp;lt; 3; i++)
+&amp;#123;
+	int sum = 0;
+	for (int j = 0; j &amp;lt; 3; j++)
+	&amp;#123;
+		sum += scores[i][j];
+	&amp;#125;
+	cout &amp;lt;&amp;lt; names[i] &amp;lt;&amp;lt; &amp;quot;同学总成绩为： &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+&amp;#125;
 
 system(&amp;quot;pause&amp;quot;);
 
