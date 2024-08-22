@@ -5964,6 +5964,432 @@ return 0;
  ]]></description>
         </item>
         <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</guid>
+            <title>c++基础入门笔记(4)</title>
+            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</link>
+            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
+4 程序流程结构&lt;br&gt;
+ C/C++ 支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构&lt;/p&gt;
+&lt;p&gt;顺序结构：程序按顺序执行，不发生跳转&lt;br&gt;
+选择结构：依据条件是否满足，有选择的执行相应功能&lt;br&gt;
+循环结构：依据条件是否满足，循环多次执行某段代码&lt;br&gt;
+ 4.1 选择结构&lt;br&gt;
+ 4.1.1 if 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 执行满足条件的语句&lt;/p&gt;
+&lt;p&gt;if 语句的三种形式&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//选择结构-单行if语句
+//输入一个分数，如果分数大于600分，视为考上一本大学，并在屏幕上打印
+
+int score = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请输入一个分数：&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; score;
+
+cout &amp;lt;&amp;lt; &amp;quot;您输入的分数为： &amp;quot; &amp;lt;&amp;lt; score &amp;lt;&amp;lt; endl;
+
+//if语句
+//注意事项，在if判断语句后面，不要加分号
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学！！！&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;多行格式 if 语句：if (条件){ 条件满足执行的语句 } else { 条件不满足执行的语句 };&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int score = 0;
+
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 多条件的 if 语句：if (条件 1){ 条件 1 满足执行的语句 } else if (条件 2){条件 2 满足执行的语句}… else { 都不满足执行的语句}&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int main() &amp;#123;
+
+int score = 0;
+
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 500)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 400)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;嵌套 if 语句：在 if 语句中，可以嵌套使用 if 语句，达到更精确的条件判断&lt;/p&gt;
+&lt;p&gt;案例需求：&lt;/p&gt;
+&lt;p&gt;提示用户输入一个高考考试分数，根据分数做如下判断&lt;br&gt;
+分数如果大于 600 分视为考上一本，大于 500 分考上二本，大于 400 考上三本，其余视为未考上本科；&lt;br&gt;
+在一本分数中，如果大于 700 分，考入北大，大于 650 分，考入清华，大于 600 考入人大。&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int score = 0;
+
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+	if (score &amp;gt; 700)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了北大&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	else if (score &amp;gt; 650)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了清华&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	else
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了人大&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	
+&amp;#125;
+else if (score &amp;gt; 500)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 400)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 练习案例： 三只小猪称体重&lt;/p&gt;
+&lt;p&gt;有三只小猪 ABC，请分别输入三只小猪的体重，并且判断哪只小猪最重？&lt;/p&gt;
+&lt;p&gt;4.1.2 三目运算符&lt;/p&gt;
+&lt;p&gt;作用： 通过三目运算符实现简单的判断&lt;/p&gt;
+&lt;p&gt;语法：表达式 1 ? 表达式 2 ：表达式 3&lt;/p&gt;
+&lt;p&gt;解释：&lt;/p&gt;
+&lt;p&gt;如果表达式 1 的值为真，执行表达式 2，并返回表达式 2 的结果；&lt;/p&gt;
+&lt;p&gt;如果表达式 1 的值为假，执行表达式 3，并返回表达式 3 的结果。&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 20;
+int c = 0;
+
+c = a &amp;gt; b ? a : b;
+cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
+
+//C++中三目运算符返回的是变量,可以继续赋值
+
+(a &amp;gt; b ? a : b) = 100;
+
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;4.1.3 switch 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 执行多条件分支语句&lt;/p&gt;
+&lt;p&gt;语法：&lt;/p&gt;
+&lt;p&gt;switch (表达式)&lt;/p&gt;
+&lt;p&gt;{&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;case 结果1：执行语句;break;
+
+case 结果2：执行语句;break;
+
+...
+
+default:执行语句;break;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//请给电影评分 
+//10 ~ 9   经典   
+// 8 ~ 7   非常好
+// 6 ~ 5   一般
+// 5分以下 烂片
+
+int score = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请给电影打分&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; score;
+
+switch (score)
+&amp;#123;
+case 10:
+case 9:
+	cout &amp;lt;&amp;lt; &amp;quot;经典&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 8:
+	cout &amp;lt;&amp;lt; &amp;quot;非常好&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 7:
+case 6:
+	cout &amp;lt;&amp;lt; &amp;quot;一般&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+default:
+	cout &amp;lt;&amp;lt; &amp;quot;烂片&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;4.2 循环结构&lt;br&gt;
+ 4.2.1 while 循环语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p 循环语句=&#34;&#34;&gt;语法：while (循环条件)&lt;/p&gt;
+&lt;p&gt;解释：只要循环条件的结果为真，就执行循环语句&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+while (num &amp;lt; 10)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;num = &amp;quot; &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
+	num++;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;while 循环练习案例：猜数字&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 系统随机生成一个 1 到 100 之间的数字，玩家进行猜测，如果猜错，提示玩家数字过大或过小，如果猜对恭喜玩家胜利，并且退出游戏。&lt;/p&gt;
+&lt;p&gt;4.2.2 do…while 循环语句&lt;/p&gt;
+&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p&gt;语法： do {循环语句} while (循环条件);&lt;/p&gt;
+&lt;p&gt;** 注意：** 与 while 的区别在于 do…while 会先执行一次循环语句，再判断循环条件&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+
+do
+&amp;#123;
+	cout &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
+	num++;
+
+&amp;#125; while (num &amp;lt; 10);
+
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;练习案例：水仙花数&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 水仙花数是指一个 3 位数，它的每个位上的数字的 3 次幂之和等于它本身&lt;/p&gt;
+&lt;p&gt;例如：1^3 + 5^3+ 3^3 = 153&lt;/p&gt;
+&lt;p&gt;请利用 do…while 语句，求出所有 3 位数中的水仙花数&lt;/p&gt;
+&lt;p&gt;4.2.3 for 循环语句&lt;/p&gt;
+&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p 循环语句;=&#34;&#34;&gt;语法：for (起始表达式；条件表达式；末尾循环体)&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 详解：&lt;/p&gt;
+&lt;p&gt;练习案例：敲桌子&lt;/p&gt;
+&lt;p&gt;案例描述：从 1 开始数到数字 100， 如果数字个位含有 7，或者数字十位含有 7，或者该数字是 7 的倍数，我们打印敲桌子，其余数字直接打印输出。&lt;/p&gt;
+&lt;p&gt;4.2.4 嵌套循环&lt;/p&gt;
+&lt;p&gt;作用： 在循环体中再嵌套一层循环，解决一些实际问题&lt;/p&gt;
+&lt;p&gt;例如我们想在屏幕中打印如下图片，就需要利用嵌套循环&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//外层循环执行1次，内层循环执行1轮
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 10; j++)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;*&amp;quot; &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+** 练习案例：** 乘法口诀表&lt;/p&gt;
+&lt;p&gt;案例描述：利用嵌套循环，实现九九乘法表&lt;/p&gt;
+&lt;p&gt;4.3 跳转语句&lt;br&gt;
+ 4.3.1 break 语句&lt;/p&gt;
+&lt;p&gt;作用: 用于跳出选择结构或者循环结构&lt;/p&gt;
+&lt;p&gt;break 使用的时机：&lt;/p&gt;
+&lt;p&gt;出现在 switch 条件语句中，作用是终止 case 并跳出 switch&lt;br&gt;
+ 出现在循环语句中，作用是跳出当前的循环语句&lt;br&gt;
+出现在嵌套循环中，跳出最近的内层循环语句&lt;br&gt;
+示例 1：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+//1、在 switch 语句中使用 break&lt;br&gt;
+cout &amp;lt;&amp;lt;“请选择您挑战副本的难度：” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“1、普通” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“2、中等” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“3、困难” &amp;lt;&amp;lt; endl;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+
+cin &amp;gt;&amp;gt; num;
+
+switch (num)
+&amp;#123;
+case 1:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是普通难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 2:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是中等难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 3:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是困难难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 示例 2：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+//2、在循环语句中用 break&lt;br&gt;
+for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
+{&lt;br&gt;
+if (i == 5)&lt;br&gt;
+{&lt;br&gt;
+break; // 跳出循环语句&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 示例 3：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+// 在嵌套循环语句中使用 break，退出内层循环&lt;br&gt;
+ for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
+{&lt;br&gt;
+for (int j = 0; j &amp;lt; 10; j++)&lt;br&gt;
+{&lt;br&gt;
+if (j == 5)&lt;br&gt;
+{&lt;br&gt;
+break;&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; “*” &amp;lt;&amp;lt; &amp;quot; &amp;quot;;&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 4.3.2 continue 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 在循环语句中，跳过本次循环中余下尚未执行的语句，继续执行下一次循环&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 100; i++)
+&amp;#123;
+	if (i % 2 == 0)
+	&amp;#123;
+		continue;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;4.3.3 goto 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 可以无条件跳转语句&lt;/p&gt;
+&lt;p&gt;语法： goto 标记；&lt;/p&gt;
+&lt;p&gt;** 解释：** 如果标记的名称存在，执行到 goto 语句时，会跳转到标记的位置&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;1&amp;quot; &amp;lt;&amp;lt; endl;
+
+goto FLAG;
+
+cout &amp;lt;&amp;lt; &amp;quot;2&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;3&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
+
+FLAG:
+
+cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+ ]]></description>
+        </item>
+        <item>
             <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/</guid>
             <title>c++基础入门笔记(5)</title>
             <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/</link>
@@ -6397,432 +6823,6 @@ int main() {&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;int a = 100;
 int b = 200;
 swap(a, b);
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
- ]]></description>
-        </item>
-        <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</guid>
-            <title>c++基础入门笔记(4)</title>
-            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</link>
-            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
-            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
-4 程序流程结构&lt;br&gt;
- C/C++ 支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构&lt;/p&gt;
-&lt;p&gt;顺序结构：程序按顺序执行，不发生跳转&lt;br&gt;
-选择结构：依据条件是否满足，有选择的执行相应功能&lt;br&gt;
-循环结构：依据条件是否满足，循环多次执行某段代码&lt;br&gt;
- 4.1 选择结构&lt;br&gt;
- 4.1.1 if 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 执行满足条件的语句&lt;/p&gt;
-&lt;p&gt;if 语句的三种形式&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//选择结构-单行if语句
-//输入一个分数，如果分数大于600分，视为考上一本大学，并在屏幕上打印
-
-int score = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请输入一个分数：&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; score;
-
-cout &amp;lt;&amp;lt; &amp;quot;您输入的分数为： &amp;quot; &amp;lt;&amp;lt; score &amp;lt;&amp;lt; endl;
-
-//if语句
-//注意事项，在if判断语句后面，不要加分号
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学！！！&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;多行格式 if 语句：if (条件){ 条件满足执行的语句 } else { 条件不满足执行的语句 };&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int score = 0;
-
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
-
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 多条件的 if 语句：if (条件 1){ 条件 1 满足执行的语句 } else if (条件 2){条件 2 满足执行的语句}… else { 都不满足执行的语句}&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int main() &amp;#123;
-
-int score = 0;
-
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
-
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 500)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 400)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;嵌套 if 语句：在 if 语句中，可以嵌套使用 if 语句，达到更精确的条件判断&lt;/p&gt;
-&lt;p&gt;案例需求：&lt;/p&gt;
-&lt;p&gt;提示用户输入一个高考考试分数，根据分数做如下判断&lt;br&gt;
-分数如果大于 600 分视为考上一本，大于 500 分考上二本，大于 400 考上三本，其余视为未考上本科；&lt;br&gt;
-在一本分数中，如果大于 700 分，考入北大，大于 650 分，考入清华，大于 600 考入人大。&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int score = 0;
-
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
-
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-	if (score &amp;gt; 700)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了北大&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	else if (score &amp;gt; 650)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了清华&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	else
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了人大&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	
-&amp;#125;
-else if (score &amp;gt; 500)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 400)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 练习案例： 三只小猪称体重&lt;/p&gt;
-&lt;p&gt;有三只小猪 ABC，请分别输入三只小猪的体重，并且判断哪只小猪最重？&lt;/p&gt;
-&lt;p&gt;4.1.2 三目运算符&lt;/p&gt;
-&lt;p&gt;作用： 通过三目运算符实现简单的判断&lt;/p&gt;
-&lt;p&gt;语法：表达式 1 ? 表达式 2 ：表达式 3&lt;/p&gt;
-&lt;p&gt;解释：&lt;/p&gt;
-&lt;p&gt;如果表达式 1 的值为真，执行表达式 2，并返回表达式 2 的结果；&lt;/p&gt;
-&lt;p&gt;如果表达式 1 的值为假，执行表达式 3，并返回表达式 3 的结果。&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 20;
-int c = 0;
-
-c = a &amp;gt; b ? a : b;
-cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
-
-//C++中三目运算符返回的是变量,可以继续赋值
-
-(a &amp;gt; b ? a : b) = 100;
-
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.1.3 switch 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 执行多条件分支语句&lt;/p&gt;
-&lt;p&gt;语法：&lt;/p&gt;
-&lt;p&gt;switch (表达式)&lt;/p&gt;
-&lt;p&gt;{&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;case 结果1：执行语句;break;
-
-case 结果2：执行语句;break;
-
-...
-
-default:执行语句;break;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//请给电影评分 
-//10 ~ 9   经典   
-// 8 ~ 7   非常好
-// 6 ~ 5   一般
-// 5分以下 烂片
-
-int score = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请给电影打分&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; score;
-
-switch (score)
-&amp;#123;
-case 10:
-case 9:
-	cout &amp;lt;&amp;lt; &amp;quot;经典&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 8:
-	cout &amp;lt;&amp;lt; &amp;quot;非常好&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 7:
-case 6:
-	cout &amp;lt;&amp;lt; &amp;quot;一般&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-default:
-	cout &amp;lt;&amp;lt; &amp;quot;烂片&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.2 循环结构&lt;br&gt;
- 4.2.1 while 循环语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p 循环语句=&#34;&#34;&gt;语法：while (循环条件)&lt;/p&gt;
-&lt;p&gt;解释：只要循环条件的结果为真，就执行循环语句&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-while (num &amp;lt; 10)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;num = &amp;quot; &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
-	num++;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;while 循环练习案例：猜数字&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 系统随机生成一个 1 到 100 之间的数字，玩家进行猜测，如果猜错，提示玩家数字过大或过小，如果猜对恭喜玩家胜利，并且退出游戏。&lt;/p&gt;
-&lt;p&gt;4.2.2 do…while 循环语句&lt;/p&gt;
-&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p&gt;语法： do {循环语句} while (循环条件);&lt;/p&gt;
-&lt;p&gt;** 注意：** 与 while 的区别在于 do…while 会先执行一次循环语句，再判断循环条件&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-
-do
-&amp;#123;
-	cout &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
-	num++;
-
-&amp;#125; while (num &amp;lt; 10);
-
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;练习案例：水仙花数&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 水仙花数是指一个 3 位数，它的每个位上的数字的 3 次幂之和等于它本身&lt;/p&gt;
-&lt;p&gt;例如：1^3 + 5^3+ 3^3 = 153&lt;/p&gt;
-&lt;p&gt;请利用 do…while 语句，求出所有 3 位数中的水仙花数&lt;/p&gt;
-&lt;p&gt;4.2.3 for 循环语句&lt;/p&gt;
-&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p 循环语句;=&#34;&#34;&gt;语法：for (起始表达式；条件表达式；末尾循环体)&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 详解：&lt;/p&gt;
-&lt;p&gt;练习案例：敲桌子&lt;/p&gt;
-&lt;p&gt;案例描述：从 1 开始数到数字 100， 如果数字个位含有 7，或者数字十位含有 7，或者该数字是 7 的倍数，我们打印敲桌子，其余数字直接打印输出。&lt;/p&gt;
-&lt;p&gt;4.2.4 嵌套循环&lt;/p&gt;
-&lt;p&gt;作用： 在循环体中再嵌套一层循环，解决一些实际问题&lt;/p&gt;
-&lt;p&gt;例如我们想在屏幕中打印如下图片，就需要利用嵌套循环&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//外层循环执行1次，内层循环执行1轮
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 10; j++)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;*&amp;quot; &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-** 练习案例：** 乘法口诀表&lt;/p&gt;
-&lt;p&gt;案例描述：利用嵌套循环，实现九九乘法表&lt;/p&gt;
-&lt;p&gt;4.3 跳转语句&lt;br&gt;
- 4.3.1 break 语句&lt;/p&gt;
-&lt;p&gt;作用: 用于跳出选择结构或者循环结构&lt;/p&gt;
-&lt;p&gt;break 使用的时机：&lt;/p&gt;
-&lt;p&gt;出现在 switch 条件语句中，作用是终止 case 并跳出 switch&lt;br&gt;
- 出现在循环语句中，作用是跳出当前的循环语句&lt;br&gt;
-出现在嵌套循环中，跳出最近的内层循环语句&lt;br&gt;
-示例 1：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-//1、在 switch 语句中使用 break&lt;br&gt;
-cout &amp;lt;&amp;lt;“请选择您挑战副本的难度：” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“1、普通” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“2、中等” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“3、困难” &amp;lt;&amp;lt; endl;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-
-cin &amp;gt;&amp;gt; num;
-
-switch (num)
-&amp;#123;
-case 1:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是普通难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 2:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是中等难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 3:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是困难难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 示例 2：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-//2、在循环语句中用 break&lt;br&gt;
-for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
-{&lt;br&gt;
-if (i == 5)&lt;br&gt;
-{&lt;br&gt;
-break; // 跳出循环语句&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 示例 3：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-// 在嵌套循环语句中使用 break，退出内层循环&lt;br&gt;
- for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
-{&lt;br&gt;
-for (int j = 0; j &amp;lt; 10; j++)&lt;br&gt;
-{&lt;br&gt;
-if (j == 5)&lt;br&gt;
-{&lt;br&gt;
-break;&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; “*” &amp;lt;&amp;lt; &amp;quot; &amp;quot;;&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 4.3.2 continue 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 在循环语句中，跳过本次循环中余下尚未执行的语句，继续执行下一次循环&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 100; i++)
-&amp;#123;
-	if (i % 2 == 0)
-	&amp;#123;
-		continue;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.3.3 goto 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 可以无条件跳转语句&lt;/p&gt;
-&lt;p&gt;语法： goto 标记；&lt;/p&gt;
-&lt;p&gt;** 解释：** 如果标记的名称存在，执行到 goto 语句时，会跳转到标记的位置&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;1&amp;quot; &amp;lt;&amp;lt; endl;
-
-goto FLAG;
-
-cout &amp;lt;&amp;lt; &amp;quot;2&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;3&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
-
-FLAG:
-
-cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
 
 system(&amp;quot;pause&amp;quot;);
 
