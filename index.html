@@ -47,6 +47,509 @@
 </header>
   <div id="content" class="inner">
     <div id="main-col" class="alignleft"><div id="wrapper">
+  <article id="post-分布式事务" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2024-09-07T02:44:02.000Z"><a href="/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">2024-09-07</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">分布式事务</a></h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p>分布式事务</p>
+<p>0. 学习目标</p>
+<p>1. 分布式事务问题</p>
+<p>1.1. 本地事务</p>
+<p>本地事务，也就是传统的<strong>单机事务</strong>。在传统数据库事务中，必须要满足四个原则：</p>
+<p><img src="img/image-20210724165045186.png" alt="image-20210724165045186"></p>
+<p>1.2. 分布式事务</p>
+<p><strong>分布式事务</strong>，就是指不是在单个服务或单个数据库架构下，产生的事务，例如：</p>
+<ul>
+<li>跨数据源的分布式事务</li>
+<li>跨服务的分布式事务</li>
+<li>综合情况</li>
+</ul>
+<p>在数据库水平拆分、服务垂直拆分之后，一个业务操作通常要跨多个数据库、服务才能完成。例如电商行业中比较常见的下单付款案例，包括下面几个行为：</p>
+<ul>
+<li>创建新订单</li>
+<li>扣减商品库存</li>
+<li>从用户账户余额扣除金额</li>
+</ul>
+<p>完成上面的操作需要访问三个不同的微服务和三个不同的数据库。</p>
+<p><img src="img/image-20210724165338958.png" alt="image-20210724165338958"></p>
+<p>订单的创建、库存的扣减、账户扣款在每一个服务和数据库内是一个本地事务，可以保证 ACID 原则。</p>
+<p>但是当我们把三件事情看做一个 &quot;业务&quot;，要满足保证 “业务” 的原子性，要么所有操作全部成功，要么全部失败，不允许出现部分成功部分失败的现象，这就是<strong>分布式系统下的事务</strong>了。</p>
+<p>此时 ACID 难以满足，这是分布式事务要解决的问题</p>
+<p>1.3. 演示分布式事务问题</p>
+<p>我们通过一个案例来演示分布式事务的问题：</p>
+<p>1）<strong>创建数据库，名为 seata_demo，然后导入课前资料提供的 SQL 文件：</strong></p>
+<p><img src="img/image-20210724165634571.png" alt="image-20210724165634571"></p>
+<p>2）<strong>导入课前资料提供的微服务：</strong></p>
+<p><img src="img/image-20210724165709994.png" alt="image-20210724165709994"></p>
+<p>微服务结构如下：</p>
+<p><img src="img/image-20210724165729273.png" alt="image-20210724165729273"></p>
+<p>其中：</p>
+<p>seata-demo：父工程，负责管理项目依赖</p>
+<ul>
+<li>account-service：账户服务，负责管理用户的资金账户。提供扣减余额的接口</li>
+<li>storage-service：库存服务，负责管理商品库存。提供扣减库存的接口</li>
+<li>order-service：订单服务，负责管理订单。创建订单时，需要调用 account-service 和 storage-service</li>
+</ul>
+<p><strong>3）启动 nacos、所有微服务</strong></p>
+<p><strong>4）测试下单功能，发出 Post 请求：</strong></p>
+<p>请求如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request POST <span class="string">&#x27;http://localhost:8082/order?userId=user202103032042012&amp;commodityCode=100202003032041&amp;count=20&amp;money=200&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>如图：</p>
+<p><img src="img/image-20210724170113404.png" alt="image-20210724170113404"></p>
+<p>测试发现，当库存不足时，如果余额已经扣减，并不会回滚，出现了分布式事务问题。</p>
+<p>2. 理论基础</p>
+<p>解决分布式事务问题，需要一些分布式系统的基础知识作为理论指导。</p>
+<p>2.1.CAP 定理</p>
+<p>1998 年，加州大学的计算机科学家 Eric Brewer 提出，分布式系统有三个指标。</p>
+<blockquote>
+<ul>
+<li>Consistency（一致性）</li>
+<li>Availability（可用性）</li>
+<li>Partition tolerance （分区容错性）</li>
+</ul>
+</blockquote>
+<p><img src="img/image-20210724170517944.png" alt="image-20210724170517944"></p>
+<p>它们的第一个字母分别是 C、A、P。</p>
+<p>Eric Brewer 说，这三个指标不可能同时做到。这个结论就叫做 CAP 定理。</p>
+<p>2.1.1. 一致性</p>
+<p>Consistency（一致性）：用户访问分布式系统中的任意节点，得到的数据必须一致。</p>
+<p>比如现在包含两个节点，其中的初始数据是一致的：</p>
+<p><img src="img/image-20210724170704694.png" alt="image-20210724170704694"></p>
+<p>当我们修改其中一个节点的数据时，两者的数据产生了差异：</p>
+<p><img src="img/image-20210724170735847.png" alt="image-20210724170735847"></p>
+<p>要想保住一致性，就必须实现 node01 到 node02 的数据 同步：</p>
+<p><img src="img/image-20210724170834855.png" alt="image-20210724170834855"></p>
+<p>2.1.2. 可用性</p>
+<p>Availability （可用性）：用户访问集群中的任意健康节点，必须能得到响应，而不是超时或拒绝。</p>
+<p>如图，有三个节点的集群，访问任何一个都可以及时得到响应：</p>
+<p><img src="img/image-20210724170932072.png" alt="image-20210724170932072"></p>
+<p>当有部分节点因为网络故障或其它原因无法访问时，代表节点不可用：</p>
+<p><img src="img/image-20210724171007516.png" alt="image-20210724171007516"></p>
+<p>2.1.3. 分区容错</p>
+<p><strong>Partition（分区）</strong>：因为网络故障或其它原因导致分布式系统中的部分节点与其它节点失去连接，形成独立分区。</p>
+<p><img src="img/image-20210724171041210.png" alt="image-20210724171041210"></p>
+<p><strong>Tolerance（容错）</strong>：在集群出现分区时，整个系统也要持续对外提供服务</p>
+<p>2.1.4. 矛盾</p>
+<p>在分布式系统中，系统间的网络不能 100% 保证健康，一定会有故障的时候，而服务有必须对外保证服务。因此 Partition Tolerance 不可避免。</p>
+<p>当节点接收到新的数据变更时，就会出现问题了：</p>
+<p><img src="img/image-20210724171546472.png" alt="image-20210724171546472"></p>
+<p>如果此时要保证<strong>一致性</strong>，就必须等待网络恢复，完成数据同步后，整个集群才对外提供服务，服务处于阻塞状态，不可用。</p>
+<p>如果此时要保证<strong>可用性</strong>，就不能等待网络恢复，那 node01、node02 与 node03 之间就会出现数据不一致。</p>
+<p>也就是说，在 P 一定会出现的情况下，A 和 C 之间只能实现一个。</p>
+<p>2.2.BASE 理论</p>
+<p>BASE 理论是对 CAP 的一种解决思路，包含三个思想：</p>
+<ul>
+<li><strong>Basically Available</strong> <strong>（基本可用）</strong>：分布式系统在出现故障时，允许损失部分可用性，即保证核心可用。</li>
+<li>**Soft State（软状态）：** 在一定时间内，允许出现中间状态，比如临时的不一致状态。</li>
+<li><strong>Eventually Consistent（最终一致性）</strong>：虽然无法保证强一致性，但是在软状态结束后，最终达到数据一致。</li>
+</ul>
+<p>2.3. 解决分布式事务的思路</p>
+<p>分布式事务最大的问题是各个子事务的一致性问题，因此可以借鉴 CAP 定理和 BASE 理论，有两种解决思路：</p>
+<ul>
+<li>
+<p>AP 模式：各子事务分别执行和提交，允许出现结果不一致，然后采用弥补措施恢复数据即可，实现最终一致。</p>
+</li>
+<li>
+<p>CP 模式：各个子事务执行后互相等待，同时提交，同时回滚，达成强一致。但事务等待过程中，处于弱可用状态。</p>
+</li>
+</ul>
+<p>但不管是哪一种模式，都需要在子系统事务之间互相通讯，协调事务状态，也就是需要一个<strong>事务协调者 (TC)</strong>：</p>
+<p><img src="img/image-20210724172123567.png" alt="image-20210724172123567"></p>
+<p>这里的子系统事务，称为<strong>分支事务</strong>；有关联的各个分支事务在一起称为<strong>全局事务</strong>。</p>
+<p>3. 初识 Seata</p>
+<p>Seata 是 2019 年 1 月份蚂蚁金服和阿里巴巴共同开源的分布式事务解决方案。致力于提供高性能和简单易用的分布式事务服务，为用户打造一站式的分布式解决方案。</p>
+<p>官网地址：<a target="_blank" rel="noopener" href="http://seata.io/%EF%BC%8C%E5%85%B6%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E3%80%81%E6%92%AD%E5%AE%A2%E4%B8%AD%E6%8F%90%E4%BE%9B%E4%BA%86%E5%A4%A7%E9%87%8F%E7%9A%84%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E3%80%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E3%80%82">http://seata.io/，其中的文档、播客中提供了大量的使用说明、源码分析。</a></p>
+<p><img src="img/image-20210724172225817.png" alt="image-20210724172225817"></p>
+<p>3.1.Seata 的架构</p>
+<p>Seata 事务管理中有三个重要的角色：</p>
+<ul>
+<li>
+<p><strong>TC (Transaction Coordinator) -</strong> ** 事务协调者：** 维护全局和分支事务的状态，协调全局事务提交或回滚。</p>
+</li>
+<li>
+<p><strong>TM (Transaction Manager) -</strong> ** 事务管理器：** 定义全局事务的范围、开始全局事务、提交或回滚全局事务。</p>
+</li>
+<li>
+<p><strong>RM (Resource Manager) -</strong> ** 资源管理器：** 管理分支事务处理的资源，与 TC 交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚。</p>
+</li>
+</ul>
+<p>整体的架构如图：</p>
+<p><img src="img/image-20210724172326452.png" alt="image-20210724172326452"></p>
+<p>Seata 基于上述架构提供了四种不同的分布式事务解决方案：</p>
+<ul>
+<li>XA 模式：强一致性分阶段事务模式，牺牲了一定的可用性，无业务侵入</li>
+<li>TCC 模式：最终一致的分阶段事务模式，有业务侵入</li>
+<li>AT 模式：最终一致的分阶段事务模式，无业务侵入，也是 Seata 的默认模式</li>
+<li>SAGA 模式：长事务模式，有业务侵入</li>
+</ul>
+<p>无论哪种方案，都离不开 TC，也就是事务的协调者。</p>
+<p>3.2. 部署 TC 服务</p>
+<p>参考课前资料提供的文档《 <a target="_blank" rel="noopener" href="http://xn--seata-vn9hk12f0m1b31qe33bern.md">seata 的部署和集成.md</a> 》：</p>
+<p><img src="img/image-20210724172549013.png" alt="image-20210724172549013"></p>
+<p>3.3. 微服务集成 Seata</p>
+<p>我们以 order-service 为例来演示。</p>
+<p>3.3.1. 引入依赖</p>
+<p>首先，在 order-service 中引入依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--seata--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-alibaba-seata<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--版本较低，1.3.0，因此排除--&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>seata-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.seata<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.seata<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>seata-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--seata starter 采用1.4.2版本--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;seata.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>3.3.2. 配置 TC 地址</p>
+<p>在 order-service 中的 application.yml 中，配置 TC 服务信息，通过注册中心 nacos，结合服务名称获取 TC 地址：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">seata:</span></span><br><span class="line">  <span class="attr">registry:</span>  <span class="string">TC服务注册中心的配置，微服务根据这些信息去注册中心获取tc服务地址</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">nacos</span>  <span class="string">注册中心类型</span> <span class="string">nacos</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">server-addr:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:8848</span>  <span class="string">nacos地址</span></span><br><span class="line">      <span class="attr">namespace:</span> <span class="string">&quot;&quot;</span>  <span class="string">namespace，默认为空</span></span><br><span class="line">      <span class="attr">group:</span> <span class="string">DEFAULT_GROUP</span>  <span class="string">分组，默认是DEFAULT_GROUP</span></span><br><span class="line">      <span class="attr">application:</span> <span class="string">seata-tc-server</span>  <span class="string">seata服务名称</span></span><br><span class="line">      <span class="attr">username:</span> <span class="string">nacos</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">nacos</span></span><br><span class="line">  <span class="attr">tx-service-group:</span> <span class="string">seata-demo</span>  <span class="string">事务组名称</span></span><br><span class="line">  <span class="attr">service:</span></span><br><span class="line">    <span class="attr">vgroup-mapping:</span>  <span class="string">事务组与cluster的映射关系</span></span><br><span class="line">      <span class="attr">seata-demo:</span> <span class="string">SH</span></span><br></pre></td></tr></table></figure>
+<p>微服务如何根据这些配置寻找 TC 的地址呢？</p>
+<p>我们知道注册到 Nacos 中的微服务，确定一个具体实例需要四个信息：</p>
+<ul>
+<li>namespace：命名空间</li>
+<li>group：分组</li>
+<li>application：服务名</li>
+<li>cluster：集群名</li>
+</ul>
+<p>以上四个信息，在刚才的 yaml 文件中都能找到：</p>
+<p><img src="img/image-20210724173654258.png" alt="image-20210724173654258"></p>
+<p>namespace 为空，就是默认的 public</p>
+<p>结合起来，TC 服务的信息就是：public@DEFAULT_GROUP@seata-tc-server@SH，这样就能确定 TC 服务集群了。然后就可以去 Nacos 拉取对应的实例信息了。</p>
+<p>3.3.3. 其它服务</p>
+<p>其它两个微服务也都参考 order-service 的步骤来做，完全一样。</p>
+<p>4. 动手实践</p>
+<p>下面我们就一起学习下 Seata 中的四种不同的事务模式。</p>
+<p>4.1.XA 模式</p>
+<p>XA 规范 是 X/Open 组织定义的分布式事务处理（DTP，Distributed Transaction Processing）标准，XA 规范 描述了全局的 TM 与局部的 RM 之间的接口，几乎所有主流的数据库都对 XA 规范 提供了支持。</p>
+<p>4.1.1. 两阶段提交</p>
+<p>XA 是规范，目前主流数据库都实现了这种规范，实现的原理都是基于两阶段提交。</p>
+<p>正常情况：</p>
+<p><img src="img/image-20210724174102768.png" alt="image-20210724174102768"></p>
+<p>异常情况：</p>
+<p><img src="img/image-20210724174234987.png" alt="image-20210724174234987"></p>
+<p>一阶段：</p>
+<ul>
+<li>事务协调者通知每个事物参与者执行本地事务</li>
+<li>本地事务执行完成后报告事务执行状态给事务协调者，此时事务不提交，继续持有数据库锁</li>
+</ul>
+<p>二阶段：</p>
+<ul>
+<li>事务协调者基于一阶段的报告来判断下一步操作
+<ul>
+<li>如果一阶段都成功，则通知所有事务参与者，提交事务</li>
+<li>如果一阶段任意一个参与者失败，则通知所有事务参与者回滚事务</li>
+</ul>
+</li>
+</ul>
+<p>4.1.2.Seata 的 XA 模型</p>
+<p>Seata 对原始的 XA 模式做了简单的封装和改造，以适应自己的事务模型，基本架构如图：</p>
+<p><img src="img/image-20210724174424070.png" alt="image-20210724174424070"></p>
+<p>RM 一阶段的工作：</p>
+<p>​	① 注册分支事务到 TC</p>
+<p>​	② 执行分支业务 sql 但不提交</p>
+<p>​	③ 报告执行状态到 TC</p>
+<p>TC 二阶段的工作：</p>
+<ul>
+<li>
+<p>TC 检测各分支事务执行状态</p>
+<p>a. 如果都成功，通知所有 RM 提交事务</p>
+<p>b. 如果有失败，通知所有 RM 回滚事务</p>
+</li>
+</ul>
+<p>RM 二阶段的工作：</p>
+<ul>
+<li>接收 TC 指令，提交或回滚事务</li>
+</ul>
+<p>4.1.3. 优缺点</p>
+<p>XA 模式的优点是什么？</p>
+<ul>
+<li>事务的强一致性，满足 ACID 原则。</li>
+<li>常用数据库都支持，实现简单，并且没有代码侵入</li>
+</ul>
+<p>XA 模式的缺点是什么？</p>
+<ul>
+<li>因为一阶段需要锁定数据库资源，等待二阶段结束才释放，性能较差</li>
+<li>依赖关系型数据库实现事务</li>
+</ul>
+<p>4.1.4. 实现 XA 模式</p>
+<p>Seata 的 starter 已经完成了 XA 模式的自动装配，实现非常简单，步骤如下：</p>
+<p>1）修改 application.yml 文件（每个参与事务的微服务），开启 XA 模式：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">seata:</span></span><br><span class="line">  <span class="attr">data-source-proxy-mode:</span> <span class="string">XA</span></span><br></pre></td></tr></table></figure>
+<p>2）给发起全局事务的入口方法添加 @GlobalTransactional 注解:</p>
+<p>本例中是 OrderServiceImpl 中的 create 方法.</p>
+<p><img src="img/image-20210724174859556.png" alt="image-20210724174859556"></p>
+<p>3）重启服务并测试</p>
+<p>重启 order-service，再次测试，发现无论怎样，三个微服务都能成功回滚。</p>
+<p>4.2.AT 模式</p>
+<p>AT 模式同样是分阶段提交的事务模型，不过缺弥补了 XA 模型中资源锁定周期过长的缺陷。</p>
+<p>4.2.1.Seata 的 AT 模型</p>
+<p>基本流程图：</p>
+<p><img src="img/image-20210724175327511.png" alt="image-20210724175327511"></p>
+<p>阶段一 RM 的工作：</p>
+<ul>
+<li>注册分支事务</li>
+<li>记录 undo-log（数据快照）</li>
+<li>执行业务 sql 并提交</li>
+<li>报告事务状态</li>
+</ul>
+<p>阶段二提交时 RM 的工作：</p>
+<ul>
+<li>删除 undo-log 即可</li>
+</ul>
+<p>阶段二回滚时 RM 的工作：</p>
+<ul>
+<li>根据 undo-log 恢复数据到更新前</li>
+</ul>
+<p>4.2.2. 流程梳理</p>
+<p>我们用一个真实的业务来梳理下 AT 模式的原理。</p>
+<p>比如，现在又一个数据库表，记录用户余额：</p>
+<table>
+<thead>
+<tr>
+<th><strong>id</strong></th>
+<th><strong>money</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>100</td>
+</tr>
+</tbody>
+</table>
+<p>其中一个分支业务要执行的 SQL 为：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> tb_account <span class="keyword">set</span> money <span class="operator">=</span> money <span class="operator">-</span> <span class="number">10</span> <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>AT 模式下，当前分支事务执行流程如下：</p>
+<p>一阶段：</p>
+<p>1）TM 发起并注册全局事务到 TC</p>
+<p>2）TM 调用分支事务</p>
+<p>3）分支事务准备执行业务 SQL</p>
+<p>4）RM 拦截业务 SQL，根据 where 条件查询原始数据，形成快照。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span> <span class="attr">&quot;money&quot;</span><span class="punctuation">:</span> <span class="number">100</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>5）RM 执行业务 SQL，提交本地事务，释放数据库锁。此时  <code>money = 90</code></p>
+<p>6）RM 报告本地事务状态给 TC</p>
+<p>二阶段：</p>
+<p>1）TM 通知 TC 事务结束</p>
+<p>2）TC 检查分支事务状态</p>
+<p>​	 a）如果都成功，则立即删除快照</p>
+<p>​	 b）如果有分支事务失败，需要回滚。读取快照数据（ <code>&#123;&quot;id&quot;: 1, &quot;money&quot;: 100&#125;</code> ），将快照恢复到数据库。此时数据库再次恢复为 100</p>
+<p>流程图：</p>
+<p><img src="img/image-20210724180722921.png" alt="image-20210724180722921"></p>
+<p>4.2.3.AT 与 XA 的区别</p>
+<p>简述 AT 模式与 XA 模式最大的区别是什么？</p>
+<ul>
+<li>XA 模式一阶段不提交事务，锁定资源；AT 模式一阶段直接提交，不锁定资源。</li>
+<li>XA 模式依赖数据库机制实现回滚；AT 模式利用数据快照实现数据回滚。</li>
+<li>XA 模式强一致；AT 模式最终一致</li>
+</ul>
+<p>4.2.4. 脏写问题</p>
+<p>在多线程并发访问 AT 模式的分布式事务时，有可能出现脏写问题，如图：</p>
+<p><img src="img/image-20210724181541234.png" alt="image-20210724181541234"></p>
+<p>解决思路就是引入了全局锁的概念。在释放 DB 锁之前，先拿到全局锁。避免同一时刻有另外一个事务来操作当前数据。</p>
+<p><img src="img/image-20210724181843029.png" alt="image-20210724181843029"></p>
+<p>4.2.5. 优缺点</p>
+<p>AT 模式的优点：</p>
+<ul>
+<li>一阶段完成直接提交事务，释放数据库资源，性能比较好</li>
+<li>利用全局锁实现读写隔离</li>
+<li>没有代码侵入，框架自动完成回滚和提交</li>
+</ul>
+<p>AT 模式的缺点：</p>
+<ul>
+<li>两阶段之间属于软状态，属于最终一致</li>
+<li>框架的快照功能会影响性能，但比 XA 模式要好很多</li>
+</ul>
+<p>4.2.6. 实现 AT 模式</p>
+<p>AT 模式中的快照生成、回滚等动作都是由框架自动完成，没有任何代码侵入，因此实现非常简单。</p>
+<p>只不过，AT 模式需要一个表来记录全局锁、另一张表来记录数据快照 undo_log。</p>
+<p>1）导入数据库表，记录全局锁</p>
+<p>导入课前资料提供的 Sql 文件：seata-at.sql，其中 lock_table 导入到 TC 服务关联的数据库，undo_log 表导入到微服务关联的数据库：</p>
+<p><img src="img/image-20210724182217272.png" alt="image-20210724182217272"></p>
+<p>2）修改 application.yml 文件，将事务模式修改为 AT 模式即可：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">seata:</span></span><br><span class="line">  <span class="attr">data-source-proxy-mode:</span> <span class="string">AT</span>  <span class="string">默认就是AT</span></span><br></pre></td></tr></table></figure>
+<p>3）重启服务并测试</p>
+<p>4.3.TCC 模式</p>
+<p>TCC 模式与 AT 模式非常相似，每阶段都是独立事务，不同的是 TCC 通过人工编码来实现数据恢复。需要实现三个方法：</p>
+<ul>
+<li>
+<p>Try：资源的检测和预留；</p>
+</li>
+<li>
+<p>Confirm：完成资源操作业务；要求 Try 成功 Confirm 一定要能成功。</p>
+</li>
+<li>
+<p>Cancel：预留资源释放，可以理解为 try 的反向操作。</p>
+</li>
+</ul>
+<p>4.3.1. 流程分析</p>
+<p>举例，一个扣减用户余额的业务。假设账户 A 原来余额是 100，需要余额扣减 30 元。</p>
+<ul>
+<li><strong>阶段一（ Try ）</strong>：检查余额是否充足，如果充足则冻结金额增加 30 元，可用余额扣除 30</li>
+</ul>
+<p>初识余额：</p>
+<p><img src="img/image-20210724182424907.png" alt="image-20210724182424907"></p>
+<p>余额充足，可以冻结：</p>
+<p><img src="img/image-20210724182457951.png" alt="image-20210724182457951"></p>
+<p>此时，总金额 = 冻结金额 + 可用金额，数量依然是 100 不变。事务直接提交无需等待其它事务。</p>
+<ul>
+<li><strong>阶段二（Confirm)</strong>：假如要提交（Confirm），则冻结金额扣减 30</li>
+</ul>
+<p>确认可以提交，不过之前可用金额已经扣减过了，这里只要清除冻结金额就好了：</p>
+<p><img src="img/image-20210724182706011.png" alt="image-20210724182706011"></p>
+<p>此时，总金额 = 冻结金额 + 可用金额 = 0 + 70  = 70 元</p>
+<ul>
+<li><strong>阶段二 (Canncel)</strong>：如果要回滚（Cancel），则冻结金额扣减 30，可用余额增加 30</li>
+</ul>
+<p>需要回滚，那么就要释放冻结金额，恢复可用金额：</p>
+<p><img src="img/image-20210724182810734.png" alt="image-20210724182810734"></p>
+<p>4.3.2.Seata 的 TCC 模型</p>
+<p>Seata 中的 TCC 模型依然延续之前的事务架构，如图：</p>
+<p><img src="img/image-20210724182937713.png" alt="image-20210724182937713"></p>
+<p>4.3.3. 优缺点</p>
+<p>TCC 模式的每个阶段是做什么的？</p>
+<ul>
+<li>Try：资源检查和预留</li>
+<li>Confirm：业务执行和提交</li>
+<li>Cancel：预留资源的释放</li>
+</ul>
+<p>TCC 的优点是什么？</p>
+<ul>
+<li>一阶段完成直接提交事务，释放数据库资源，性能好</li>
+<li>相比 AT 模型，无需生成快照，无需使用全局锁，性能最强</li>
+<li>不依赖数据库事务，而是依赖补偿操作，可以用于非事务型数据库</li>
+</ul>
+<p>TCC 的缺点是什么？</p>
+<ul>
+<li>有代码侵入，需要人为编写 try、Confirm 和 Cancel 接口，太麻烦</li>
+<li>软状态，事务是最终一致</li>
+<li>需要考虑 Confirm 和 Cancel 的失败情况，做好幂等处理</li>
+</ul>
+<p>4.3.4. 事务悬挂和空回滚</p>
+<p>1）空回滚</p>
+<p>当某分支事务的 try 阶段<strong>阻塞</strong>时，可能导致全局事务超时而触发二阶段的 cancel 操作。在未执行 try 操作时先执行了 cancel 操作，这时 cancel 不能做回滚，就是<strong>空回滚</strong>。</p>
+<p>如图：</p>
+<p><img src="img/image-20210724183426891.png" alt="image-20210724183426891"></p>
+<p>执行 cancel 操作时，应当判断 try 是否已经执行，如果尚未执行，则应该空回滚。</p>
+<p>2）业务悬挂</p>
+<p>对于已经空回滚的业务，之前被阻塞的 try 操作恢复，继续执行 try，就永远不可能 confirm 或 cancel ，事务一直处于中间状态，这就是<strong>业务悬挂</strong>。</p>
+<p>执行 try 操作时，应当判断 cancel 是否已经执行过了，如果已经执行，应当阻止空回滚后的 try 操作，避免悬挂</p>
+<p>4.3.5. 实现 TCC 模式</p>
+<p>解决空回滚和业务悬挂问题，必须要记录当前事务状态，是在 try、还是 cancel？</p>
+<p>1）思路分析</p>
+<p>这里我们定义一张表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `account_freeze_tbl` (</span><br><span class="line">  `xid` <span class="type">varchar</span>(<span class="number">128</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `user_id` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;用户id&#x27;</span>,</span><br><span class="line">  `freeze_money` <span class="type">int</span>(<span class="number">11</span>) unsigned <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;冻结金额&#x27;</span>,</span><br><span class="line">  `state` <span class="type">int</span>(<span class="number">1</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;事务状态，0:try，1:confirm，2:cancel&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`xid`) <span class="keyword">USING</span> BTREE</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8 ROW_FORMAT<span class="operator">=</span>COMPACT;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li>xid：是全局事务 id</li>
+<li>freeze_money：用来记录用户冻结金额</li>
+<li>state：用来记录事务状态</li>
+</ul>
+<p>那此时，我们的业务开怎么做呢？</p>
+<ul>
+<li>Try 业务：
+<ul>
+<li>记录冻结金额和事务状态到 account_freeze 表</li>
+<li>扣减 account 表可用金额</li>
+</ul>
+</li>
+<li>Confirm 业务
+<ul>
+<li>根据 xid 删除 account_freeze 表的冻结记录</li>
+</ul>
+</li>
+<li>Cancel 业务
+<ul>
+<li>修改 account_freeze 表，冻结金额为 0，state 为 2</li>
+<li>修改 account 表，恢复可用金额</li>
+</ul>
+</li>
+<li>如何判断是否空回滚？
+<ul>
+<li>cancel 业务中，根据 xid 查询 account_freeze，如果为 null 则说明 try 还没做，需要空回滚</li>
+</ul>
+</li>
+<li>如何避免业务悬挂？
+<ul>
+<li>try 业务中，根据 xid 查询 account_freeze ，如果已经存在则证明 Cancel 已经执行，拒绝执行 try 业务</li>
+</ul>
+</li>
+</ul>
+<p>接下来，我们改造 account-service，利用 TCC 实现余额扣减功能。</p>
+<p>2）声明 TCC 接口</p>
+<p>TCC 的 Try、Confirm、Cancel 方法都需要在接口中基于注解来声明，</p>
+<p>我们在 account-service 项目中的 <code>cn.itcast.account.service</code>  包中新建一个接口，声明 TCC 三个接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.account.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.seata.rm.tcc.api.BusinessActionContext;</span><br><span class="line"><span class="keyword">import</span> io.seata.rm.tcc.api.BusinessActionContextParameter;</span><br><span class="line"><span class="keyword">import</span> io.seata.rm.tcc.api.LocalTCC;</span><br><span class="line"><span class="keyword">import</span> io.seata.rm.tcc.api.TwoPhaseBusinessAction;</span><br><span class="line"></span><br><span class="line"><span class="meta">@LocalTCC</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">AccountTCCService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@TwoPhaseBusinessAction(name = &quot;deduct&quot;, commitMethod = &quot;confirm&quot;, rollbackMethod = &quot;cancel&quot;)</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">deduct</span><span class="params">(<span class="meta">@BusinessActionContextParameter(paramName = &quot;userId&quot;)</span> String userId,</span></span><br><span class="line"><span class="params">                <span class="meta">@BusinessActionContextParameter(paramName = &quot;money&quot;)</span><span class="type">int</span> money)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">confirm</span><span class="params">(BusinessActionContext ctx)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">cancel</span><span class="params">(BusinessActionContext ctx)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3）编写实现类</p>
+<p>在 account-service 服务中的 <code>cn.itcast.account.service.impl</code>  包下新建一个类，实现 TCC 业务：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.account.service.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.itcast.account.entity.AccountFreeze;</span><br><span class="line"><span class="keyword">import</span> cn.itcast.account.mapper.AccountFreezeMapper;</span><br><span class="line"><span class="keyword">import</span> cn.itcast.account.mapper.AccountMapper;</span><br><span class="line"><span class="keyword">import</span> cn.itcast.account.service.AccountTCCService;</span><br><span class="line"><span class="keyword">import</span> io.seata.core.context.RootContext;</span><br><span class="line"><span class="keyword">import</span> io.seata.rm.tcc.api.BusinessActionContext;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> org.springframework.transaction.annotation.Transactional;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AccountTCCServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">AccountTCCService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AccountMapper accountMapper;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AccountFreezeMapper freezeMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deduct</span><span class="params">(String userId, <span class="type">int</span> money)</span> &#123;</span><br><span class="line">        <span class="comment">// 0.获取事务id</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">xid</span> <span class="operator">=</span> RootContext.getXID();</span><br><span class="line">        <span class="comment">// 1.扣减可用余额</span></span><br><span class="line">        accountMapper.deduct(userId, money);</span><br><span class="line">        <span class="comment">// 2.记录冻结金额，事务状态</span></span><br><span class="line">        <span class="type">AccountFreeze</span> <span class="variable">freeze</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AccountFreeze</span>();</span><br><span class="line">        freeze.setUserId(userId);</span><br><span class="line">        freeze.setFreezeMoney(money);</span><br><span class="line">        freeze.setState(AccountFreeze.State.TRY);</span><br><span class="line">        freeze.setXid(xid);</span><br><span class="line">        freezeMapper.insert(freeze);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">confirm</span><span class="params">(BusinessActionContext ctx)</span> &#123;</span><br><span class="line">        <span class="comment">// 1.获取事务id</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">xid</span> <span class="operator">=</span> ctx.getXid();</span><br><span class="line">        <span class="comment">// 2.根据id删除冻结记录</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> freezeMapper.deleteById(xid);</span><br><span class="line">        <span class="keyword">return</span> count == <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">cancel</span><span class="params">(BusinessActionContext ctx)</span> &#123;</span><br><span class="line">        <span class="comment">// 0.查询冻结记录</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">xid</span> <span class="operator">=</span> ctx.getXid();</span><br><span class="line">        <span class="type">AccountFreeze</span> <span class="variable">freeze</span> <span class="operator">=</span> freezeMapper.selectById(xid);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1.恢复可用余额</span></span><br><span class="line">        accountMapper.refund(freeze.getUserId(), freeze.getFreezeMoney());</span><br><span class="line">        <span class="comment">// 2.将冻结金额清零，状态改为CANCEL</span></span><br><span class="line">        freeze.setFreezeMoney(<span class="number">0</span>);</span><br><span class="line">        freeze.setState(AccountFreeze.State.CANCEL);</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> freezeMapper.updateById(freeze);</span><br><span class="line">        <span class="keyword">return</span> count == <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.4.SAGA 模式</p>
+<p>Saga 模式是 Seata 即将开源的长事务解决方案，将由蚂蚁金服主要贡献。</p>
+<p>其理论基础是 Hector &amp; Kenneth  在 1987 年发表的论文<a target="_blank" rel="noopener" href="https://microservices.io/patterns/data/saga.html"> Sagas</a>。</p>
+<p>Seata 官网对于 Saga 的指南：<a target="_blank" rel="noopener" href="https://seata.io/zh-cn/docs/user/saga.html">https://seata.io/zh-cn/docs/user/saga.html</a></p>
+<p>4.4.1. 原理</p>
+<p>在 Saga 模式下，分布式事务内有多个参与者，每一个参与者都是一个冲正补偿服务，需要用户根据业务场景实现其正向操作和逆向回滚操作。</p>
+<p>分布式事务执行过程中，依次执行各参与者的正向操作，如果所有正向操作均执行成功，那么分布式事务提交。如果任何一个正向操作执行失败，那么分布式事务会去退回去执行前面各参与者的逆向回滚操作，回滚已提交的参与者，使分布式事务回到初始状态。</p>
+<p><img src="img/image-20210724184846396.png" alt="image-20210724184846396"></p>
+<p>Saga 也分为两个阶段：</p>
+<ul>
+<li>一阶段：直接提交本地事务</li>
+<li>二阶段：成功则什么都不做；失败则通过编写补偿业务来回滚</li>
+</ul>
+<p>4.4.2. 优缺点</p>
+<p>优点：</p>
+<ul>
+<li>事务参与者可以基于事件驱动实现异步调用，吞吐高</li>
+<li>一阶段直接提交事务，无锁，性能好</li>
+<li>不用编写 TCC 中的三个阶段，实现简单</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>软状态持续时间不确定，时效性差</li>
+<li>没有锁，没有事务隔离，会有脏写</li>
+</ul>
+<p>4.5. 四种模式对比</p>
+<p>我们从以下几个方面来对比四种实现：</p>
+<ul>
+<li>一致性：能否保证事务的一致性？强一致还是最终一致？</li>
+<li>隔离性：事务之间的隔离性如何？</li>
+<li>代码侵入：是否需要对业务代码改造？</li>
+<li>性能：有无性能损耗？</li>
+<li>场景：常见的业务场景</li>
+</ul>
+<p>如图：</p>
+<p><img src="img/image-20210724185021819.png" alt="image-20210724185021819"></p>
+<p>5. 高可用</p>
+<p>Seata 的 TC 服务作为分布式事务核心，一定要保证集群的高可用性。</p>
+<p>5.1. 高可用架构模型</p>
+<p>搭建 TC 服务集群非常简单，启动多个 TC 服务，注册到 nacos 即可。</p>
+<p>但集群并不能确保 100% 安全，万一集群所在机房故障怎么办？所以如果要求较高，一般都会做异地多机房容灾。</p>
+<p>比如一个 TC 集群在上海，另一个 TC 集群在杭州：</p>
+<p><img src="img/image-20210724185240957.png" alt="image-20210724185240957"></p>
+<p>微服务基于事务组（tx-service-group) 与 TC 集群的映射关系，来查找当前应该使用哪个 TC 集群。当 SH 集群故障时，只需要将 vgroup-mapping 中的映射关系改成 HZ。则所有微服务就会切换到 HZ 的 TC 集群了。</p>
+<p>5.2. 实现高可用</p>
+<p>具体实现请参考课前资料提供的文档《<a target="_blank" rel="noopener" href="http://xn--seata-vn9hk12f0m1b31qe33bern.md">seata 的部署和集成.md</a>》：</p>
+<p><img src="img/image-20210724172549013.png" alt="image-20210724172549013"></p>
+<p>第三章节：</p>
+<p><img src="img/image-20210724185638729.png" alt="image-20210724185638729"></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
   <article id="post-使用无服务OpenWhisk云平台实现简单的demo" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   
   <div class="post-content">
@@ -3337,413 +3840,6 @@ wskcli 是 Apache OpenWhisk 的命令行接口（CLI），用来与 OpenWhisk �
 <blockquote>
 <p>说明：在资料中也提供了 CodeGenerator 代码生成器类，根据实际情况修改后可以直接使用。</p>
 </blockquote>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article id="post-Maven进阶" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time class="dt-published" datetime="2024-05-25T05:37:27.000Z"><a href="/Maven%E8%BF%9B%E9%98%B6/">2024-05-25</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/Maven%E8%BF%9B%E9%98%B6/">Maven进阶</a></h1>
-  
-
-    </header>
-    <div class="e-content entry" itemprop="articleBody">
-      
-        <p>学习目标</p>
-<ul class="task-list">
-<li class="task-list-item"><input type="checkbox" id="cbx_0" disabled="true"><label for="cbx_0"> 理解分模块开发的意义</label></li>
-<li class="task-list-item"><input type="checkbox" id="cbx_1" disabled="true"><label for="cbx_1"> 能够使用聚合工程快速构建项目</label></li>
-<li class="task-list-item"><input type="checkbox" id="cbx_2" disabled="true"><label for="cbx_2"> 能够使用继承简化项目配置</label></li>
-<li class="task-list-item"><input type="checkbox" id="cbx_3" disabled="true"><label for="cbx_3"> 能够根据需求配置生产、开发、测试环境，并在各环境间切换运行</label></li>
-</ul>
-<p>一、分模块开发与设计</p>
-<ol>
-<li>分模块开发的意义</li>
-</ol>
-<p>问题导入</p>
-<p>分模块开发对工程有什么好处？</p>
-<p>模块拆分原则</p>
-<p>目的：项目的扩展性变强了，方便其他项目引用相同的功能。</p>
-<p><img src="img/image-20210716092839618.png" alt="image-20210716092839618"></p>
-<ul>
-<li>将原始模块按照功能拆分成若干个子模块，方便模块间的相互调用，接口共享</li>
-</ul>
-<p><img src="img/image-20210805122133568.png" alt="image-20210805122133568"></p>
-<ol start="2">
-<li>分模块开发（模块拆分）</li>
-</ol>
-<p>问题导入</p>
-<p>一个完整的工程依据什么来进行模块的拆分？</p>
-<p>2.1 创建 Maven 模块</p>
-<p><img src="img/image-20210805122213607.png" alt="image-20210805122213607"></p>
-<p>2.2 书写模块代码</p>
-<p>注意事项：</p>
-<ol>
-<li>分模块开发需要先针对模块功能进行设计，再进行编码。不会先将工程开发完毕，然后进行拆分</li>
-</ol>
-<p>2.3 通过 maven 指令安装模块到本地仓库（install 指令）</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn install</span><br></pre></td></tr></table></figure>
-<p>注意事项：</p>
-<ol>
-<li>团队内部开发需要发布模块功能到团队内部可共享的仓库中（私服）</li>
-</ol>
-<p>二、依赖管理</p>
-<ul>
-<li>
-<p>依赖管理指当前项目运行所需的 jar，一个项目可以设置多个依赖</p>
-</li>
-<li>
-<p>格式：</p>
-</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--设置当前项目所依赖的所有jar--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--设置具体的依赖--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--依赖所属群组id--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--依赖所属项目id--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-webmvc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--依赖版本号--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.10.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ol>
-<li>依赖传递</li>
-</ol>
-<p>问题导入</p>
-<p>A 依赖 B，B 依赖 C，A 是否依赖于 C 呢？</p>
-<ul>
-<li>依赖具有传递性
-<ul>
-<li>直接依赖：在当前项目中通过依赖配置建立的依赖关系</li>
-<li>间接依赖：被资源的资源如果依赖其他资源，当前项目间接依赖其他资源</li>
-<li>特殊优先：当同级配置了相同资源的不同版本，后配置的覆盖先配置的</li>
-</ul>
-</li>
-</ul>
-<p><img src="img/image-20210805122632136.png" alt="image-20210805122632136"></p>
-<ol start="2">
-<li>可选依赖</li>
-</ol>
-<p>问题导入</p>
-<p>A 依赖 B，B 依赖 C，如果 A 不想将 C 依赖进来，是否可以做到？</p>
-<ul>
-<li>可选依赖指对外隐藏当前所依赖的资源 ———— 不透明</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.itheima<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven_03_pojo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--可选依赖是隐藏当前工程所依赖的资源，隐藏后对应资源将不具有依赖传递性--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>false<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ol start="3">
-<li>排除依赖</li>
-</ol>
-<p>问题导入</p>
-<p>A 依赖 B，B 依赖 C，如果 A 不想将 C 依赖进来，是否可以做到？</p>
-<ul>
-<li>排除依赖指主动断开依赖的资源，被排除的资源无需指定版本 ———— 不需要</li>
-<li>排除依赖资源仅指定 GA 即可，无需指定 V</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.itheima<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven_04_dao<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--排除依赖是隐藏当前资源对应的依赖关系--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>4 可选依赖和排除依赖的区别</p>
-<p><img src="img/image-20210513163239710.png" alt="image-20210513163239710"></p>
-<p>三、聚合与继承</p>
-<ol>
-<li>聚合工程</li>
-</ol>
-<p>问题导入</p>
-<p>什么叫聚合？</p>
-<ul>
-<li>
-<p>聚合：将多个模块组织成一个整体，同时进行项目构建的过程称为聚合</p>
-</li>
-<li>
-<p>聚合工程：通常是一个不具有业务功能的” 空 “工程（有且仅有一个 pom 文件）</p>
-</li>
-<li>
-<p>作用：使用聚合工程可以将多个工程编组，通过对聚合工程进行构建，实现对所包含的模块进行同步构建</p>
-<ul>
-<li>当工程中某个模块发生更新（变更）时，必须保障工程中与已更新模块关联的模块同步更新，此时可以使用聚合工程来解决批量模块同步构建的问题</li>
-</ul>
-</li>
-</ul>
-<p><img src="img/image-20210805154428870.png" alt="image-20210805154428870"></p>
-<ol start="2">
-<li>聚合工程开发</li>
-</ol>
-<p>问题导入</p>
-<p>工程的打包方式有哪几种？</p>
-<p>2.1 创建 Maven 模块，设置打包类型为 pom</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">packaging</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>注意事项：</p>
-<ol>
-<li>每个 maven 工程都有对应的打包方式，默认为 jar，web 工程打包方式为 war</li>
-</ol>
-<p>2.2 设置当前聚合工程所包含的子模块名称</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">modules</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>../maven_ssm<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>../maven_pojo<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>../maven_dao<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">modules</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>注意事项：</p>
-<ol>
-<li>
-<p>聚合工程中所包含的模块在进行构建时会根据模块间的依赖关系设置构建顺序，与聚合工程中模块的配置书写位置无关。</p>
-</li>
-<li>
-<p>参与聚合的工程无法向上感知是否参与聚合，只能向下配置哪些模块参与本工程的聚合。</p>
-</li>
-<li>
-<p>继承关系</p>
-</li>
-</ol>
-<p>问题导入</p>
-<p>什么叫继承？</p>
-<ul>
-<li>概念：
-<ul>
-<li>继承描述的是两个工程间的关系，与 java 中的继承相似，子工程可以继承父工程中的配置信息，常见于依赖关系的继承</li>
-</ul>
-</li>
-<li>作用：
-<ul>
-<li>简化配置</li>
-<li>减少版本冲突</li>
-</ul>
-</li>
-</ul>
-<p><img src="img/image-20210805123427449.png" alt="image-20210805123427449"></p>
-<ol start="4">
-<li>继承关系开发</li>
-</ol>
-<p>4.1 创建 Maven 模块，设置打包类型为 pom</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">packaging</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>注意事项：</p>
-<ol>
-<li>建议父工程打包方式设置为 pom</li>
-</ol>
-<p>4.2 在父工程的 pom 文件中配置依赖关系（子工程将沿用父工程中的依赖关系）</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-webmvc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.10.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    ……</span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>4.3 配置子工程中可选的依赖关系</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>druid<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.1.16<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        ……</span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>4.3 在子工程中配置当前工程所继承的父工程</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--定义该工程的父工程--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.itheima<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven_parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--填写父工程的pom文件，根据实际情况填写--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">relativePath</span>&gt;</span>../maven_parent/pom.xml<span class="tag">&lt;/<span class="name">relativePath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>4.5 在子工程中配置使用父工程中可选依赖的坐标</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>druid<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>注意事项：</p>
-<ol>
-<li>
-<p>子工程中使用父工程中的可选依赖时，仅需要提供群组 id 和项目 id，无需提供版本，版本由父工程统一提供，避免版本冲突</p>
-</li>
-<li>
-<p>子工程中还可以定义父工程中没有定义的依赖关系</p>
-</li>
-<li>
-<p>聚合与继承的区别</p>
-</li>
-</ol>
-<p>问题导入</p>
-<p>聚合和继承的作用？</p>
-<ul>
-<li>作用
-<ul>
-<li>聚合用于快速构建项目</li>
-<li>继承用于快速配置</li>
-</ul>
-</li>
-<li>相同点：
-<ul>
-<li>聚合与继承的 pom.xml 文件打包方式均为 pom，可以将两种关系制作到同一个 pom 文件中</li>
-<li>聚合与继承均属于设计型模块，并无实际的模块内容</li>
-</ul>
-</li>
-<li>不同点：
-<ul>
-<li>聚合是在当前模块中配置关系，聚合可以感知到参与聚合的模块有哪些</li>
-<li>继承是在子模块中配置关系，父模块无法感知哪些子模块继承了自己</li>
-</ul>
-</li>
-</ul>
-<p>四、属性管理</p>
-<ol>
-<li>属性</li>
-</ol>
-<p>问题导入</p>
-<p>定义属性有什么好处？</p>
-<p><img src="img/image-20210805124018028.png" alt="image-20210805124018028"></p>
-<p>1.1 属性配置与使用</p>
-<p>①：定义属性</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--定义自定义属性--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">spring.version</span>&gt;</span>5.2.10.RELEASE<span class="tag">&lt;/<span class="name">spring.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">junit.version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">junit.version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>②：引用属性</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>1.2 资源文件引用属性</p>
-<p>①：定义属性</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--定义自定义属性--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">spring.version</span>&gt;</span>5.2.10.RELEASE<span class="tag">&lt;/<span class="name">spring.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">junit.version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">junit.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">jdbc.url</span>&gt;</span>jdbc:mysql://127.0.0.1:3306/ssm_db<span class="tag">&lt;/<span class="name">jdbc.url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>②：配置文件中引用属性</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">jdbc.driver</span>=<span class="string">com.mysql.jdbc.Driver</span></span><br><span class="line"><span class="attr">jdbc.url</span>=<span class="string">$&#123;jdbc.url&#125;</span></span><br><span class="line"><span class="attr">jdbc.username</span>=<span class="string">root</span></span><br><span class="line"><span class="attr">jdbc.password</span>=<span class="string">root</span></span><br></pre></td></tr></table></figure>
-<p>③：开启资源文件目录加载属性的过滤器</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">resource</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">directory</span>&gt;</span>$&#123;project.basedir&#125;/src/main/resources<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">filtering</span>&gt;</span>true<span class="tag">&lt;/<span class="name">filtering</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">resource</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>④：配置 maven 打 war 包时，忽略 web.xml 检查</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-war-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">failOnMissingWebXml</span>&gt;</span>false<span class="tag">&lt;/<span class="name">failOnMissingWebXml</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>1.3 其他属性（了解）</p>
-<ul>
-<li>属性列表
-<ul>
-<li>自定义属性（常用）</li>
-<li>内置属性</li>
-<li>Setting 属性</li>
-<li>Java 系统属性</li>
-<li>环境变量属性</li>
-</ul>
-</li>
-</ul>
-<p><img src="img/image-20210805124411768.png" alt="image-20210805124411768"></p>
-<ol start="2">
-<li>版本管理</li>
-</ol>
-<p>问题导入</p>
-<p>项目开发的版本可以分为哪几种？</p>
-<p>2.1 工程版本</p>
-<ul>
-<li>SNAPSHOT（快照版本）
-<ul>
-<li>项目开发过程中临时输出的版本，称为快照版本</li>
-<li>快照版本会随着开发的进展不断更新</li>
-</ul>
-</li>
-<li>RELEASE（发布版本）
-<ul>
-<li>项目开发到进入阶段里程碑后，向团队外部发布较为稳定的版本，这种版本所对应的构件文件是稳定的</li>
-<li>即便进行功能的后续开发，也不会改变当前发布版本内容，这种版本称为发布版本</li>
-</ul>
-</li>
-</ul>
-<p><img src="img/image-20210805124506165.png" alt="image-20210805124506165"></p>
-<p>2.2 发布版本</p>
-<ul>
-<li>alpha 版</li>
-<li>beta 版</li>
-<li>纯数字版</li>
-</ul>
-<p>五、多环境配置与应用</p>
-<ol>
-<li>多环境配置作用</li>
-</ol>
-<p>问题导入</p>
-<p>多环境配置有什么好处？</p>
-<ul>
-<li>maven 提供配置多种环境的设定，帮助开发者使用过程中快速切换环境</li>
-</ul>
-<p><img src="img/image-20210805124805979.png" alt="image-20210805124805979"></p>
-<ol start="2">
-<li>多环境配置步骤</li>
-</ol>
-<p>2.1 定义多环境</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--定义多环境--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--定义具体的环境：生产环境--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--定义环境对应的唯一名称--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span>&gt;</span>env_dep<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--定义环境中专用的属性值--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">jdbc.url</span>&gt;</span>jdbc:mysql://127.0.0.1:3306/ssm_db<span class="tag">&lt;/<span class="name">jdbc.url</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--设置默认启动--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">activation</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">activation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--定义具体的环境：开发环境--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span>&gt;</span>env_pro<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">        ……</span><br><span class="line">    <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>2.2 使用多环境（构建过程）</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">【命令】：</span><br><span class="line">mvn 指令 –P 环境定义id</span><br><span class="line"></span><br><span class="line">【范例】：</span><br><span class="line">mvn install –P pro_env</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>跳过测试（了解）</li>
-</ol>
-<p>问题导入</p>
-<p>跳过测试会不会影响项目的构建过程？</p>
-<p>2.1 应用场景</p>
-<ul>
-<li>功能更新中并且没有开发完毕</li>
-<li>快速打包</li>
-<li>……</li>
-</ul>
-<p>2.2 跳过测试命令</p>
-<ul>
-<li>mvn install –D skipTests</li>
-</ul>
-<p>注意事项：</p>
-<ol>
-<li>执行的项目构建指令必须包含测试生命周期，否则无效果。例如执行 compile 生命周期，不经过 test 生命周期。</li>
-</ol>
-<p>2.3 细粒度控制跳过测试</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-surefire-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.22.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">skipTests</span>&gt;</span>true<span class="tag">&lt;/<span class="name">skipTests</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--设置跳过测试--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--包含指定的测试用例--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/User*Test.java<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--排除指定的测试用例--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>**/User*TestCase.java<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>六、私服</p>
-<ol>
-<li>私服介绍</li>
-</ol>
-<p>问题导入</p>
-<p>这里的私服和平时我们听的国服、体验服、欧服等等有什么区别？</p>
-<p>1.1 介绍</p>
-<ul>
-<li>
-<p>团队开发现状分析</p>
-</li>
-<li>
-<p>私服是一台独立的服务器，用于解决团队内部的资源共享与资源同步问题</p>
-</li>
-<li>
-<p>Nexus</p>
-<ul>
-<li>Sonatype 公司的一款 maven 私服产品</li>
-<li>下载地址：<a target="_blank" rel="noopener" href="https://help.sonatype.com/repomanager3/download">https://help.sonatype.com/repomanager3/download</a></li>
-</ul>
-</li>
-</ul>
-<p><img src="img/image-20210805125240781.png" alt="image-20210805125240781"></p>
-<p>1.2 Nexus 安装与启动</p>
-<ul>
-<li>
-<p>启动服务器（命令行启动）</p>
-<ul>
-<li>nexus.exe /run nexus</li>
-</ul>
-</li>
-<li>
-<p>访问服务器（默认端口：8081）</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://localhost:8081">http://localhost:8081</a></li>
-</ul>
-</li>
-<li>
-<p>修改基础配置信息</p>
-<ul>
-<li>安装路径下 etc 目录中 nexus-default.properties 文件保存有 nexus 基础配置信息，例如默认访问端口。</li>
-</ul>
-</li>
-<li>
-<p>修改服务器运行配置信息</p>
-<ul>
-<li>安装路径下 bin 目录中 nexus.vmoptions 文件保存有 nexus 服务器启动对应的配置信息，例如默认占用内存空间。</li>
-</ul>
-</li>
-</ul>
-<p>1.3 私服资源操作流程分析</p>
-<p><img src="img/image-20210805125509894.png" alt="image-20210805125509894"></p>
-<ol start="2">
-<li>私服仓库分类</li>
-</ol>
-<p>问题导入</p>
-<p>私服仓库分为哪几种？</p>
-<p><img src="img/image-20210805125522304.png" alt="image-20210805125522304"></p>
-<ol start="3">
-<li>资源上传与下载</li>
-</ol>
-<p>问题导入</p>
-<p>往私服上传资源是否需要身份认证？在哪里设置认证信息？</p>
-<p><img src="img/image-20210805125541963.png" alt="image-20210805125541963"></p>
-<p>3.1 从私服中下载依赖</p>
-<p>【第一步】在 maven 的 settings.xml 中 &lt;mirrors&gt; 标签中配置，此时就需要注释掉 aliyun 的配置。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mirror</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>nexus-heima<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mirrorOf</span>&gt;</span>*<span class="tag">&lt;/<span class="name">mirrorOf</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://localhost:8081/repository/maven-public/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mirror</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>【第二步】在 nexus 中设置允许匿名下载，如果不允许将不会从私服中下载依赖</p>
-<p><img src="img/image-20201119201910078.png" alt="image-20201119201910078"></p>
-<p>如果私服中没有对应的 jar，会去中央仓库下载，速度很慢。可以配置让私服去阿里云中下载依赖。</p>
-<p><img src="img/image-20210817102823906.png" alt="image-20210817102823906"></p>
-<p>3.2 上传依赖到私服中</p>
-<p>【第一步】配置本地仓库访问私服的权限（在 maven 的 settings.xml 的 servers 标签中配置）</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">server</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--id任意，多个server的id不重复就行，后面会用到--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">id</span>&gt;</span>heima-nexus<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span><span class="comment">&lt;!--填写自己nexus设定的登录秘密--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">server</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>【第一步】配置当前项目访问私服上传资源的保存位置（项目的 pom.xml 文件中配置）</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">distributionManagement</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">repository</span>&gt;</span></span><br><span class="line">      	<span class="comment">&lt;!--和maven/settings.xml中server中的id一致，表示使用该id对应的用户名和密码--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span>&gt;</span>heima-nexus<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">      	<span class="comment">&lt;!--如果jar的版本是release版本，那么就上传到这个仓库，根据自己情况修改--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://localhost:8081/repository/heima-releases/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">snapshotRepository</span>&gt;</span></span><br><span class="line">      	<span class="comment">&lt;!--和maven/settings.xml中server中的id一致，表示使用该id对应的用户名和密码--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span>&gt;</span>heima-nexus<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">      	<span class="comment">&lt;!--如果jar的版本是snapshot版本，那么就上传到这个仓库，根据自己情况修改--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://localhost:8081/repository/heima-snapshots/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">snapshotRepository</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">distributionManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p><strong><mark>注意：要和 maven 的 settings.xml 中 server 中定义的 &lt;id&gt;heima-nexus&lt;/id &gt; 对应</mark></strong></p>
-<p>【第三步】发布资源到私服命令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn deploy</span><br></pre></td></tr></table></figure>
 
       
     </div>

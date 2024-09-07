@@ -5,8 +5,486 @@
         <link>https://zhuwei290.github.io</link>
         <description></description>
         <language>zh-CN</language>
-        <pubDate>Fri, 23 Aug 2024 00:24:58 +0800</pubDate>
-        <lastBuildDate>Fri, 23 Aug 2024 00:24:58 +0800</lastBuildDate>
+        <pubDate>Sat, 07 Sep 2024 10:44:02 +0800</pubDate>
+        <lastBuildDate>Sat, 07 Sep 2024 10:44:02 +0800</lastBuildDate>
+        <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/</guid>
+            <title>分布式事务</title>
+            <link>https://zhuwei290.github.io/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/</link>
+            <pubDate>Sat, 07 Sep 2024 10:44:02 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;分布式事务&lt;/p&gt;
+&lt;p&gt;0. 学习目标&lt;/p&gt;
+&lt;p&gt;1. 分布式事务问题&lt;/p&gt;
+&lt;p&gt;1.1. 本地事务&lt;/p&gt;
+&lt;p&gt;本地事务，也就是传统的&lt;strong&gt;单机事务&lt;/strong&gt;。在传统数据库事务中，必须要满足四个原则：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724165045186.png&#34; alt=&#34;image-20210724165045186&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.2. 分布式事务&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;分布式事务&lt;/strong&gt;，就是指不是在单个服务或单个数据库架构下，产生的事务，例如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;跨数据源的分布式事务&lt;/li&gt;
+&lt;li&gt;跨服务的分布式事务&lt;/li&gt;
+&lt;li&gt;综合情况&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在数据库水平拆分、服务垂直拆分之后，一个业务操作通常要跨多个数据库、服务才能完成。例如电商行业中比较常见的下单付款案例，包括下面几个行为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;创建新订单&lt;/li&gt;
+&lt;li&gt;扣减商品库存&lt;/li&gt;
+&lt;li&gt;从用户账户余额扣除金额&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;完成上面的操作需要访问三个不同的微服务和三个不同的数据库。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724165338958.png&#34; alt=&#34;image-20210724165338958&#34;&gt;&lt;/p&gt;
+&lt;p&gt;订单的创建、库存的扣减、账户扣款在每一个服务和数据库内是一个本地事务，可以保证 ACID 原则。&lt;/p&gt;
+&lt;p&gt;但是当我们把三件事情看做一个 &amp;quot;业务&amp;quot;，要满足保证 “业务” 的原子性，要么所有操作全部成功，要么全部失败，不允许出现部分成功部分失败的现象，这就是&lt;strong&gt;分布式系统下的事务&lt;/strong&gt;了。&lt;/p&gt;
+&lt;p&gt;此时 ACID 难以满足，这是分布式事务要解决的问题&lt;/p&gt;
+&lt;p&gt;1.3. 演示分布式事务问题&lt;/p&gt;
+&lt;p&gt;我们通过一个案例来演示分布式事务的问题：&lt;/p&gt;
+&lt;p&gt;1）&lt;strong&gt;创建数据库，名为 seata_demo，然后导入课前资料提供的 SQL 文件：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724165634571.png&#34; alt=&#34;image-20210724165634571&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2）&lt;strong&gt;导入课前资料提供的微服务：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724165709994.png&#34; alt=&#34;image-20210724165709994&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微服务结构如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724165729273.png&#34; alt=&#34;image-20210724165729273&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其中：&lt;/p&gt;
+&lt;p&gt;seata-demo：父工程，负责管理项目依赖&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;account-service：账户服务，负责管理用户的资金账户。提供扣减余额的接口&lt;/li&gt;
+&lt;li&gt;storage-service：库存服务，负责管理商品库存。提供扣减库存的接口&lt;/li&gt;
+&lt;li&gt;order-service：订单服务，负责管理订单。创建订单时，需要调用 account-service 和 storage-service&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;3）启动 nacos、所有微服务&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;4）测试下单功能，发出 Post 请求：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;请求如下：&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;curl --location --request POST &lt;span class=&#34;string&#34;&gt;&amp;#x27;http://localhost:8082/order?userId=user202103032042012&amp;amp;commodityCode=100202003032041&amp;amp;count=20&amp;amp;money=200&amp;#x27;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724170113404.png&#34; alt=&#34;image-20210724170113404&#34;&gt;&lt;/p&gt;
+&lt;p&gt;测试发现，当库存不足时，如果余额已经扣减，并不会回滚，出现了分布式事务问题。&lt;/p&gt;
+&lt;p&gt;2. 理论基础&lt;/p&gt;
+&lt;p&gt;解决分布式事务问题，需要一些分布式系统的基础知识作为理论指导。&lt;/p&gt;
+&lt;p&gt;2.1.CAP 定理&lt;/p&gt;
+&lt;p&gt;1998 年，加州大学的计算机科学家 Eric Brewer 提出，分布式系统有三个指标。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Consistency（一致性）&lt;/li&gt;
+&lt;li&gt;Availability（可用性）&lt;/li&gt;
+&lt;li&gt;Partition tolerance （分区容错性）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724170517944.png&#34; alt=&#34;image-20210724170517944&#34;&gt;&lt;/p&gt;
+&lt;p&gt;它们的第一个字母分别是 C、A、P。&lt;/p&gt;
+&lt;p&gt;Eric Brewer 说，这三个指标不可能同时做到。这个结论就叫做 CAP 定理。&lt;/p&gt;
+&lt;p&gt;2.1.1. 一致性&lt;/p&gt;
+&lt;p&gt;Consistency（一致性）：用户访问分布式系统中的任意节点，得到的数据必须一致。&lt;/p&gt;
+&lt;p&gt;比如现在包含两个节点，其中的初始数据是一致的：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724170704694.png&#34; alt=&#34;image-20210724170704694&#34;&gt;&lt;/p&gt;
+&lt;p&gt;当我们修改其中一个节点的数据时，两者的数据产生了差异：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724170735847.png&#34; alt=&#34;image-20210724170735847&#34;&gt;&lt;/p&gt;
+&lt;p&gt;要想保住一致性，就必须实现 node01 到 node02 的数据 同步：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724170834855.png&#34; alt=&#34;image-20210724170834855&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.1.2. 可用性&lt;/p&gt;
+&lt;p&gt;Availability （可用性）：用户访问集群中的任意健康节点，必须能得到响应，而不是超时或拒绝。&lt;/p&gt;
+&lt;p&gt;如图，有三个节点的集群，访问任何一个都可以及时得到响应：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724170932072.png&#34; alt=&#34;image-20210724170932072&#34;&gt;&lt;/p&gt;
+&lt;p&gt;当有部分节点因为网络故障或其它原因无法访问时，代表节点不可用：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724171007516.png&#34; alt=&#34;image-20210724171007516&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.1.3. 分区容错&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Partition（分区）&lt;/strong&gt;：因为网络故障或其它原因导致分布式系统中的部分节点与其它节点失去连接，形成独立分区。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724171041210.png&#34; alt=&#34;image-20210724171041210&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Tolerance（容错）&lt;/strong&gt;：在集群出现分区时，整个系统也要持续对外提供服务&lt;/p&gt;
+&lt;p&gt;2.1.4. 矛盾&lt;/p&gt;
+&lt;p&gt;在分布式系统中，系统间的网络不能 100% 保证健康，一定会有故障的时候，而服务有必须对外保证服务。因此 Partition Tolerance 不可避免。&lt;/p&gt;
+&lt;p&gt;当节点接收到新的数据变更时，就会出现问题了：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724171546472.png&#34; alt=&#34;image-20210724171546472&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如果此时要保证&lt;strong&gt;一致性&lt;/strong&gt;，就必须等待网络恢复，完成数据同步后，整个集群才对外提供服务，服务处于阻塞状态，不可用。&lt;/p&gt;
+&lt;p&gt;如果此时要保证&lt;strong&gt;可用性&lt;/strong&gt;，就不能等待网络恢复，那 node01、node02 与 node03 之间就会出现数据不一致。&lt;/p&gt;
+&lt;p&gt;也就是说，在 P 一定会出现的情况下，A 和 C 之间只能实现一个。&lt;/p&gt;
+&lt;p&gt;2.2.BASE 理论&lt;/p&gt;
+&lt;p&gt;BASE 理论是对 CAP 的一种解决思路，包含三个思想：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Basically Available&lt;/strong&gt; &lt;strong&gt;（基本可用）&lt;/strong&gt;：分布式系统在出现故障时，允许损失部分可用性，即保证核心可用。&lt;/li&gt;
+&lt;li&gt;**Soft State（软状态）：** 在一定时间内，允许出现中间状态，比如临时的不一致状态。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Eventually Consistent（最终一致性）&lt;/strong&gt;：虽然无法保证强一致性，但是在软状态结束后，最终达到数据一致。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.3. 解决分布式事务的思路&lt;/p&gt;
+&lt;p&gt;分布式事务最大的问题是各个子事务的一致性问题，因此可以借鉴 CAP 定理和 BASE 理论，有两种解决思路：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;AP 模式：各子事务分别执行和提交，允许出现结果不一致，然后采用弥补措施恢复数据即可，实现最终一致。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;CP 模式：各个子事务执行后互相等待，同时提交，同时回滚，达成强一致。但事务等待过程中，处于弱可用状态。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但不管是哪一种模式，都需要在子系统事务之间互相通讯，协调事务状态，也就是需要一个&lt;strong&gt;事务协调者 (TC)&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724172123567.png&#34; alt=&#34;image-20210724172123567&#34;&gt;&lt;/p&gt;
+&lt;p&gt;这里的子系统事务，称为&lt;strong&gt;分支事务&lt;/strong&gt;；有关联的各个分支事务在一起称为&lt;strong&gt;全局事务&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;3. 初识 Seata&lt;/p&gt;
+&lt;p&gt;Seata 是 2019 年 1 月份蚂蚁金服和阿里巴巴共同开源的分布式事务解决方案。致力于提供高性能和简单易用的分布式事务服务，为用户打造一站式的分布式解决方案。&lt;/p&gt;
+&lt;p&gt;官网地址：&lt;a href=&#34;http://seata.io/%EF%BC%8C%E5%85%B6%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E3%80%81%E6%92%AD%E5%AE%A2%E4%B8%AD%E6%8F%90%E4%BE%9B%E4%BA%86%E5%A4%A7%E9%87%8F%E7%9A%84%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E3%80%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E3%80%82&#34;&gt;http://seata.io/，其中的文档、播客中提供了大量的使用说明、源码分析。&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724172225817.png&#34; alt=&#34;image-20210724172225817&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.1.Seata 的架构&lt;/p&gt;
+&lt;p&gt;Seata 事务管理中有三个重要的角色：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;TC (Transaction Coordinator) -&lt;/strong&gt; ** 事务协调者：** 维护全局和分支事务的状态，协调全局事务提交或回滚。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;TM (Transaction Manager) -&lt;/strong&gt; ** 事务管理器：** 定义全局事务的范围、开始全局事务、提交或回滚全局事务。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;RM (Resource Manager) -&lt;/strong&gt; ** 资源管理器：** 管理分支事务处理的资源，与 TC 交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;整体的架构如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724172326452.png&#34; alt=&#34;image-20210724172326452&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Seata 基于上述架构提供了四种不同的分布式事务解决方案：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;XA 模式：强一致性分阶段事务模式，牺牲了一定的可用性，无业务侵入&lt;/li&gt;
+&lt;li&gt;TCC 模式：最终一致的分阶段事务模式，有业务侵入&lt;/li&gt;
+&lt;li&gt;AT 模式：最终一致的分阶段事务模式，无业务侵入，也是 Seata 的默认模式&lt;/li&gt;
+&lt;li&gt;SAGA 模式：长事务模式，有业务侵入&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;无论哪种方案，都离不开 TC，也就是事务的协调者。&lt;/p&gt;
+&lt;p&gt;3.2. 部署 TC 服务&lt;/p&gt;
+&lt;p&gt;参考课前资料提供的文档《 &lt;a href=&#34;http://xn--seata-vn9hk12f0m1b31qe33bern.md&#34;&gt;seata 的部署和集成.md&lt;/a&gt; 》：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724172549013.png&#34; alt=&#34;image-20210724172549013&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.3. 微服务集成 Seata&lt;/p&gt;
+&lt;p&gt;我们以 order-service 为例来演示。&lt;/p&gt;
+&lt;p&gt;3.3.1. 引入依赖&lt;/p&gt;
+&lt;p&gt;首先，在 order-service 中引入依赖：&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;&amp;lt;!--seata--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;com.alibaba.cloud&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-cloud-starter-alibaba-seata&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;exclusions&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--版本较低，1.3.0，因此排除--&amp;gt;&lt;/span&gt; &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;exclusion&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;seata-spring-boot-starter&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;io.seata&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;exclusion&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;exclusions&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;io.seata&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;seata-spring-boot-starter&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;&amp;lt;!--seata starter 采用1.4.2版本--&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;$&amp;#123;seata.version&amp;#125;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;version&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;3.3.2. 配置 TC 地址&lt;/p&gt;
+&lt;p&gt;在 order-service 中的 application.yml 中，配置 TC 服务信息，通过注册中心 nacos，结合服务名称获取 TC 地址：&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;seata:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;registry:&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;TC服务注册中心的配置，微服务根据这些信息去注册中心获取tc服务地址&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;type:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;nacos&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;注册中心类型&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;nacos&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;nacos:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;server-addr:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;127.0&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.0&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.1&lt;/span&gt;&lt;span class=&#34;string&#34;&gt;:8848&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;nacos地址&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;namespace:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;quot;&amp;quot;&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;namespace，默认为空&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;group:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;DEFAULT_GROUP&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;分组，默认是DEFAULT_GROUP&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;application:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;seata-tc-server&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;seata服务名称&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;username:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;nacos&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;password:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;nacos&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;tx-service-group:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;seata-demo&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;事务组名称&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;service:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;vgroup-mapping:&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;事务组与cluster的映射关系&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;seata-demo:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;SH&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;微服务如何根据这些配置寻找 TC 的地址呢？&lt;/p&gt;
+&lt;p&gt;我们知道注册到 Nacos 中的微服务，确定一个具体实例需要四个信息：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;namespace：命名空间&lt;/li&gt;
+&lt;li&gt;group：分组&lt;/li&gt;
+&lt;li&gt;application：服务名&lt;/li&gt;
+&lt;li&gt;cluster：集群名&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以上四个信息，在刚才的 yaml 文件中都能找到：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724173654258.png&#34; alt=&#34;image-20210724173654258&#34;&gt;&lt;/p&gt;
+&lt;p&gt;namespace 为空，就是默认的 public&lt;/p&gt;
+&lt;p&gt;结合起来，TC 服务的信息就是：public@DEFAULT_GROUP@seata-tc-server@SH，这样就能确定 TC 服务集群了。然后就可以去 Nacos 拉取对应的实例信息了。&lt;/p&gt;
+&lt;p&gt;3.3.3. 其它服务&lt;/p&gt;
+&lt;p&gt;其它两个微服务也都参考 order-service 的步骤来做，完全一样。&lt;/p&gt;
+&lt;p&gt;4. 动手实践&lt;/p&gt;
+&lt;p&gt;下面我们就一起学习下 Seata 中的四种不同的事务模式。&lt;/p&gt;
+&lt;p&gt;4.1.XA 模式&lt;/p&gt;
+&lt;p&gt;XA 规范 是 X/Open 组织定义的分布式事务处理（DTP，Distributed Transaction Processing）标准，XA 规范 描述了全局的 TM 与局部的 RM 之间的接口，几乎所有主流的数据库都对 XA 规范 提供了支持。&lt;/p&gt;
+&lt;p&gt;4.1.1. 两阶段提交&lt;/p&gt;
+&lt;p&gt;XA 是规范，目前主流数据库都实现了这种规范，实现的原理都是基于两阶段提交。&lt;/p&gt;
+&lt;p&gt;正常情况：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724174102768.png&#34; alt=&#34;image-20210724174102768&#34;&gt;&lt;/p&gt;
+&lt;p&gt;异常情况：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724174234987.png&#34; alt=&#34;image-20210724174234987&#34;&gt;&lt;/p&gt;
+&lt;p&gt;一阶段：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;事务协调者通知每个事物参与者执行本地事务&lt;/li&gt;
+&lt;li&gt;本地事务执行完成后报告事务执行状态给事务协调者，此时事务不提交，继续持有数据库锁&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;二阶段：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;事务协调者基于一阶段的报告来判断下一步操作
+&lt;ul&gt;
+&lt;li&gt;如果一阶段都成功，则通知所有事务参与者，提交事务&lt;/li&gt;
+&lt;li&gt;如果一阶段任意一个参与者失败，则通知所有事务参与者回滚事务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.1.2.Seata 的 XA 模型&lt;/p&gt;
+&lt;p&gt;Seata 对原始的 XA 模式做了简单的封装和改造，以适应自己的事务模型，基本架构如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724174424070.png&#34; alt=&#34;image-20210724174424070&#34;&gt;&lt;/p&gt;
+&lt;p&gt;RM 一阶段的工作：&lt;/p&gt;
+&lt;p&gt;​	① 注册分支事务到 TC&lt;/p&gt;
+&lt;p&gt;​	② 执行分支业务 sql 但不提交&lt;/p&gt;
+&lt;p&gt;​	③ 报告执行状态到 TC&lt;/p&gt;
+&lt;p&gt;TC 二阶段的工作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;TC 检测各分支事务执行状态&lt;/p&gt;
+&lt;p&gt;a. 如果都成功，通知所有 RM 提交事务&lt;/p&gt;
+&lt;p&gt;b. 如果有失败，通知所有 RM 回滚事务&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;RM 二阶段的工作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;接收 TC 指令，提交或回滚事务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.1.3. 优缺点&lt;/p&gt;
+&lt;p&gt;XA 模式的优点是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;事务的强一致性，满足 ACID 原则。&lt;/li&gt;
+&lt;li&gt;常用数据库都支持，实现简单，并且没有代码侵入&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;XA 模式的缺点是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;因为一阶段需要锁定数据库资源，等待二阶段结束才释放，性能较差&lt;/li&gt;
+&lt;li&gt;依赖关系型数据库实现事务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.1.4. 实现 XA 模式&lt;/p&gt;
+&lt;p&gt;Seata 的 starter 已经完成了 XA 模式的自动装配，实现非常简单，步骤如下：&lt;/p&gt;
+&lt;p&gt;1）修改 application.yml 文件（每个参与事务的微服务），开启 XA 模式：&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;seata:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;data-source-proxy-mode:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;XA&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2）给发起全局事务的入口方法添加 @GlobalTransactional 注解:&lt;/p&gt;
+&lt;p&gt;本例中是 OrderServiceImpl 中的 create 方法.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724174859556.png&#34; alt=&#34;image-20210724174859556&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3）重启服务并测试&lt;/p&gt;
+&lt;p&gt;重启 order-service，再次测试，发现无论怎样，三个微服务都能成功回滚。&lt;/p&gt;
+&lt;p&gt;4.2.AT 模式&lt;/p&gt;
+&lt;p&gt;AT 模式同样是分阶段提交的事务模型，不过缺弥补了 XA 模型中资源锁定周期过长的缺陷。&lt;/p&gt;
+&lt;p&gt;4.2.1.Seata 的 AT 模型&lt;/p&gt;
+&lt;p&gt;基本流程图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724175327511.png&#34; alt=&#34;image-20210724175327511&#34;&gt;&lt;/p&gt;
+&lt;p&gt;阶段一 RM 的工作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;注册分支事务&lt;/li&gt;
+&lt;li&gt;记录 undo-log（数据快照）&lt;/li&gt;
+&lt;li&gt;执行业务 sql 并提交&lt;/li&gt;
+&lt;li&gt;报告事务状态&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;阶段二提交时 RM 的工作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;删除 undo-log 即可&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;阶段二回滚时 RM 的工作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;根据 undo-log 恢复数据到更新前&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.2.2. 流程梳理&lt;/p&gt;
+&lt;p&gt;我们用一个真实的业务来梳理下 AT 模式的原理。&lt;/p&gt;
+&lt;p&gt;比如，现在又一个数据库表，记录用户余额：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;id&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;money&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;100&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;其中一个分支业务要执行的 SQL 为：&lt;/p&gt;
+&lt;figure class=&#34;highlight sql&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;update&lt;/span&gt; tb_account &lt;span class=&#34;keyword&#34;&gt;set&lt;/span&gt; money &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; money &lt;span class=&#34;operator&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;where&lt;/span&gt; id &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;AT 模式下，当前分支事务执行流程如下：&lt;/p&gt;
+&lt;p&gt;一阶段：&lt;/p&gt;
+&lt;p&gt;1）TM 发起并注册全局事务到 TC&lt;/p&gt;
+&lt;p&gt;2）TM 调用分支事务&lt;/p&gt;
+&lt;p&gt;3）分支事务准备执行业务 SQL&lt;/p&gt;
+&lt;p&gt;4）RM 拦截业务 SQL，根据 where 条件查询原始数据，形成快照。&lt;/p&gt;
+&lt;figure class=&#34;highlight json&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;punctuation&#34;&gt;&amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;&amp;quot;id&amp;quot;&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;attr&#34;&gt;&amp;quot;money&amp;quot;&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;100&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;punctuation&#34;&gt;&amp;#125;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;5）RM 执行业务 SQL，提交本地事务，释放数据库锁。此时  &lt;code&gt;money = 90&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;6）RM 报告本地事务状态给 TC&lt;/p&gt;
+&lt;p&gt;二阶段：&lt;/p&gt;
+&lt;p&gt;1）TM 通知 TC 事务结束&lt;/p&gt;
+&lt;p&gt;2）TC 检查分支事务状态&lt;/p&gt;
+&lt;p&gt;​	 a）如果都成功，则立即删除快照&lt;/p&gt;
+&lt;p&gt;​	 b）如果有分支事务失败，需要回滚。读取快照数据（ &lt;code&gt;&amp;#123;&amp;quot;id&amp;quot;: 1, &amp;quot;money&amp;quot;: 100&amp;#125;&lt;/code&gt; ），将快照恢复到数据库。此时数据库再次恢复为 100&lt;/p&gt;
+&lt;p&gt;流程图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724180722921.png&#34; alt=&#34;image-20210724180722921&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.2.3.AT 与 XA 的区别&lt;/p&gt;
+&lt;p&gt;简述 AT 模式与 XA 模式最大的区别是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;XA 模式一阶段不提交事务，锁定资源；AT 模式一阶段直接提交，不锁定资源。&lt;/li&gt;
+&lt;li&gt;XA 模式依赖数据库机制实现回滚；AT 模式利用数据快照实现数据回滚。&lt;/li&gt;
+&lt;li&gt;XA 模式强一致；AT 模式最终一致&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.2.4. 脏写问题&lt;/p&gt;
+&lt;p&gt;在多线程并发访问 AT 模式的分布式事务时，有可能出现脏写问题，如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724181541234.png&#34; alt=&#34;image-20210724181541234&#34;&gt;&lt;/p&gt;
+&lt;p&gt;解决思路就是引入了全局锁的概念。在释放 DB 锁之前，先拿到全局锁。避免同一时刻有另外一个事务来操作当前数据。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724181843029.png&#34; alt=&#34;image-20210724181843029&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.2.5. 优缺点&lt;/p&gt;
+&lt;p&gt;AT 模式的优点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一阶段完成直接提交事务，释放数据库资源，性能比较好&lt;/li&gt;
+&lt;li&gt;利用全局锁实现读写隔离&lt;/li&gt;
+&lt;li&gt;没有代码侵入，框架自动完成回滚和提交&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;AT 模式的缺点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;两阶段之间属于软状态，属于最终一致&lt;/li&gt;
+&lt;li&gt;框架的快照功能会影响性能，但比 XA 模式要好很多&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.2.6. 实现 AT 模式&lt;/p&gt;
+&lt;p&gt;AT 模式中的快照生成、回滚等动作都是由框架自动完成，没有任何代码侵入，因此实现非常简单。&lt;/p&gt;
+&lt;p&gt;只不过，AT 模式需要一个表来记录全局锁、另一张表来记录数据快照 undo_log。&lt;/p&gt;
+&lt;p&gt;1）导入数据库表，记录全局锁&lt;/p&gt;
+&lt;p&gt;导入课前资料提供的 Sql 文件：seata-at.sql，其中 lock_table 导入到 TC 服务关联的数据库，undo_log 表导入到微服务关联的数据库：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724182217272.png&#34; alt=&#34;image-20210724182217272&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2）修改 application.yml 文件，将事务模式修改为 AT 模式即可：&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;seata:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;data-source-proxy-mode:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;AT&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;默认就是AT&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;3）重启服务并测试&lt;/p&gt;
+&lt;p&gt;4.3.TCC 模式&lt;/p&gt;
+&lt;p&gt;TCC 模式与 AT 模式非常相似，每阶段都是独立事务，不同的是 TCC 通过人工编码来实现数据恢复。需要实现三个方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Try：资源的检测和预留；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Confirm：完成资源操作业务；要求 Try 成功 Confirm 一定要能成功。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Cancel：预留资源释放，可以理解为 try 的反向操作。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.3.1. 流程分析&lt;/p&gt;
+&lt;p&gt;举例，一个扣减用户余额的业务。假设账户 A 原来余额是 100，需要余额扣减 30 元。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;阶段一（ Try ）&lt;/strong&gt;：检查余额是否充足，如果充足则冻结金额增加 30 元，可用余额扣除 30&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;初识余额：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724182424907.png&#34; alt=&#34;image-20210724182424907&#34;&gt;&lt;/p&gt;
+&lt;p&gt;余额充足，可以冻结：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724182457951.png&#34; alt=&#34;image-20210724182457951&#34;&gt;&lt;/p&gt;
+&lt;p&gt;此时，总金额 = 冻结金额 + 可用金额，数量依然是 100 不变。事务直接提交无需等待其它事务。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;阶段二（Confirm)&lt;/strong&gt;：假如要提交（Confirm），则冻结金额扣减 30&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;确认可以提交，不过之前可用金额已经扣减过了，这里只要清除冻结金额就好了：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724182706011.png&#34; alt=&#34;image-20210724182706011&#34;&gt;&lt;/p&gt;
+&lt;p&gt;此时，总金额 = 冻结金额 + 可用金额 = 0 + 70  = 70 元&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;阶段二 (Canncel)&lt;/strong&gt;：如果要回滚（Cancel），则冻结金额扣减 30，可用余额增加 30&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;需要回滚，那么就要释放冻结金额，恢复可用金额：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724182810734.png&#34; alt=&#34;image-20210724182810734&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.3.2.Seata 的 TCC 模型&lt;/p&gt;
+&lt;p&gt;Seata 中的 TCC 模型依然延续之前的事务架构，如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724182937713.png&#34; alt=&#34;image-20210724182937713&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.3.3. 优缺点&lt;/p&gt;
+&lt;p&gt;TCC 模式的每个阶段是做什么的？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Try：资源检查和预留&lt;/li&gt;
+&lt;li&gt;Confirm：业务执行和提交&lt;/li&gt;
+&lt;li&gt;Cancel：预留资源的释放&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;TCC 的优点是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一阶段完成直接提交事务，释放数据库资源，性能好&lt;/li&gt;
+&lt;li&gt;相比 AT 模型，无需生成快照，无需使用全局锁，性能最强&lt;/li&gt;
+&lt;li&gt;不依赖数据库事务，而是依赖补偿操作，可以用于非事务型数据库&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;TCC 的缺点是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有代码侵入，需要人为编写 try、Confirm 和 Cancel 接口，太麻烦&lt;/li&gt;
+&lt;li&gt;软状态，事务是最终一致&lt;/li&gt;
+&lt;li&gt;需要考虑 Confirm 和 Cancel 的失败情况，做好幂等处理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.3.4. 事务悬挂和空回滚&lt;/p&gt;
+&lt;p&gt;1）空回滚&lt;/p&gt;
+&lt;p&gt;当某分支事务的 try 阶段&lt;strong&gt;阻塞&lt;/strong&gt;时，可能导致全局事务超时而触发二阶段的 cancel 操作。在未执行 try 操作时先执行了 cancel 操作，这时 cancel 不能做回滚，就是&lt;strong&gt;空回滚&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724183426891.png&#34; alt=&#34;image-20210724183426891&#34;&gt;&lt;/p&gt;
+&lt;p&gt;执行 cancel 操作时，应当判断 try 是否已经执行，如果尚未执行，则应该空回滚。&lt;/p&gt;
+&lt;p&gt;2）业务悬挂&lt;/p&gt;
+&lt;p&gt;对于已经空回滚的业务，之前被阻塞的 try 操作恢复，继续执行 try，就永远不可能 confirm 或 cancel ，事务一直处于中间状态，这就是&lt;strong&gt;业务悬挂&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;执行 try 操作时，应当判断 cancel 是否已经执行过了，如果已经执行，应当阻止空回滚后的 try 操作，避免悬挂&lt;/p&gt;
+&lt;p&gt;4.3.5. 实现 TCC 模式&lt;/p&gt;
+&lt;p&gt;解决空回滚和业务悬挂问题，必须要记录当前事务状态，是在 try、还是 cancel？&lt;/p&gt;
+&lt;p&gt;1）思路分析&lt;/p&gt;
+&lt;p&gt;这里我们定义一张表：&lt;/p&gt;
+&lt;figure class=&#34;highlight sql&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;CREATE&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;TABLE&lt;/span&gt; `account_freeze_tbl` (&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  `xid` &lt;span class=&#34;type&#34;&gt;varchar&lt;/span&gt;(&lt;span class=&#34;number&#34;&gt;128&lt;/span&gt;) &lt;span class=&#34;keyword&#34;&gt;NOT&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;NULL&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  `user_id` &lt;span class=&#34;type&#34;&gt;varchar&lt;/span&gt;(&lt;span class=&#34;number&#34;&gt;255&lt;/span&gt;) &lt;span class=&#34;keyword&#34;&gt;DEFAULT&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;NULL&lt;/span&gt; COMMENT &lt;span class=&#34;string&#34;&gt;&amp;#x27;用户id&amp;#x27;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  `freeze_money` &lt;span class=&#34;type&#34;&gt;int&lt;/span&gt;(&lt;span class=&#34;number&#34;&gt;11&lt;/span&gt;) unsigned &lt;span class=&#34;keyword&#34;&gt;DEFAULT&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;#x27;0&amp;#x27;&lt;/span&gt; COMMENT &lt;span class=&#34;string&#34;&gt;&amp;#x27;冻结金额&amp;#x27;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  `state` &lt;span class=&#34;type&#34;&gt;int&lt;/span&gt;(&lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;) &lt;span class=&#34;keyword&#34;&gt;DEFAULT&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;NULL&lt;/span&gt; COMMENT &lt;span class=&#34;string&#34;&gt;&amp;#x27;事务状态，0:try，1:confirm，2:cancel&amp;#x27;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;keyword&#34;&gt;PRIMARY&lt;/span&gt; KEY (`xid`) &lt;span class=&#34;keyword&#34;&gt;USING&lt;/span&gt; BTREE&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;) ENGINE&lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt;InnoDB &lt;span class=&#34;keyword&#34;&gt;DEFAULT&lt;/span&gt; CHARSET&lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt;utf8 ROW_FORMAT&lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt;COMPACT;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;其中：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;xid：是全局事务 id&lt;/li&gt;
+&lt;li&gt;freeze_money：用来记录用户冻结金额&lt;/li&gt;
+&lt;li&gt;state：用来记录事务状态&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;那此时，我们的业务开怎么做呢？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Try 业务：
+&lt;ul&gt;
+&lt;li&gt;记录冻结金额和事务状态到 account_freeze 表&lt;/li&gt;
+&lt;li&gt;扣减 account 表可用金额&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Confirm 业务
+&lt;ul&gt;
+&lt;li&gt;根据 xid 删除 account_freeze 表的冻结记录&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Cancel 业务
+&lt;ul&gt;
+&lt;li&gt;修改 account_freeze 表，冻结金额为 0，state 为 2&lt;/li&gt;
+&lt;li&gt;修改 account 表，恢复可用金额&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;如何判断是否空回滚？
+&lt;ul&gt;
+&lt;li&gt;cancel 业务中，根据 xid 查询 account_freeze，如果为 null 则说明 try 还没做，需要空回滚&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;如何避免业务悬挂？
+&lt;ul&gt;
+&lt;li&gt;try 业务中，根据 xid 查询 account_freeze ，如果已经存在则证明 Cancel 已经执行，拒绝执行 try 业务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;接下来，我们改造 account-service，利用 TCC 实现余额扣减功能。&lt;/p&gt;
+&lt;p&gt;2）声明 TCC 接口&lt;/p&gt;
+&lt;p&gt;TCC 的 Try、Confirm、Cancel 方法都需要在接口中基于注解来声明，&lt;/p&gt;
+&lt;p&gt;我们在 account-service 项目中的 &lt;code&gt;cn.itcast.account.service&lt;/code&gt;  包中新建一个接口，声明 TCC 三个接口：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;package&lt;/span&gt; cn.itcast.account.service;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; io.seata.rm.tcc.api.BusinessActionContext;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; io.seata.rm.tcc.api.BusinessActionContextParameter;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; io.seata.rm.tcc.api.LocalTCC;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; io.seata.rm.tcc.api.TwoPhaseBusinessAction;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@LocalTCC&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;AccountTCCService&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@TwoPhaseBusinessAction(name = &amp;quot;deduct&amp;quot;, commitMethod = &amp;quot;confirm&amp;quot;, rollbackMethod = &amp;quot;cancel&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;deduct&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(&lt;span class=&#34;meta&#34;&gt;@BusinessActionContextParameter(paramName = &amp;quot;userId&amp;quot;)&lt;/span&gt; String userId,&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;params&#34;&gt;                &lt;span class=&#34;meta&#34;&gt;@BusinessActionContextParameter(paramName = &amp;quot;money&amp;quot;)&lt;/span&gt;&lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; money)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;confirm&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(BusinessActionContext ctx)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;cancel&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(BusinessActionContext ctx)&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;3）编写实现类&lt;/p&gt;
+&lt;p&gt;在 account-service 服务中的 &lt;code&gt;cn.itcast.account.service.impl&lt;/code&gt;  包下新建一个类，实现 TCC 业务：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;45&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;46&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;47&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;48&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;49&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;50&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;51&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;52&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;53&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;54&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;55&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;56&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;57&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;58&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;59&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;60&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;61&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;62&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;package&lt;/span&gt; cn.itcast.account.service.impl;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; cn.itcast.account.entity.AccountFreeze;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; cn.itcast.account.mapper.AccountFreezeMapper;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; cn.itcast.account.mapper.AccountMapper;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; cn.itcast.account.service.AccountTCCService;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; io.seata.core.context.RootContext;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; io.seata.rm.tcc.api.BusinessActionContext;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; lombok.extern.slf4j.Slf4j;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.beans.factory.annotation.Autowired;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.stereotype.Service;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.transaction.annotation.Transactional;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Service&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Slf4j&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;AccountTCCServiceImpl&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;implements&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;AccountTCCService&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; AccountMapper accountMapper;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Autowired&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;private&lt;/span&gt; AccountFreezeMapper freezeMapper;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Override&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Transactional&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;deduct&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String userId, &lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; money)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 0.获取事务id&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;xid&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; RootContext.getXID();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 1.扣减可用余额&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        accountMapper.deduct(userId, money);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 2.记录冻结金额，事务状态&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;AccountFreeze&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;freeze&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;AccountFreeze&lt;/span&gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        freeze.setUserId(userId);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        freeze.setFreezeMoney(money);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        freeze.setState(AccountFreeze.State.TRY);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        freeze.setXid(xid);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        freezeMapper.insert(freeze);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Override&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;confirm&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(BusinessActionContext ctx)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 1.获取事务id&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;xid&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; ctx.getXid();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 2.根据id删除冻结记录&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;count&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; freezeMapper.deleteById(xid);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; count == &lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Override&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;type&#34;&gt;boolean&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;cancel&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(BusinessActionContext ctx)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 0.查询冻结记录&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;xid&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; ctx.getXid();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;AccountFreeze&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;freeze&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; freezeMapper.selectById(xid);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 1.恢复可用余额&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        accountMapper.refund(freeze.getUserId(), freeze.getFreezeMoney());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 2.将冻结金额清零，状态改为CANCEL&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        freeze.setFreezeMoney(&lt;span class=&#34;number&#34;&gt;0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        freeze.setState(AccountFreeze.State.CANCEL);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;count&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; freezeMapper.updateById(freeze);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; count == &lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;4.4.SAGA 模式&lt;/p&gt;
+&lt;p&gt;Saga 模式是 Seata 即将开源的长事务解决方案，将由蚂蚁金服主要贡献。&lt;/p&gt;
+&lt;p&gt;其理论基础是 Hector &amp;amp; Kenneth  在 1987 年发表的论文&lt;a href=&#34;https://microservices.io/patterns/data/saga.html&#34;&gt; Sagas&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;Seata 官网对于 Saga 的指南：&lt;a href=&#34;https://seata.io/zh-cn/docs/user/saga.html&#34;&gt;https://seata.io/zh-cn/docs/user/saga.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;4.4.1. 原理&lt;/p&gt;
+&lt;p&gt;在 Saga 模式下，分布式事务内有多个参与者，每一个参与者都是一个冲正补偿服务，需要用户根据业务场景实现其正向操作和逆向回滚操作。&lt;/p&gt;
+&lt;p&gt;分布式事务执行过程中，依次执行各参与者的正向操作，如果所有正向操作均执行成功，那么分布式事务提交。如果任何一个正向操作执行失败，那么分布式事务会去退回去执行前面各参与者的逆向回滚操作，回滚已提交的参与者，使分布式事务回到初始状态。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724184846396.png&#34; alt=&#34;image-20210724184846396&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Saga 也分为两个阶段：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一阶段：直接提交本地事务&lt;/li&gt;
+&lt;li&gt;二阶段：成功则什么都不做；失败则通过编写补偿业务来回滚&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.4.2. 优缺点&lt;/p&gt;
+&lt;p&gt;优点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;事务参与者可以基于事件驱动实现异步调用，吞吐高&lt;/li&gt;
+&lt;li&gt;一阶段直接提交事务，无锁，性能好&lt;/li&gt;
+&lt;li&gt;不用编写 TCC 中的三个阶段，实现简单&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;缺点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;软状态持续时间不确定，时效性差&lt;/li&gt;
+&lt;li&gt;没有锁，没有事务隔离，会有脏写&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.5. 四种模式对比&lt;/p&gt;
+&lt;p&gt;我们从以下几个方面来对比四种实现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一致性：能否保证事务的一致性？强一致还是最终一致？&lt;/li&gt;
+&lt;li&gt;隔离性：事务之间的隔离性如何？&lt;/li&gt;
+&lt;li&gt;代码侵入：是否需要对业务代码改造？&lt;/li&gt;
+&lt;li&gt;性能：有无性能损耗？&lt;/li&gt;
+&lt;li&gt;场景：常见的业务场景&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724185021819.png&#34; alt=&#34;image-20210724185021819&#34;&gt;&lt;/p&gt;
+&lt;p&gt;5. 高可用&lt;/p&gt;
+&lt;p&gt;Seata 的 TC 服务作为分布式事务核心，一定要保证集群的高可用性。&lt;/p&gt;
+&lt;p&gt;5.1. 高可用架构模型&lt;/p&gt;
+&lt;p&gt;搭建 TC 服务集群非常简单，启动多个 TC 服务，注册到 nacos 即可。&lt;/p&gt;
+&lt;p&gt;但集群并不能确保 100% 安全，万一集群所在机房故障怎么办？所以如果要求较高，一般都会做异地多机房容灾。&lt;/p&gt;
+&lt;p&gt;比如一个 TC 集群在上海，另一个 TC 集群在杭州：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724185240957.png&#34; alt=&#34;image-20210724185240957&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微服务基于事务组（tx-service-group) 与 TC 集群的映射关系，来查找当前应该使用哪个 TC 集群。当 SH 集群故障时，只需要将 vgroup-mapping 中的映射关系改成 HZ。则所有微服务就会切换到 HZ 的 TC 集群了。&lt;/p&gt;
+&lt;p&gt;5.2. 实现高可用&lt;/p&gt;
+&lt;p&gt;具体实现请参考课前资料提供的文档《&lt;a href=&#34;http://xn--seata-vn9hk12f0m1b31qe33bern.md&#34;&gt;seata 的部署和集成.md&lt;/a&gt;》：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724172549013.png&#34; alt=&#34;image-20210724172549013&#34;&gt;&lt;/p&gt;
+&lt;p&gt;第三章节：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210724185638729.png&#34; alt=&#34;image-20210724185638729&#34;&gt;&lt;/p&gt;
+ ]]></description>
+        </item>
         <item>
             <guid isPermalink="true">https://zhuwei290.github.io/%E4%BD%BF%E7%94%A8%E6%97%A0%E6%9C%8D%E5%8A%A1OpenWhisk%E4%BA%91%E5%B9%B3%E5%8F%B0%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84demo/</guid>
             <title>使用无服务OpenWhisk云平台实现简单的demo</title>
@@ -5438,6 +5916,432 @@ DI （ Dependency Injection ）依赖注入&lt;br&gt;
  ]]></description>
         </item>
         <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</guid>
+            <title>c++基础入门笔记(4)</title>
+            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</link>
+            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
+4 程序流程结构&lt;br&gt;
+ C/C++ 支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构&lt;/p&gt;
+&lt;p&gt;顺序结构：程序按顺序执行，不发生跳转&lt;br&gt;
+选择结构：依据条件是否满足，有选择的执行相应功能&lt;br&gt;
+循环结构：依据条件是否满足，循环多次执行某段代码&lt;br&gt;
+ 4.1 选择结构&lt;br&gt;
+ 4.1.1 if 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 执行满足条件的语句&lt;/p&gt;
+&lt;p&gt;if 语句的三种形式&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//选择结构-单行if语句
+//输入一个分数，如果分数大于600分，视为考上一本大学，并在屏幕上打印
+
+int score = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请输入一个分数：&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; score;
+
+cout &amp;lt;&amp;lt; &amp;quot;您输入的分数为： &amp;quot; &amp;lt;&amp;lt; score &amp;lt;&amp;lt; endl;
+
+//if语句
+//注意事项，在if判断语句后面，不要加分号
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学！！！&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;多行格式 if 语句：if (条件){ 条件满足执行的语句 } else { 条件不满足执行的语句 };&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int score = 0;
+
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 多条件的 if 语句：if (条件 1){ 条件 1 满足执行的语句 } else if (条件 2){条件 2 满足执行的语句}… else { 都不满足执行的语句}&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int main() &amp;#123;
+
+int score = 0;
+
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 500)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 400)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;嵌套 if 语句：在 if 语句中，可以嵌套使用 if 语句，达到更精确的条件判断&lt;/p&gt;
+&lt;p&gt;案例需求：&lt;/p&gt;
+&lt;p&gt;提示用户输入一个高考考试分数，根据分数做如下判断&lt;br&gt;
+分数如果大于 600 分视为考上一本，大于 500 分考上二本，大于 400 考上三本，其余视为未考上本科；&lt;br&gt;
+在一本分数中，如果大于 700 分，考入北大，大于 650 分，考入清华，大于 600 考入人大。&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int score = 0;
+
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+	if (score &amp;gt; 700)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了北大&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	else if (score &amp;gt; 650)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了清华&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	else
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了人大&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	
+&amp;#125;
+else if (score &amp;gt; 500)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 400)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 练习案例： 三只小猪称体重&lt;/p&gt;
+&lt;p&gt;有三只小猪 ABC，请分别输入三只小猪的体重，并且判断哪只小猪最重？&lt;/p&gt;
+&lt;p&gt;4.1.2 三目运算符&lt;/p&gt;
+&lt;p&gt;作用： 通过三目运算符实现简单的判断&lt;/p&gt;
+&lt;p&gt;语法：表达式 1 ? 表达式 2 ：表达式 3&lt;/p&gt;
+&lt;p&gt;解释：&lt;/p&gt;
+&lt;p&gt;如果表达式 1 的值为真，执行表达式 2，并返回表达式 2 的结果；&lt;/p&gt;
+&lt;p&gt;如果表达式 1 的值为假，执行表达式 3，并返回表达式 3 的结果。&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 20;
+int c = 0;
+
+c = a &amp;gt; b ? a : b;
+cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
+
+//C++中三目运算符返回的是变量,可以继续赋值
+
+(a &amp;gt; b ? a : b) = 100;
+
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;4.1.3 switch 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 执行多条件分支语句&lt;/p&gt;
+&lt;p&gt;语法：&lt;/p&gt;
+&lt;p&gt;switch (表达式)&lt;/p&gt;
+&lt;p&gt;{&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;case 结果1：执行语句;break;
+
+case 结果2：执行语句;break;
+
+...
+
+default:执行语句;break;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//请给电影评分 
+//10 ~ 9   经典   
+// 8 ~ 7   非常好
+// 6 ~ 5   一般
+// 5分以下 烂片
+
+int score = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请给电影打分&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; score;
+
+switch (score)
+&amp;#123;
+case 10:
+case 9:
+	cout &amp;lt;&amp;lt; &amp;quot;经典&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 8:
+	cout &amp;lt;&amp;lt; &amp;quot;非常好&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 7:
+case 6:
+	cout &amp;lt;&amp;lt; &amp;quot;一般&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+default:
+	cout &amp;lt;&amp;lt; &amp;quot;烂片&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;4.2 循环结构&lt;br&gt;
+ 4.2.1 while 循环语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p 循环语句=&#34;&#34;&gt;语法：while (循环条件)&lt;/p&gt;
+&lt;p&gt;解释：只要循环条件的结果为真，就执行循环语句&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+while (num &amp;lt; 10)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;num = &amp;quot; &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
+	num++;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;while 循环练习案例：猜数字&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 系统随机生成一个 1 到 100 之间的数字，玩家进行猜测，如果猜错，提示玩家数字过大或过小，如果猜对恭喜玩家胜利，并且退出游戏。&lt;/p&gt;
+&lt;p&gt;4.2.2 do…while 循环语句&lt;/p&gt;
+&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p&gt;语法： do {循环语句} while (循环条件);&lt;/p&gt;
+&lt;p&gt;** 注意：** 与 while 的区别在于 do…while 会先执行一次循环语句，再判断循环条件&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+
+do
+&amp;#123;
+	cout &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
+	num++;
+
+&amp;#125; while (num &amp;lt; 10);
+
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;练习案例：水仙花数&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 水仙花数是指一个 3 位数，它的每个位上的数字的 3 次幂之和等于它本身&lt;/p&gt;
+&lt;p&gt;例如：1^3 + 5^3+ 3^3 = 153&lt;/p&gt;
+&lt;p&gt;请利用 do…while 语句，求出所有 3 位数中的水仙花数&lt;/p&gt;
+&lt;p&gt;4.2.3 for 循环语句&lt;/p&gt;
+&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p 循环语句;=&#34;&#34;&gt;语法：for (起始表达式；条件表达式；末尾循环体)&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 详解：&lt;/p&gt;
+&lt;p&gt;练习案例：敲桌子&lt;/p&gt;
+&lt;p&gt;案例描述：从 1 开始数到数字 100， 如果数字个位含有 7，或者数字十位含有 7，或者该数字是 7 的倍数，我们打印敲桌子，其余数字直接打印输出。&lt;/p&gt;
+&lt;p&gt;4.2.4 嵌套循环&lt;/p&gt;
+&lt;p&gt;作用： 在循环体中再嵌套一层循环，解决一些实际问题&lt;/p&gt;
+&lt;p&gt;例如我们想在屏幕中打印如下图片，就需要利用嵌套循环&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//外层循环执行1次，内层循环执行1轮
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 10; j++)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;*&amp;quot; &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+** 练习案例：** 乘法口诀表&lt;/p&gt;
+&lt;p&gt;案例描述：利用嵌套循环，实现九九乘法表&lt;/p&gt;
+&lt;p&gt;4.3 跳转语句&lt;br&gt;
+ 4.3.1 break 语句&lt;/p&gt;
+&lt;p&gt;作用: 用于跳出选择结构或者循环结构&lt;/p&gt;
+&lt;p&gt;break 使用的时机：&lt;/p&gt;
+&lt;p&gt;出现在 switch 条件语句中，作用是终止 case 并跳出 switch&lt;br&gt;
+ 出现在循环语句中，作用是跳出当前的循环语句&lt;br&gt;
+出现在嵌套循环中，跳出最近的内层循环语句&lt;br&gt;
+示例 1：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+//1、在 switch 语句中使用 break&lt;br&gt;
+cout &amp;lt;&amp;lt;“请选择您挑战副本的难度：” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“1、普通” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“2、中等” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“3、困难” &amp;lt;&amp;lt; endl;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+
+cin &amp;gt;&amp;gt; num;
+
+switch (num)
+&amp;#123;
+case 1:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是普通难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 2:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是中等难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 3:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是困难难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 示例 2：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+//2、在循环语句中用 break&lt;br&gt;
+for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
+{&lt;br&gt;
+if (i == 5)&lt;br&gt;
+{&lt;br&gt;
+break; // 跳出循环语句&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 示例 3：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+// 在嵌套循环语句中使用 break，退出内层循环&lt;br&gt;
+ for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
+{&lt;br&gt;
+for (int j = 0; j &amp;lt; 10; j++)&lt;br&gt;
+{&lt;br&gt;
+if (j == 5)&lt;br&gt;
+{&lt;br&gt;
+break;&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; “*” &amp;lt;&amp;lt; &amp;quot; &amp;quot;;&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 4.3.2 continue 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 在循环语句中，跳过本次循环中余下尚未执行的语句，继续执行下一次循环&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 100; i++)
+&amp;#123;
+	if (i % 2 == 0)
+	&amp;#123;
+		continue;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;4.3.3 goto 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 可以无条件跳转语句&lt;/p&gt;
+&lt;p&gt;语法： goto 标记；&lt;/p&gt;
+&lt;p&gt;** 解释：** 如果标记的名称存在，执行到 goto 语句时，会跳转到标记的位置&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;1&amp;quot; &amp;lt;&amp;lt; endl;
+
+goto FLAG;
+
+cout &amp;lt;&amp;lt; &amp;quot;2&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;3&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
+
+FLAG:
+
+cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+ ]]></description>
+        </item>
+        <item>
             <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</guid>
             <title>c++基础入门笔记(2)</title>
             <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</link>
@@ -5964,422 +6868,192 @@ return 0;
  ]]></description>
         </item>
         <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</guid>
-            <title>c++基础入门笔记(4)</title>
-            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</link>
+            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</guid>
+            <title>c++基础入门笔记(6)</title>
+            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</link>
             <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
             <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
-4 程序流程结构&lt;br&gt;
- C/C++ 支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构&lt;/p&gt;
-&lt;p&gt;顺序结构：程序按顺序执行，不发生跳转&lt;br&gt;
-选择结构：依据条件是否满足，有选择的执行相应功能&lt;br&gt;
-循环结构：依据条件是否满足，循环多次执行某段代码&lt;br&gt;
- 4.1 选择结构&lt;br&gt;
- 4.1.1 if 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 执行满足条件的语句&lt;/p&gt;
-&lt;p&gt;if 语句的三种形式&lt;/p&gt;
+6 函数&lt;br&gt;
+ 6.1 概述&lt;br&gt;
+ ** 作用：** 将一段经常使用的代码封装起来，减少重复代码&lt;/p&gt;
+&lt;p&gt;一个较大的程序，一般分为若干个程序块，每个模块实现特定的功能。&lt;/p&gt;
+&lt;p&gt;6.2 函数的定义&lt;br&gt;
+函数的定义一般主要有 5 个步骤：&lt;/p&gt;
+&lt;p&gt;1、返回值类型&lt;/p&gt;
+&lt;p&gt;2、函数名&lt;/p&gt;
+&lt;p&gt;3、参数表列&lt;/p&gt;
+&lt;p&gt;4、函数体语句&lt;/p&gt;
+&lt;p&gt;5、return 表达式&lt;/p&gt;
+&lt;p&gt;语法：&lt;/p&gt;
+&lt;p&gt;返回值类型 函数名 （参数列表）&lt;br&gt;
+{&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;   函数体语句
+
+   return表达式
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 返回值类型 ：一个函数可以返回一个值。在函数定义中&lt;br&gt;
+函数名：给函数起个名称&lt;br&gt;
+参数列表：使用该函数时，传入的数据&lt;br&gt;
+函数体语句：花括号内的代码，函数内需要执行的语句&lt;br&gt;
+ return 表达式： 和返回值类型挂钩，函数执行完后，返回相应的数据&lt;br&gt;
+ ** 示例：** 定义一个加法函数，实现两个数相加&lt;/p&gt;
+&lt;p&gt;// 函数定义&lt;br&gt;
+ int add (int num1, int num2)&lt;br&gt;
+{&lt;br&gt;
+int sum = num1 + num2;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;br&gt;
+ 6.3 函数的调用&lt;br&gt;
+ ** 功能：** 使用定义好的函数&lt;/p&gt;
+&lt;p&gt;语法：函数名（参数）&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;// 函数定义&lt;br&gt;
+ int add (int num1, int num2) // 定义中的 num1,num2 称为形式参数，简称形参&lt;br&gt;
+ {&lt;br&gt;
+int sum = num1 + num2;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;/p&gt;
 &lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//选择结构-单行if语句
-//输入一个分数，如果分数大于600分，视为考上一本大学，并在屏幕上打印
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+//调用add函数
+int sum = add(a, b);//调用时的a，b称为实际参数，简称实参
+cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
 
-int score = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请输入一个分数：&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; score;
+a = 100;
+b = 100;
 
-cout &amp;lt;&amp;lt; &amp;quot;您输入的分数为： &amp;quot; &amp;lt;&amp;lt; score &amp;lt;&amp;lt; endl;
-
-//if语句
-//注意事项，在if判断语句后面，不要加分号
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学！！！&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
+sum = add(a, b);
+cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
 
 system(&amp;quot;pause&amp;quot;);
 
 return 0;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;多行格式 if 语句：if (条件){ 条件满足执行的语句 } else { 条件不满足执行的语句 };&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int score = 0;
-
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
-
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 多条件的 if 语句：if (条件 1){ 条件 1 满足执行的语句 } else if (条件 2){条件 2 满足执行的语句}… else { 都不满足执行的语句}&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int main() &amp;#123;
-
-int score = 0;
-
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
-
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 500)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 400)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;嵌套 if 语句：在 if 语句中，可以嵌套使用 if 语句，达到更精确的条件判断&lt;/p&gt;
-&lt;p&gt;案例需求：&lt;/p&gt;
-&lt;p&gt;提示用户输入一个高考考试分数，根据分数做如下判断&lt;br&gt;
-分数如果大于 600 分视为考上一本，大于 500 分考上二本，大于 400 考上三本，其余视为未考上本科；&lt;br&gt;
-在一本分数中，如果大于 700 分，考入北大，大于 650 分，考入清华，大于 600 考入人大。&lt;br&gt;
+&lt;p&gt;6.4 值传递&lt;br&gt;
+所谓值传递，就是函数调用时实参将数值传入给形参&lt;br&gt;
+值传递时，如果形参发生，并不会影响实参&lt;br&gt;
 示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int score = 0;
+&lt;p&gt;void swap(int num1, int num2)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; “交换前：” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int temp = num1;
+num1 = num2;
+num2 = temp;
 
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;交换后：&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;
 
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-	if (score &amp;gt; 700)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了北大&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	else if (score &amp;gt; 650)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了清华&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	else
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了人大&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	
-&amp;#125;
-else if (score &amp;gt; 500)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 400)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
+//return ; 当函数声明时候，不需要返回值，可以不写return
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 练习案例： 三只小猪称体重&lt;/p&gt;
-&lt;p&gt;有三只小猪 ABC，请分别输入三只小猪的体重，并且判断哪只小猪最重？&lt;/p&gt;
-&lt;p&gt;4.1.2 三目运算符&lt;/p&gt;
-&lt;p&gt;作用： 通过三目运算符实现简单的判断&lt;/p&gt;
-&lt;p&gt;语法：表达式 1 ? 表达式 2 ：表达式 3&lt;/p&gt;
-&lt;p&gt;解释：&lt;/p&gt;
-&lt;p&gt;如果表达式 1 的值为真，执行表达式 2，并返回表达式 2 的结果；&lt;/p&gt;
-&lt;p&gt;如果表达式 1 的值为假，执行表达式 3，并返回表达式 3 的结果。&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;}&lt;/p&gt;
 &lt;p&gt;int main() {&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;int a = 10;
 int b = 20;
-int c = 0;
 
-c = a &amp;gt; b ? a : b;
-cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
+swap(a, b);
 
-//C++中三目运算符返回的是变量,可以继续赋值
+cout &amp;lt;&amp;lt; &amp;quot;mian中的 a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;mian中的 b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
 
-(a &amp;gt; b ? a : b) = 100;
+system(&amp;quot;pause&amp;quot;);
 
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;6.5 函数的常见样式&lt;br&gt;
+常见的函数样式有 4 种&lt;/p&gt;
+&lt;p&gt;无参无返&lt;br&gt;
+有参无返&lt;br&gt;
+无参有返&lt;br&gt;
+有参有返&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;// 函数常见样式&lt;br&gt;
+ //1、 无参无返&lt;br&gt;
+ void test01 ()&lt;br&gt;
+{&lt;br&gt;
+//void a = 10; // 无类型不可以创建变量，原因无法分配内存&lt;br&gt;
+ cout &amp;lt;&amp;lt;“this is test01” &amp;lt;&amp;lt; endl;&lt;br&gt;
+//test01 (); 函数调用&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//2、 有参无返&lt;br&gt;
+ void test02 (int a)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; “this is test02” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//3、无参有返&lt;br&gt;
+ int test03 ()&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;this is test03 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
+return 10;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//4、有参有返&lt;br&gt;
+ int test04 (int a, int b)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;this is test04 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
+int sum = a + b;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;br&gt;
+ 6.6 函数的声明&lt;br&gt;
+作用： 告诉编译器函数名称及如何调用函数。函数的实际主体可以单独定义。&lt;/p&gt;
+&lt;p&gt;函数的声明可以多次，但是函数的定义只能有一次&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;// 声明可以多次，定义只能一次&lt;br&gt;
+ // 声明&lt;br&gt;
+ int max (int a, int b);&lt;br&gt;
+int max(int a, int b);&lt;br&gt;
+// 定义&lt;br&gt;
+ int max (int a, int b)&lt;br&gt;
+{&lt;br&gt;
+return a &amp;gt; b ? a : b;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 100;
+int b = 200;
+
+cout &amp;lt;&amp;lt; max(a, b) &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 6.7 函数的分文件编写&lt;br&gt;
+ ** 作用：** 让代码结构更加清晰&lt;/p&gt;
+&lt;p&gt;函数分文件编写一般有 4 个步骤&lt;/p&gt;
+&lt;p&gt;创建后缀名为.h 的头文件&lt;br&gt;
+创建后缀名为.cpp 的源文件&lt;br&gt;
+在头文件中写函数的声明&lt;br&gt;
+在源文件中写函数的定义&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;//swap.xn--h-216a053e&#34;&gt;//swap.h 文件&lt;/a&gt;&lt;br&gt;
+ #include&lt;iostream&gt;&lt;br&gt;
+using namespace std;&lt;/p&gt;
+&lt;p&gt;// 实现两个数字交换的函数声明&lt;br&gt;
+ void swap (int a, int b);&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;//swap.xn--cpp-wu9dq54h&#34;&gt;//swap.cpp 文件&lt;/a&gt;&lt;br&gt;
+ #include “swap.h”&lt;/p&gt;
+&lt;p&gt;void swap(int a, int b)&lt;br&gt;
+{&lt;br&gt;
+int temp = a;&lt;br&gt;
+a = b;&lt;br&gt;
+b = temp;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
 cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.1.3 switch 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 执行多条件分支语句&lt;/p&gt;
-&lt;p&gt;语法：&lt;/p&gt;
-&lt;p&gt;switch (表达式)&lt;/p&gt;
-&lt;p&gt;{&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;case 结果1：执行语句;break;
-
-case 结果2：执行语句;break;
-
-...
-
-default:执行语句;break;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//请给电影评分 
-//10 ~ 9   经典   
-// 8 ~ 7   非常好
-// 6 ~ 5   一般
-// 5分以下 烂片
-
-int score = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请给电影打分&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; score;
-
-switch (score)
-&amp;#123;
-case 10:
-case 9:
-	cout &amp;lt;&amp;lt; &amp;quot;经典&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 8:
-	cout &amp;lt;&amp;lt; &amp;quot;非常好&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 7:
-case 6:
-	cout &amp;lt;&amp;lt; &amp;quot;一般&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-default:
-	cout &amp;lt;&amp;lt; &amp;quot;烂片&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.2 循环结构&lt;br&gt;
- 4.2.1 while 循环语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p 循环语句=&#34;&#34;&gt;语法：while (循环条件)&lt;/p&gt;
-&lt;p&gt;解释：只要循环条件的结果为真，就执行循环语句&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-while (num &amp;lt; 10)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;num = &amp;quot; &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
-	num++;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;while 循环练习案例：猜数字&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 系统随机生成一个 1 到 100 之间的数字，玩家进行猜测，如果猜错，提示玩家数字过大或过小，如果猜对恭喜玩家胜利，并且退出游戏。&lt;/p&gt;
-&lt;p&gt;4.2.2 do…while 循环语句&lt;/p&gt;
-&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p&gt;语法： do {循环语句} while (循环条件);&lt;/p&gt;
-&lt;p&gt;** 注意：** 与 while 的区别在于 do…while 会先执行一次循环语句，再判断循环条件&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-
-do
-&amp;#123;
-	cout &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
-	num++;
-
-&amp;#125; while (num &amp;lt; 10);
-
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;练习案例：水仙花数&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 水仙花数是指一个 3 位数，它的每个位上的数字的 3 次幂之和等于它本身&lt;/p&gt;
-&lt;p&gt;例如：1^3 + 5^3+ 3^3 = 153&lt;/p&gt;
-&lt;p&gt;请利用 do…while 语句，求出所有 3 位数中的水仙花数&lt;/p&gt;
-&lt;p&gt;4.2.3 for 循环语句&lt;/p&gt;
-&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p 循环语句;=&#34;&#34;&gt;语法：for (起始表达式；条件表达式；末尾循环体)&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;}&lt;br&gt;
- 详解：&lt;/p&gt;
-&lt;p&gt;练习案例：敲桌子&lt;/p&gt;
-&lt;p&gt;案例描述：从 1 开始数到数字 100， 如果数字个位含有 7，或者数字十位含有 7，或者该数字是 7 的倍数，我们打印敲桌子，其余数字直接打印输出。&lt;/p&gt;
-&lt;p&gt;4.2.4 嵌套循环&lt;/p&gt;
-&lt;p&gt;作用： 在循环体中再嵌套一层循环，解决一些实际问题&lt;/p&gt;
-&lt;p&gt;例如我们想在屏幕中打印如下图片，就需要利用嵌套循环&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//外层循环执行1次，内层循环执行1轮
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 10; j++)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;*&amp;quot; &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-** 练习案例：** 乘法口诀表&lt;/p&gt;
-&lt;p&gt;案例描述：利用嵌套循环，实现九九乘法表&lt;/p&gt;
-&lt;p&gt;4.3 跳转语句&lt;br&gt;
- 4.3.1 break 语句&lt;/p&gt;
-&lt;p&gt;作用: 用于跳出选择结构或者循环结构&lt;/p&gt;
-&lt;p&gt;break 使用的时机：&lt;/p&gt;
-&lt;p&gt;出现在 switch 条件语句中，作用是终止 case 并跳出 switch&lt;br&gt;
- 出现在循环语句中，作用是跳出当前的循环语句&lt;br&gt;
-出现在嵌套循环中，跳出最近的内层循环语句&lt;br&gt;
-示例 1：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-//1、在 switch 语句中使用 break&lt;br&gt;
-cout &amp;lt;&amp;lt;“请选择您挑战副本的难度：” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“1、普通” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“2、中等” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“3、困难” &amp;lt;&amp;lt; endl;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-
-cin &amp;gt;&amp;gt; num;
-
-switch (num)
-&amp;#123;
-case 1:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是普通难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 2:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是中等难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 3:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是困难难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 示例 2：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-//2、在循环语句中用 break&lt;br&gt;
-for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
-{&lt;br&gt;
-if (i == 5)&lt;br&gt;
-{&lt;br&gt;
-break; // 跳出循环语句&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 示例 3：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-// 在嵌套循环语句中使用 break，退出内层循环&lt;br&gt;
- for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
-{&lt;br&gt;
-for (int j = 0; j &amp;lt; 10; j++)&lt;br&gt;
-{&lt;br&gt;
-if (j == 5)&lt;br&gt;
-{&lt;br&gt;
-break;&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; “*” &amp;lt;&amp;lt; &amp;quot; &amp;quot;;&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 4.3.2 continue 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 在循环语句中，跳过本次循环中余下尚未执行的语句，继续执行下一次循环&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 100; i++)
-&amp;#123;
-	if (i % 2 == 0)
-	&amp;#123;
-		continue;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.3.3 goto 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 可以无条件跳转语句&lt;/p&gt;
-&lt;p&gt;语法： goto 标记；&lt;/p&gt;
-&lt;p&gt;** 解释：** 如果标记的名称存在，执行到 goto 语句时，会跳转到标记的位置&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;1&amp;quot; &amp;lt;&amp;lt; endl;
-
-goto FLAG;
-
-cout &amp;lt;&amp;lt; &amp;quot;2&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;3&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
-
-FLAG:
-
-cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
+//main 函数文件&lt;br&gt;
+ #include “swap.h”&lt;br&gt;
+int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 100;
+int b = 200;
+swap(a, b);
 
 system(&amp;quot;pause&amp;quot;);
 
@@ -6627,202 +7301,6 @@ for (int i = 0; i &amp;lt; 3; i++)
 	&amp;#125;
 	cout &amp;lt;&amp;lt; names[i] &amp;lt;&amp;lt; &amp;quot;同学总成绩为： &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
 &amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
- ]]></description>
-        </item>
-        <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</guid>
-            <title>c++基础入门笔记(6)</title>
-            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</link>
-            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
-            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
-6 函数&lt;br&gt;
- 6.1 概述&lt;br&gt;
- ** 作用：** 将一段经常使用的代码封装起来，减少重复代码&lt;/p&gt;
-&lt;p&gt;一个较大的程序，一般分为若干个程序块，每个模块实现特定的功能。&lt;/p&gt;
-&lt;p&gt;6.2 函数的定义&lt;br&gt;
-函数的定义一般主要有 5 个步骤：&lt;/p&gt;
-&lt;p&gt;1、返回值类型&lt;/p&gt;
-&lt;p&gt;2、函数名&lt;/p&gt;
-&lt;p&gt;3、参数表列&lt;/p&gt;
-&lt;p&gt;4、函数体语句&lt;/p&gt;
-&lt;p&gt;5、return 表达式&lt;/p&gt;
-&lt;p&gt;语法：&lt;/p&gt;
-&lt;p&gt;返回值类型 函数名 （参数列表）&lt;br&gt;
-{&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;   函数体语句
-
-   return表达式
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 返回值类型 ：一个函数可以返回一个值。在函数定义中&lt;br&gt;
-函数名：给函数起个名称&lt;br&gt;
-参数列表：使用该函数时，传入的数据&lt;br&gt;
-函数体语句：花括号内的代码，函数内需要执行的语句&lt;br&gt;
- return 表达式： 和返回值类型挂钩，函数执行完后，返回相应的数据&lt;br&gt;
- ** 示例：** 定义一个加法函数，实现两个数相加&lt;/p&gt;
-&lt;p&gt;// 函数定义&lt;br&gt;
- int add (int num1, int num2)&lt;br&gt;
-{&lt;br&gt;
-int sum = num1 + num2;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;br&gt;
- 6.3 函数的调用&lt;br&gt;
- ** 功能：** 使用定义好的函数&lt;/p&gt;
-&lt;p&gt;语法：函数名（参数）&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;// 函数定义&lt;br&gt;
- int add (int num1, int num2) // 定义中的 num1,num2 称为形式参数，简称形参&lt;br&gt;
- {&lt;br&gt;
-int sum = num1 + num2;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-//调用add函数
-int sum = add(a, b);//调用时的a，b称为实际参数，简称实参
-cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-
-a = 100;
-b = 100;
-
-sum = add(a, b);
-cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;6.4 值传递&lt;br&gt;
-所谓值传递，就是函数调用时实参将数值传入给形参&lt;br&gt;
-值传递时，如果形参发生，并不会影响实参&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;void swap(int num1, int num2)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; “交换前：” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int temp = num1;
-num1 = num2;
-num2 = temp;
-
-cout &amp;lt;&amp;lt; &amp;quot;交换后：&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;
-
-//return ; 当函数声明时候，不需要返回值，可以不写return
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 20;
-
-swap(a, b);
-
-cout &amp;lt;&amp;lt; &amp;quot;mian中的 a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;mian中的 b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;6.5 函数的常见样式&lt;br&gt;
-常见的函数样式有 4 种&lt;/p&gt;
-&lt;p&gt;无参无返&lt;br&gt;
-有参无返&lt;br&gt;
-无参有返&lt;br&gt;
-有参有返&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;// 函数常见样式&lt;br&gt;
- //1、 无参无返&lt;br&gt;
- void test01 ()&lt;br&gt;
-{&lt;br&gt;
-//void a = 10; // 无类型不可以创建变量，原因无法分配内存&lt;br&gt;
- cout &amp;lt;&amp;lt;“this is test01” &amp;lt;&amp;lt; endl;&lt;br&gt;
-//test01 (); 函数调用&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//2、 有参无返&lt;br&gt;
- void test02 (int a)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; “this is test02” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//3、无参有返&lt;br&gt;
- int test03 ()&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;this is test03 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
-return 10;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//4、有参有返&lt;br&gt;
- int test04 (int a, int b)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;this is test04 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
-int sum = a + b;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;br&gt;
- 6.6 函数的声明&lt;br&gt;
-作用： 告诉编译器函数名称及如何调用函数。函数的实际主体可以单独定义。&lt;/p&gt;
-&lt;p&gt;函数的声明可以多次，但是函数的定义只能有一次&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;// 声明可以多次，定义只能一次&lt;br&gt;
- // 声明&lt;br&gt;
- int max (int a, int b);&lt;br&gt;
-int max(int a, int b);&lt;br&gt;
-// 定义&lt;br&gt;
- int max (int a, int b)&lt;br&gt;
-{&lt;br&gt;
-return a &amp;gt; b ? a : b;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 100;
-int b = 200;
-
-cout &amp;lt;&amp;lt; max(a, b) &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 6.7 函数的分文件编写&lt;br&gt;
- ** 作用：** 让代码结构更加清晰&lt;/p&gt;
-&lt;p&gt;函数分文件编写一般有 4 个步骤&lt;/p&gt;
-&lt;p&gt;创建后缀名为.h 的头文件&lt;br&gt;
-创建后缀名为.cpp 的源文件&lt;br&gt;
-在头文件中写函数的声明&lt;br&gt;
-在源文件中写函数的定义&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;//swap.xn--h-216a053e&#34;&gt;//swap.h 文件&lt;/a&gt;&lt;br&gt;
- #include&lt;iostream&gt;&lt;br&gt;
-using namespace std;&lt;/p&gt;
-&lt;p&gt;// 实现两个数字交换的函数声明&lt;br&gt;
- void swap (int a, int b);&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;//swap.xn--cpp-wu9dq54h&#34;&gt;//swap.cpp 文件&lt;/a&gt;&lt;br&gt;
- #include “swap.h”&lt;/p&gt;
-&lt;p&gt;void swap(int a, int b)&lt;br&gt;
-{&lt;br&gt;
-int temp = a;&lt;br&gt;
-a = b;&lt;br&gt;
-b = temp;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-//main 函数文件&lt;br&gt;
- #include “swap.h”&lt;br&gt;
-int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 100;
-int b = 200;
-swap(a, b);
 
 system(&amp;quot;pause&amp;quot;);
 
