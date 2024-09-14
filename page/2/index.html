@@ -47,6 +47,380 @@
 </header>
   <div id="content" class="inner">
     <div id="main-col" class="alignleft"><div id="wrapper">
+  <article id="post-MyBatisPlus" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2024-06-01T06:52:23.000Z"><a href="/MyBatisPlus/">2024-06-01</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/MyBatisPlus/">MyBatisPlus</a></h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p>学习目标</p>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" id="cbx_0" disabled="true"><label for="cbx_0"> 能够基于 MyBatisPlus 完成标准 Dao 开发</label></li>
+<li class="task-list-item"><input type="checkbox" id="cbx_1" disabled="true"><label for="cbx_1"> 能够掌握 MyBatisPlus 的条件查询</label></li>
+<li class="task-list-item"><input type="checkbox" id="cbx_2" disabled="true"><label for="cbx_2"> 能够掌握 MyBatisPlus 的字段映射与表名映射</label></li>
+<li class="task-list-item"><input type="checkbox" id="cbx_3" disabled="true"><label for="cbx_3"> 能够掌握 id 生成策略控制</label></li>
+<li class="task-list-item"><input type="checkbox" id="cbx_4" disabled="true"><label for="cbx_4"> 能够理解代码生成器的相关配置</label></li>
+</ul>
+<p>一、MyBatisPlus 简介</p>
+<ol>
+<li>入门案例</li>
+</ol>
+<p>问题导入</p>
+<p>MyBatisPlus 环境搭建的步骤？</p>
+<p>1.1 SpringBoot 整合 MyBatisPlus 入门程序</p>
+<p>①：创建新模块，选择 Spring 初始化，并配置模块相关基础信息</p>
+<p><img src="img/image-20210801175555953.png" alt="image-20210801175555953"> ②：选择当前模块需要使用的技术集（仅保留 JDBC）</p>
+<p><img src="img/image-20210801175658648.png" alt="image-20210801175658648"></p>
+<p>③：手动添加 MyBatisPlus 起步依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.baomidou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-plus-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.4.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>druid<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.1.16<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意事项 1：由于 mp 并未被收录到 idea 的系统内置配置，无法直接选择加入</strong></p>
+<p><strong>注意事项 2：如果使用 Druid 数据源，需要导入对应坐标</strong></p>
+<p>④：制作实体类与表结构</p>
+<p>（类名与表名对应，属性名与字段名对应）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> database if <span class="keyword">not</span> <span class="keyword">exists</span> mybatisplus_db <span class="type">character</span> <span class="keyword">set</span> utf8;</span><br><span class="line">use mybatisplus_db;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">user</span> (</span><br><span class="line">            id <span class="type">bigint</span>(<span class="number">20</span>) <span class="keyword">primary</span> key auto_increment,</span><br><span class="line">            name <span class="type">varchar</span>(<span class="number">32</span>) <span class="keyword">not</span> <span class="keyword">null</span>,</span><br><span class="line">            password  <span class="type">varchar</span>(<span class="number">32</span>) <span class="keyword">not</span> <span class="keyword">null</span>,</span><br><span class="line">            age <span class="type">int</span>(<span class="number">3</span>) <span class="keyword">not</span> <span class="keyword">null</span> ,</span><br><span class="line">            tel <span class="type">varchar</span>(<span class="number">32</span>) <span class="keyword">not</span> <span class="keyword">null</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span> <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;tom&#x27;</span>,<span class="string">&#x27;123456&#x27;</span>,<span class="number">12</span>,<span class="string">&#x27;12345678910&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span> <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;jack&#x27;</span>,<span class="string">&#x27;123456&#x27;</span>,<span class="number">8</span>,<span class="string">&#x27;12345678910&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span> <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;jerry&#x27;</span>,<span class="string">&#x27;123456&#x27;</span>,<span class="number">15</span>,<span class="string">&#x27;12345678910&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span> <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;tom&#x27;</span>,<span class="string">&#x27;123456&#x27;</span>,<span class="number">9</span>,<span class="string">&#x27;12345678910&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span> <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;snake&#x27;</span>,<span class="string">&#x27;123456&#x27;</span>,<span class="number">28</span>,<span class="string">&#x27;12345678910&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span> <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;张益达&#x27;</span>,<span class="string">&#x27;123456&#x27;</span>,<span class="number">22</span>,<span class="string">&#x27;12345678910&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span> <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;张大炮&#x27;</span>,<span class="string">&#x27;123456&#x27;</span>,<span class="number">16</span>,<span class="string">&#x27;12345678910&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> String tel;</span><br><span class="line">    <span class="comment">//自行添加getter、setter、toString()等方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>⑤：设置 Jdbc 参数（<strong>application.yml</strong>）</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">com.alibaba.druid.pool.DruidDataSource</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/mybatisplus_db?serverTimezone=UTC</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">root</span></span><br></pre></td></tr></table></figure>
+<p>⑥：定义数据接口，继承<strong> BaseMapper</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.core.mapper.BaseMapper;</span><br><span class="line"><span class="keyword">import</span> com.itheima.domain.User;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.annotations.Mapper;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserDao</span> <span class="keyword">extends</span> <span class="title class_">BaseMapper</span>&lt;User&gt; &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>⑦：测试类中注入 dao 接口，测试功能</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.itheima.dao.UserDao;</span><br><span class="line"><span class="keyword">import</span> com.itheima.domain.User;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Mybatisplus01QuickstartApplicationTests</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserDao userDao;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetAll</span><span class="params">()</span> &#123;</span><br><span class="line">        List&lt;User&gt; userList = userDao.selectList(<span class="literal">null</span>);</span><br><span class="line">        System.out.println(userList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>MyBatisPlus 概述</li>
+</ol>
+<p>问题导入</p>
+<p>通过入门案例制作，MyBatisPlus 的优点有哪些？</p>
+<p>2.1 MyBatis 介绍</p>
+<ul>
+<li>
+<p>MyBatisPlus（简称 MP）是基于 MyBatis 框架基础上开发的增强型工具，旨在简化开发、提高效率</p>
+</li>
+<li>
+<p>官网：<a target="_blank" rel="noopener" href="https://mybatis.plus/">https</a><a target="_blank" rel="noopener" href="https://mybatis.plus/">😕/mybatis.plus</a><a target="_blank" rel="noopener" href="https://mybatis.plus/">/</a>   <a target="_blank" rel="noopener" href="https://mp.baomidou.com/">https://mp.baomidou.com</a><a target="_blank" rel="noopener" href="https://mp.baomidou.com/">/</a></p>
+</li>
+</ul>
+<p>2.2 MyBatisPlus 特性</p>
+<ul>
+<li>无侵入：只做增强不做改变，不会对现有工程产生影响</li>
+<li>强大的 CRUD 操作：内置通用 Mapper，少量配置即可实现单表 CRUD 操作</li>
+<li>支持 Lambda：编写查询条件无需担心字段写错</li>
+<li>支持主键自动生成</li>
+<li>内置分页插件</li>
+<li>……</li>
+</ul>
+<p>二、标准数据层开发</p>
+<ol>
+<li>MyBatisPlus 的 CRUD 操作</li>
+</ol>
+<p><img src="img/image-20210815150629727.png" alt="image-20210815150629727"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.itheima.dao.UserDao;</span><br><span class="line"><span class="keyword">import</span> com.itheima.domain.User;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Mybatisplus01QuickstartApplicationTests</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserDao userDao;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testSave</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setName(<span class="string">&quot;黑马程序员&quot;</span>);</span><br><span class="line">        user.setPassword(<span class="string">&quot;itheima&quot;</span>);</span><br><span class="line">        user.setAge(<span class="number">12</span>);</span><br><span class="line">        user.setTel(<span class="string">&quot;4006184000&quot;</span>);</span><br><span class="line">        userDao.insert(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testDelete</span><span class="params">()</span> &#123;</span><br><span class="line">        userDao.deleteById(<span class="number">1401856123725713409L</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUpdate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setId(<span class="number">1L</span>);</span><br><span class="line">        user.setName(<span class="string">&quot;Tom888&quot;</span>);</span><br><span class="line">        user.setPassword(<span class="string">&quot;tom888&quot;</span>);</span><br><span class="line">        userDao.updateById(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetById</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userDao.selectById(<span class="number">2L</span>);</span><br><span class="line">        System.out.println(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetAll</span><span class="params">()</span> &#123;</span><br><span class="line">        List&lt;User&gt; userList = userDao.selectList(<span class="literal">null</span>);</span><br><span class="line">        System.out.println(userList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>Lombok 插件介绍</li>
+</ol>
+<p>问题导入</p>
+<p>有什么简单的办法可以自动生成实体类的 GET、SET 方法？</p>
+<ul>
+<li>Lombok，一个 Java 类库，提供了一组注解，简化 POJO 实体类开发。</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.18.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>常用注解：<mark>@Data</mark>，为当前实体类在编译期设置对应的 get/set 方法，无参 / 无参构造方法，toString 方法，hashCode 方法，equals 方法等</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.domain;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.*;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    1 生成getter和setter方法：@Getter、@Setter</span></span><br><span class="line"><span class="comment">      生成toString方法：@ToString</span></span><br><span class="line"><span class="comment">      生成equals和hashcode方法：@EqualsAndHashCode</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    2 统一成以上所有：@Data</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    3 生成空参构造： @NoArgsConstructor</span></span><br><span class="line"><span class="comment">      生成全参构造： @AllArgsConstructor</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    4 lombok还给我们提供了builder的方式创建对象,好处就是可以链式编程。 @Builder【扩展】</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> String tel;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>MyBatisPlus 分页功能</li>
+</ol>
+<p>问题导入</p>
+<p>思考一下 Mybatis 分页插件是如何用的？</p>
+<p>3.1 分页功能接口</p>
+<p><img src="img/image-20210801180723261.png" alt="image-20210801180723261"></p>
+<p>3.2 MyBatisPlus 分页使用</p>
+<p><strong>①：设置分页拦截器作为 Spring 管理的 bean</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MybatisPlusConfig</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> MybatisPlusInterceptor <span class="title function_">mybatisPlusInterceptor</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">//1 创建MybatisPlusInterceptor拦截器对象</span></span><br><span class="line">        MybatisPlusInterceptor mpInterceptor=<span class="keyword">new</span> <span class="title class_">MybatisPlusInterceptor</span>();</span><br><span class="line">        <span class="comment">//2 添加分页拦截器</span></span><br><span class="line">        mpInterceptor.addInnerInterceptor(<span class="keyword">new</span> <span class="title class_">PaginationInnerInterceptor</span>());</span><br><span class="line">        <span class="keyword">return</span> mpInterceptor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>②：执行分页查询</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分页查询</span></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testSelectPage</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="comment">//1 创建IPage分页对象,设置分页参数</span></span><br><span class="line">    IPage&lt;User&gt; page=<span class="keyword">new</span> <span class="title class_">Page</span>&lt;&gt;(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line">    <span class="comment">//2 执行分页查询</span></span><br><span class="line">    userDao.selectPage(page,<span class="literal">null</span>);</span><br><span class="line">    <span class="comment">//3 获取分页结果</span></span><br><span class="line">    System.out.println(<span class="string">&quot;当前页码值：&quot;</span>+page.getCurrent());</span><br><span class="line">    System.out.println(<span class="string">&quot;每页显示数：&quot;</span>+page.getSize());</span><br><span class="line">    System.out.println(<span class="string">&quot;总页数：&quot;</span>+page.getPages());</span><br><span class="line">    System.out.println(<span class="string">&quot;总条数：&quot;</span>+page.getTotal());</span><br><span class="line">    System.out.println(<span class="string">&quot;当前页数据：&quot;</span>+page.getRecords());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.3 开启 MyBatisPlus 日志</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">com.alibaba.druid.pool.DruidDataSource</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/mybatisplus_db?serverTimezone=UTC</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">root</span></span><br><span class="line"> <span class="string">开启mp的日志（输出到控制台）</span></span><br><span class="line"><span class="attr">mybatis-plus:</span></span><br><span class="line">  <span class="attr">configuration:</span></span><br><span class="line">    <span class="attr">log-impl:</span> <span class="string">org.apache.ibatis.logging.stdout.StdOutImpl</span></span><br></pre></td></tr></table></figure>
+<p>3.4 解决日志打印过多问题</p>
+<p>3.4.1 取消初始化 spring 日志打印</p>
+<p><img src="img/image-20210815153626017.png" alt="image-20210815153626017"></p>
+<p>做法：在 resources 下新建一个 logback.xml 文件，名称固定，内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>关于 logback 参考播客：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/75f9d11ae011">https://www.jianshu.com/p/75f9d11ae011</a></p>
+<p>3.4.2 取消 SpringBoot 启动 banner 图标</p>
+<p><img src="img/image-20210815153930073.png" alt="image-20210815153930073"></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">main:</span></span><br><span class="line">    <span class="attr">banner-mode:</span> <span class="string">off</span>  <span class="string">关闭SpringBoot启动图标(banner)</span></span><br></pre></td></tr></table></figure>
+<p>3.4.3 取消 MybatisPlus 启动 banner 图标</p>
+<p><img src="img/image-20210815154115368.png" alt="image-20210815154115368"></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> <span class="string">mybatis-plus日志控制台输出</span></span><br><span class="line"><span class="attr">mybatis-plus:</span></span><br><span class="line">  <span class="attr">configuration:</span></span><br><span class="line">    <span class="attr">log-impl:</span> <span class="string">org.apache.ibatis.logging.stdout.StdOutImpl</span></span><br><span class="line">  <span class="attr">global-config:</span></span><br><span class="line">    <span class="attr">banner:</span> <span class="string">off</span>  <span class="string">关闭mybatisplus启动图标</span></span><br></pre></td></tr></table></figure>
+<p>三、DQL 编程控制</p>
+<ol>
+<li>条件查询方式</li>
+</ol>
+<ul>
+<li>MyBatisPlus 将书写复杂的 SQL 查询条件进行了封装，使用编程的形式完成查询条件的组合</li>
+</ul>
+<p><img src="img/image-20210801181232962.png" alt="image-20210801181232962"></p>
+<p>1.1 条件查询</p>
+<p>1.1.1 方式一：按条件查询</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//方式一：按条件查询</span></span><br><span class="line">QueryWrapper&lt;User&gt; qw=<span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;&gt;();</span><br><span class="line">qw.lt(<span class="string">&quot;age&quot;</span>, <span class="number">18</span>);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(qw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<p>1.1.2 方式二：lambda 格式按条件查询</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//方式二：lambda格式按条件查询</span></span><br><span class="line">QueryWrapper&lt;User&gt; qw = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;User&gt;();</span><br><span class="line">qw.lambda().lt(User::getAge, <span class="number">10</span>);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(qw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<p>1.1.3 方式三：lambda 格式按条件查询（推荐）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//方式三：lambda格式按条件查询</span></span><br><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line">lqw.lt(User::getAge, <span class="number">10</span>);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<p>1.2 组合条件</p>
+<p>1.2.1 并且关系（and）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//并且关系</span></span><br><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line"><span class="comment">//并且关系：10到30岁之间</span></span><br><span class="line">lqw.lt(User::getAge, <span class="number">30</span>).gt(User::getAge, <span class="number">10</span>);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<p>1.2.2 或者关系（or）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//或者关系</span></span><br><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line"><span class="comment">//或者关系：小于10岁或者大于30岁</span></span><br><span class="line">lqw.lt(User::getAge, <span class="number">10</span>).or().gt(User::getAge, <span class="number">30</span>);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<p>1.3 NULL 值处理</p>
+<p>问题导入</p>
+<p>如下搜索场景，在多条件查询中，有条件的值为空应该怎么解决？</p>
+<p><img src="img/image-20210801182004226.png" alt="image-20210801182004226"></p>
+<p>1.3.1 if 语句控制条件追加</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Integer minAge=<span class="number">10</span>;  <span class="comment">//将来有用户传递进来,此处简化成直接定义变量了</span></span><br><span class="line">Integer maxAge=<span class="literal">null</span>;  <span class="comment">//将来有用户传递进来,此处简化成直接定义变量了</span></span><br><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line"><span class="keyword">if</span>(minAge!=<span class="literal">null</span>)&#123;</span><br><span class="line">    lqw.gt(User::getAge, minAge);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(maxAge!=<span class="literal">null</span>)&#123;</span><br><span class="line">    lqw.lt(User::getAge, maxAge);</span><br><span class="line">&#125;</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">userList.forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+<p>1.3.2 条件参数控制</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Integer minAge=<span class="number">10</span>;  <span class="comment">//将来有用户传递进来,此处简化成直接定义变量了</span></span><br><span class="line">Integer maxAge=<span class="literal">null</span>;  <span class="comment">//将来有用户传递进来,此处简化成直接定义变量了</span></span><br><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line"><span class="comment">//参数1：如果表达式为true，那么查询才使用该条件</span></span><br><span class="line">lqw.gt(minAge!=<span class="literal">null</span>,User::getAge, minAge);</span><br><span class="line">lqw.lt(maxAge!=<span class="literal">null</span>,User::getAge, maxAge);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">userList.forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+<p>1.3.3 条件参数控制（链式编程）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Integer minAge=<span class="number">10</span>;  <span class="comment">//将来有用户传递进来,此处简化成直接定义变量了</span></span><br><span class="line">Integer maxAge=<span class="literal">null</span>;  <span class="comment">//将来有用户传递进来,此处简化成直接定义变量了</span></span><br><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line"><span class="comment">//参数1：如果表达式为true，那么查询才使用该条件</span></span><br><span class="line">lqw.gt(minAge!=<span class="literal">null</span>,User::getAge, minAge)</span><br><span class="line">   .lt(maxAge!=<span class="literal">null</span>,User::getAge, maxAge);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">userList.forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>查询投影 - 设置【查询字段、分组、分页】</li>
+</ol>
+<p>2.1 查询结果包含模型类中部分属性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*LambdaQueryWrapper&lt;User&gt; lqw = new LambdaQueryWrapper&lt;User&gt;();</span></span><br><span class="line"><span class="comment">lqw.select(User::getId, User::getName, User::getAge);*/</span></span><br><span class="line"><span class="comment">//或者</span></span><br><span class="line">QueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;User&gt;();</span><br><span class="line">lqw.select(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;age&quot;</span>, <span class="string">&quot;tel&quot;</span>);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<p>2.2 查询结果包含模型类中未定义的属性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">QueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;User&gt;();</span><br><span class="line">lqw.select(<span class="string">&quot;count(*) as count, tel&quot;</span>);</span><br><span class="line">lqw.groupBy(<span class="string">&quot;tel&quot;</span>);</span><br><span class="line">List&lt;Map&lt;String, Object&gt;&gt; userList = userDao.selectMaps(lqw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>查询条件设定</li>
+</ol>
+<p>问题导入</p>
+<p>多条件查询有哪些组合？</p>
+<ul>
+<li>范围匹配（&gt; 、 = 、between）</li>
+<li>模糊匹配（like）</li>
+<li>空判定（null）</li>
+<li>包含性匹配（in）</li>
+<li>分组（group）</li>
+<li>排序（order）</li>
+<li>……</li>
+</ul>
+<p>3.1 查询条件</p>
+<ul>
+<li>用户登录（eq 匹配）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line"><span class="comment">//等同于=</span></span><br><span class="line">lqw.eq(User::getName, <span class="string">&quot;Jerry&quot;</span>).eq(User::getPassword, <span class="string">&quot;jerry&quot;</span>);</span><br><span class="line"><span class="type">User</span> <span class="variable">loginUser</span> <span class="operator">=</span> userDao.selectOne(lqw);</span><br><span class="line">System.out.println(loginUser);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>购物设定价格区间、户籍设定年龄区间（le ge 匹配 或 between 匹配）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line"><span class="comment">//范围查询 lt le gt ge eq between</span></span><br><span class="line">lqw.between(User::getAge, <span class="number">10</span>, <span class="number">30</span>);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查信息，搜索新闻（非全文检索版：like 匹配）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LambdaQueryWrapper&lt;User&gt; lqw = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;();</span><br><span class="line"><span class="comment">//模糊匹配 like</span></span><br><span class="line">lqw.likeLeft(User::getName, <span class="string">&quot;J&quot;</span>);</span><br><span class="line">List&lt;User&gt; userList = userDao.selectList(lqw);</span><br><span class="line">System.out.println(userList);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>统计报表（分组查询聚合函数）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">QueryWrapper&lt;User&gt; qw = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;User&gt;();</span><br><span class="line">qw.select(<span class="string">&quot;gender&quot;</span>,<span class="string">&quot;count(*) as nums&quot;</span>);</span><br><span class="line">qw.groupBy(<span class="string">&quot;gender&quot;</span>);</span><br><span class="line">List&lt;Map&lt;String, Object&gt;&gt; maps = userDao.selectMaps(qw);</span><br><span class="line">System.out.println(maps);</span><br></pre></td></tr></table></figure>
+<p>3.2 查询 API</p>
+<ul>
+<li>更多查询条件设置参看 <a target="_blank" rel="noopener" href="https://mybatis.plus/guide/wrapper.html">https://mybatis.plus/guide/wrapper.htmlabstractwrapper</a></li>
+</ul>
+<p>3.3 练习：MyBatisPlus 练习</p>
+<p>题目：基于 MyBatisPlus_Ex1 模块，完成 Top5 功能的开发。</p>
+<ul>
+<li>
+<p>说明：</p>
+<p>①：Top5 指根据销售量排序（提示：对销售量进行降序排序）</p>
+<p>②：Top5 是仅获取前 5 条数据（提示：使用分页功能控制数据显示数量）</p>
+</li>
+</ul>
+<ol start="4">
+<li>字段映射与表名映射</li>
+</ol>
+<p>问题导入</p>
+<p>思考表的字段和实体类的属性不对应，查询会怎么样？</p>
+<p>4.1 问题一：表字段与编码属性设计不同步</p>
+<ul>
+<li>在模型类属性上方，使用 **@TableField** 属性注解，通过 ==<strong>value</strong>== 属性，设置当前属性对应的数据库表中的字段关系。</li>
+</ul>
+<p><img src="img/image-20210801182722773.png" alt="image-20210801182722773"></p>
+<p>4.2 问题二：编码中添加了数据库中未定义的属性</p>
+<ul>
+<li>在模型类属性上方，使用 **@TableField<strong> 注解，通过</strong><mark> exist</mark>** 属性，设置属性在数据库表字段中是否存在，默认为 true。此属性无法与 value 合并使用。</li>
+</ul>
+<p><img src="img/image-20210801182809131.png" alt="image-20210801182809131"></p>
+<p>4.3 问题三：采用默认查询开放了更多的字段查看权限</p>
+<ul>
+<li>在模型类属性上方，使用 **@TableField<strong> 注解，通过</strong><mark> select</mark>** 属性：设置该属性是否参与查询。此属性与 select () 映射配置不冲突。</li>
+</ul>
+<p><img src="img/image-20210801220534494.png" alt="image-20210801220534494"></p>
+<p>4.4 问题四：表名与编码开发设计不同步</p>
+<ul>
+<li>在<u><strong>模型类</strong></u>上方，使用 **@TableName<strong> 注解，通过</strong><mark> value</mark>** 属性，设置当前类对应的数据库表名称。</li>
+</ul>
+<p><img src="img/image-20210801220807882.png" alt="image-20210801220807882"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@TableName(&quot;tbl_user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">        id为Long类型，因为数据库中id为bigint类型，</span></span><br><span class="line"><span class="comment">        并且mybatis有自己的一套id生成方案，生成出来的id必须是Long类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="meta">@TableField(value = &quot;pwd&quot;,select = false)</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> String tel;</span><br><span class="line">    <span class="meta">@TableField(exist = false)</span> <span class="comment">//表示online字段不参与CRUD操作</span></span><br><span class="line">    <span class="keyword">private</span> Boolean online;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>四、DML 编程控制</p>
+<ol>
+<li>id 生成策略控制（Insert）</li>
+</ol>
+<p>问题导入</p>
+<p>主键生成的策略有哪几种方式？</p>
+<p>不同的表应用不同的 id 生成策略</p>
+<ul>
+<li>日志：自增（1,2,3,4，……）</li>
+<li>购物订单：特殊规则（FQ23948AK3843）</li>
+<li>外卖单：关联地区日期等信息（10 04 20200314 34 91）</li>
+<li>关系表：可省略 id</li>
+<li>……</li>
+</ul>
+<p>1.1 id 生成策略控制（@TableId 注解）</p>
+<ul>
+<li>
+<p>名称：@TableId</p>
+</li>
+<li>
+<p>类型：<strong>属性注解</strong></p>
+</li>
+<li>
+<p>位置：模型类中用于表示主键的属性定义上方</p>
+</li>
+<li>
+<p>作用：设置当前类中主键属性的生成策略</p>
+</li>
+<li>
+<p>相关属性</p>
+<p>​	<strong>type</strong>：设置主键属性的生成策略，值参照 IdType 枚举值</p>
+<p><img src="img/image-20210801192449901.png" alt="image-20210801192449901"></p>
+</li>
+</ul>
+<p>1.2 全局策略配置</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mybatis-plus:</span></span><br><span class="line">  <span class="attr">global-config:</span></span><br><span class="line">    <span class="attr">db-config:</span></span><br><span class="line">      <span class="attr">id-type:</span> <span class="string">assign_id</span></span><br><span class="line">      <span class="attr">table-prefix:</span> <span class="string">tbl_</span></span><br></pre></td></tr></table></figure>
+<p>id 生成策略全局配置</p>
+<p><img src="img/image-20210801183128266.png" alt="image-20210801183128266"></p>
+<p>表名前缀全局配置</p>
+<p><img src="img/image-20210801183157694.png" alt="image-20210801183157694"></p>
+<ol start="2">
+<li>多记录操作（批量 Delete/Select）</li>
+</ol>
+<p>问题导入</p>
+<p>MyBatisPlus 是否支持批量操作？</p>
+<p><img src="img/image-20210801183334584.png" alt="image-20210801183334584"></p>
+<p>2.1 按照主键删除多条记录</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//删除指定多条数据</span></span><br><span class="line">List&lt;Long&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="number">1402551342481838081L</span>);</span><br><span class="line">list.add(<span class="number">1402553134049501186L</span>);</span><br><span class="line">list.add(<span class="number">1402553619611430913L</span>);</span><br><span class="line"></span><br><span class="line">userDao.deleteBatchIds(list);</span><br></pre></td></tr></table></figure>
+<p>2.2 根据主键查询多条记录</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//查询指定多条数据</span></span><br><span class="line">List&lt;Long&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="number">1L</span>);</span><br><span class="line">list.add(<span class="number">3L</span>);</span><br><span class="line">list.add(<span class="number">4L</span>);</span><br><span class="line">userDao.selectBatchIds(list);</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>逻辑删除（Delete/Update）</li>
+</ol>
+<p>问题导入</p>
+<p>在实际环境中，如果想删除一条数据，是否会真的从数据库中删除该条数据？</p>
+<ul>
+<li>
+<p>删除操作业务问题：业务数据从数据库中丢弃</p>
+</li>
+<li>
+<p>逻辑删除：为数据设置是否可用状态字段，删除时设置状态字段为不可用状态，数据保留在数据库中</p>
+</li>
+</ul>
+<p><img src="img/image-20210801183459750.png" alt="image-20210801183459750"></p>
+<p>3.1 逻辑删除案例</p>
+<p>①：数据库表中添加逻辑删除标记字段</p>
+<p><img src="img/image-20210801183545635.png" alt="image-20210801183545635"></p>
+<p>②：实体类中添加对应字段，并设定当前字段为逻辑删除标记字段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.domain;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//逻辑删除字段，标记当前记录是否被删除</span></span><br><span class="line">    <span class="meta">@TableLogic</span></span><br><span class="line">    <span class="keyword">private</span> Integer deleted;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>③：配置逻辑删除字面值</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mybatis-plus:</span></span><br><span class="line">  <span class="attr">global-config:</span></span><br><span class="line">    <span class="attr">db-config:</span></span><br><span class="line">      <span class="attr">table-prefix:</span> <span class="string">tbl_</span></span><br><span class="line">       <span class="string">逻辑删除字段名</span></span><br><span class="line">      <span class="attr">logic-delete-field:</span> <span class="string">deleted</span></span><br><span class="line">       <span class="string">逻辑删除字面值：未删除为0</span></span><br><span class="line">      <span class="attr">logic-not-delete-value:</span> <span class="number">0</span></span><br><span class="line">       <span class="string">逻辑删除字面值：删除为1</span></span><br><span class="line">      <span class="attr">logic-delete-value:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>逻辑删除本质：逻辑删除的本质其实是修改操作。如果加了逻辑删除字段，查询数据时也会自动带上逻辑删除字段。</strong></p>
+<p><img src="img/image-20210801223228871.png" alt="image-20210801223228871"></p>
+<ol start="4">
+<li>乐观锁（Update）</li>
+</ol>
+<p>问题导入</p>
+<p>乐观锁主张的思想是什么？</p>
+<ul>
+<li>业务并发现象带来的问题：秒杀</li>
+</ul>
+<p><img src="img/image-20210801183851887.png" alt="image-20210801183851887"></p>
+<p>4.1 乐观锁案例</p>
+<p>①：数据库表中添加锁标记字段</p>
+<p><img src="img/image-20210801183929041.png" alt="image-20210801183929041"></p>
+<p>②：实体类中添加对应字段，并设定当前字段为逻辑删除标记字段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.domain;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableField;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableLogic;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.Version;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> Long id;</span><br><span class="line">	</span><br><span class="line">    <span class="meta">@Version</span></span><br><span class="line">    <span class="keyword">private</span> Integer version;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>③：配置乐观锁拦截器实现锁机制对应的动态 SQL 语句拼装</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MpConfig</span> &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> MybatisPlusInterceptor <span class="title function_">mpInterceptor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//1.定义Mp拦截器</span></span><br><span class="line">        <span class="type">MybatisPlusInterceptor</span> <span class="variable">mpInterceptor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MybatisPlusInterceptor</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2.添加乐观锁拦截器</span></span><br><span class="line">        mpInterceptor.addInnerInterceptor(<span class="keyword">new</span> <span class="title class_">OptimisticLockerInnerInterceptor</span>());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> mpInterceptor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>④：使用乐观锁机制在修改前必须先获取到对应数据的 verion 方可正常进行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testUpdate</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">/*User user = new User();</span></span><br><span class="line"><span class="comment">    user.setId(3L);</span></span><br><span class="line"><span class="comment">    user.setName(&quot;Jock666&quot;);</span></span><br><span class="line"><span class="comment">    user.setVersion(1);</span></span><br><span class="line"><span class="comment">    userDao.updateById(user);*/</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//1.先通过要修改的数据id将当前数据查询出来</span></span><br><span class="line">    <span class="comment">//User user = userDao.selectById(3L);</span></span><br><span class="line">    <span class="comment">//2.将要修改的属性逐一设置进去</span></span><br><span class="line">    <span class="comment">//user.setName(&quot;Jock888&quot;);</span></span><br><span class="line">    <span class="comment">//userDao.updateById(user);</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//1.先通过要修改的数据id将当前数据查询出来</span></span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userDao.selectById(<span class="number">3L</span>);     <span class="comment">//version=3</span></span><br><span class="line">    <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> userDao.selectById(<span class="number">3L</span>);    <span class="comment">//version=3</span></span><br><span class="line">    user2.setName(<span class="string">&quot;Jock aaa&quot;</span>);</span><br><span class="line">    userDao.updateById(user2);              <span class="comment">//version=&gt;4</span></span><br><span class="line">    user.setName(<span class="string">&quot;Jock bbb&quot;</span>);</span><br><span class="line">    userDao.updateById(user);               <span class="comment">//verion=3?条件还成立吗？</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="img/image-20210801223855681.png" alt="image-20210801223855681"></p>
+<p>五、快速开发 - 代码生成器</p>
+<p>问题导入</p>
+<p>如果只给一张表的字段信息，能够推演出 Domain、Dao 层的代码？</p>
+<ol>
+<li>MyBatisPlus 提供模板</li>
+</ol>
+<ul>
+<li>Mapper 接口模板</li>
+</ul>
+<p><img src="img/image-20210801224114650.png" alt="image-20210801224114650"></p>
+<ul>
+<li>实体对象类模板</li>
+</ul>
+<p><img src="img/image-20210801184632944.png" alt="image-20210801184632944"></p>
+<ol start="2">
+<li>工程搭建和基本代码编写</li>
+</ol>
+<ul>
+<li>第一步：创建 SpringBoot 工程，添加代码生成器相关依赖，其他依赖自行添加</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--代码生成器--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.baomidou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-plus-generator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.4.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--velocity模板引擎--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.velocity<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>velocity-engine-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>第二步：编写代码生成器类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.generator.AutoGenerator;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.generator.config.DataSourceConfig;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Generator</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">//1. 创建代码生成器对象，执行生成代码操作</span></span><br><span class="line">        <span class="type">AutoGenerator</span> <span class="variable">autoGenerator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AutoGenerator</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2. 数据源相关配置：读取数据库中的信息，根据数据库表结构生成代码</span></span><br><span class="line">        <span class="type">DataSourceConfig</span> <span class="variable">dataSource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DataSourceConfig</span>();</span><br><span class="line">        dataSource.setDriverName(<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);</span><br><span class="line">        dataSource.setUrl(<span class="string">&quot;jdbc:mysql://localhost:3306/mybatisplus_db?serverTimezone=UTC&quot;</span>);</span><br><span class="line">        dataSource.setUsername(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">        dataSource.setPassword(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">        autoGenerator.setDataSource(dataSource);</span><br><span class="line"></span><br><span class="line">         <span class="comment">//3. 执行生成操作</span></span><br><span class="line">        autoGenerator.execute();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>开发者自定义配置</li>
+</ol>
+<ul>
+<li>设置全局配置</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置全局配置</span></span><br><span class="line"><span class="type">GlobalConfig</span> <span class="variable">globalConfig</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GlobalConfig</span>();</span><br><span class="line">globalConfig.setOutputDir(System.getProperty(<span class="string">&quot;user.dir&quot;</span>)+<span class="string">&quot;/mybatisplus_04_generator/src/main/java&quot;</span>);    <span class="comment">//设置代码生成位置</span></span><br><span class="line">globalConfig.setOpen(<span class="literal">false</span>);    <span class="comment">//设置生成完毕后是否打开生成代码所在的目录</span></span><br><span class="line">globalConfig.setAuthor(<span class="string">&quot;黑马程序员&quot;</span>);    <span class="comment">//设置作者</span></span><br><span class="line">globalConfig.setFileOverride(<span class="literal">true</span>);     <span class="comment">//设置是否覆盖原始生成的文件</span></span><br><span class="line">globalConfig.setMapperName(<span class="string">&quot;%sDao&quot;</span>);    <span class="comment">//设置数据层接口名，%s为占位符，指代模块名称</span></span><br><span class="line">globalConfig.setIdType(IdType.ASSIGN_ID);   <span class="comment">//设置Id生成策略</span></span><br><span class="line">autoGenerator.setGlobalConfig(globalConfig);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置包名相关配置</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置包名相关配置</span></span><br><span class="line"><span class="type">PackageConfig</span> <span class="variable">packageInfo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PackageConfig</span>();</span><br><span class="line">packageInfo.setParent(<span class="string">&quot;com.aaa&quot;</span>);   <span class="comment">//设置生成的包名，与代码所在位置不冲突，二者叠加组成完整路径</span></span><br><span class="line">packageInfo.setEntity(<span class="string">&quot;domain&quot;</span>);    <span class="comment">//设置实体类包名</span></span><br><span class="line">packageInfo.setMapper(<span class="string">&quot;dao&quot;</span>);   <span class="comment">//设置数据层包名</span></span><br><span class="line">autoGenerator.setPackageInfo(packageInfo);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>策略设置</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//策略设置</span></span><br><span class="line"><span class="type">StrategyConfig</span> <span class="variable">strategyConfig</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StrategyConfig</span>();</span><br><span class="line">strategyConfig.setInclude(<span class="string">&quot;tbl_user&quot;</span>);  <span class="comment">//设置当前参与生成的表名，参数为可变参数</span></span><br><span class="line">strategyConfig.setTablePrefix(<span class="string">&quot;tbl_&quot;</span>);  <span class="comment">//设置数据库表的前缀名称，模块名 = 数据库表名 - 前缀名  例如： User = tbl_user - tbl_</span></span><br><span class="line">strategyConfig.setRestControllerStyle(<span class="literal">true</span>);    <span class="comment">//设置是否启用Rest风格</span></span><br><span class="line">strategyConfig.setVersionFieldName(<span class="string">&quot;version&quot;</span>);  <span class="comment">//设置乐观锁字段名</span></span><br><span class="line">strategyConfig.setLogicDeleteFieldName(<span class="string">&quot;deleted&quot;</span>);  <span class="comment">//设置逻辑删除字段名</span></span><br><span class="line">strategyConfig.setEntityLombokModel(<span class="literal">true</span>);  <span class="comment">//设置是否启用lombok</span></span><br><span class="line">autoGenerator.setStrategy(strategyConfig);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>说明：在资料中也提供了 CodeGenerator 代码生成器类，根据实际情况修改后可以直接使用。</p>
+</blockquote>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
   <article id="post-Maven进阶" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   
   <div class="post-content">
@@ -2605,457 +2979,6 @@ DI （ Dependency Injection ）依赖注入<br>
 <h3 id="deploy-to-remote-sites"><a class="markdownIt-Anchor" href="#deploy-to-remote-sites">#</a> Deploy to remote sites</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article id="post-c-基础入门笔记-4" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time class="dt-published" datetime="2023-01-31T07:13:43.000Z"><a href="/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/">2023-01-31</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/">c++基础入门笔记(4)</a></h1>
-  
-
-    </header>
-    <div class="e-content entry" itemprop="articleBody">
-      
-        <p>​<br>
-4 程序流程结构<br>
- C/C++ 支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构</p>
-<p>顺序结构：程序按顺序执行，不发生跳转<br>
-选择结构：依据条件是否满足，有选择的执行相应功能<br>
-循环结构：依据条件是否满足，循环多次执行某段代码<br>
- 4.1 选择结构<br>
- 4.1.1 if 语句</p>
-<p>** 作用：** 执行满足条件的语句</p>
-<p>if 语句的三种形式</p>
-<p>int main() {</p>
-<pre><code>//选择结构-单行if语句
-//输入一个分数，如果分数大于600分，视为考上一本大学，并在屏幕上打印
-
-int score = 0;
-cout &lt;&lt; &quot;请输入一个分数：&quot; &lt;&lt; endl;
-cin &gt;&gt; score;
-
-cout &lt;&lt; &quot;您输入的分数为： &quot; &lt;&lt; score &lt;&lt; endl;
-
-//if语句
-//注意事项，在if判断语句后面，不要加分号
-if (score &gt; 600)
-&#123;
-	cout &lt;&lt; &quot;我考上了一本大学！！！&quot; &lt;&lt; endl;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}</p>
-<p>多行格式 if 语句：if (条件){ 条件满足执行的语句 } else { 条件不满足执行的语句 };<br>
-​</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>int score = 0;
-
-cout &lt;&lt; &quot;请输入考试分数：&quot; &lt;&lt; endl;
-
-cin &gt;&gt; score;
-
-if (score &gt; 600)
-&#123;
-	cout &lt;&lt; &quot;我考上了一本大学&quot; &lt;&lt; endl;
-&#125;
-else
-&#123;
-	cout &lt;&lt; &quot;我未考上一本大学&quot; &lt;&lt; endl;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}<br>
- 多条件的 if 语句：if (条件 1){ 条件 1 满足执行的语句 } else if (条件 2){条件 2 满足执行的语句}… else { 都不满足执行的语句}<br>
-​</p>
-<p>​</p>
-<p>​</p>
-<p>示例：</p>
-<pre><code>int main() &#123;
-
-int score = 0;
-
-cout &lt;&lt; &quot;请输入考试分数：&quot; &lt;&lt; endl;
-
-cin &gt;&gt; score;
-
-if (score &gt; 600)
-&#123;
-	cout &lt;&lt; &quot;我考上了一本大学&quot; &lt;&lt; endl;
-&#125;
-else if (score &gt; 500)
-&#123;
-	cout &lt;&lt; &quot;我考上了二本大学&quot; &lt;&lt; endl;
-&#125;
-else if (score &gt; 400)
-&#123;
-	cout &lt;&lt; &quot;我考上了三本大学&quot; &lt;&lt; endl;
-&#125;
-else
-&#123;
-	cout &lt;&lt; &quot;我未考上本科&quot; &lt;&lt; endl;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}<br>
-​</p>
-<p>嵌套 if 语句：在 if 语句中，可以嵌套使用 if 语句，达到更精确的条件判断</p>
-<p>案例需求：</p>
-<p>提示用户输入一个高考考试分数，根据分数做如下判断<br>
-分数如果大于 600 分视为考上一本，大于 500 分考上二本，大于 400 考上三本，其余视为未考上本科；<br>
-在一本分数中，如果大于 700 分，考入北大，大于 650 分，考入清华，大于 600 考入人大。<br>
-示例：</p>
-<p>int main() {</p>
-<pre><code>int score = 0;
-
-cout &lt;&lt; &quot;请输入考试分数：&quot; &lt;&lt; endl;
-
-cin &gt;&gt; score;
-
-if (score &gt; 600)
-&#123;
-	cout &lt;&lt; &quot;我考上了一本大学&quot; &lt;&lt; endl;
-	if (score &gt; 700)
-	&#123;
-		cout &lt;&lt; &quot;我考上了北大&quot; &lt;&lt; endl;
-	&#125;
-	else if (score &gt; 650)
-	&#123;
-		cout &lt;&lt; &quot;我考上了清华&quot; &lt;&lt; endl;
-	&#125;
-	else
-	&#123;
-		cout &lt;&lt; &quot;我考上了人大&quot; &lt;&lt; endl;
-	&#125;
-	
-&#125;
-else if (score &gt; 500)
-&#123;
-	cout &lt;&lt; &quot;我考上了二本大学&quot; &lt;&lt; endl;
-&#125;
-else if (score &gt; 400)
-&#123;
-	cout &lt;&lt; &quot;我考上了三本大学&quot; &lt;&lt; endl;
-&#125;
-else
-&#123;
-	cout &lt;&lt; &quot;我未考上本科&quot; &lt;&lt; endl;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}<br>
- 练习案例： 三只小猪称体重</p>
-<p>有三只小猪 ABC，请分别输入三只小猪的体重，并且判断哪只小猪最重？</p>
-<p>4.1.2 三目运算符</p>
-<p>作用： 通过三目运算符实现简单的判断</p>
-<p>语法：表达式 1 ? 表达式 2 ：表达式 3</p>
-<p>解释：</p>
-<p>如果表达式 1 的值为真，执行表达式 2，并返回表达式 2 的结果；</p>
-<p>如果表达式 1 的值为假，执行表达式 3，并返回表达式 3 的结果。</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>int a = 10;
-int b = 20;
-int c = 0;
-
-c = a &gt; b ? a : b;
-cout &lt;&lt; &quot;c = &quot; &lt;&lt; c &lt;&lt; endl;
-
-//C++中三目运算符返回的是变量,可以继续赋值
-
-(a &gt; b ? a : b) = 100;
-
-cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
-cout &lt;&lt; &quot;b = &quot; &lt;&lt; b &lt;&lt; endl;
-cout &lt;&lt; &quot;c = &quot; &lt;&lt; c &lt;&lt; endl;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}</p>
-<p>4.1.3 switch 语句</p>
-<p>** 作用：** 执行多条件分支语句</p>
-<p>语法：</p>
-<p>switch (表达式)</p>
-<p>{</p>
-<pre><code>case 结果1：执行语句;break;
-
-case 结果2：执行语句;break;
-
-...
-
-default:执行语句;break;
-</code></pre>
-<p>}</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>//请给电影评分 
-//10 ~ 9   经典   
-// 8 ~ 7   非常好
-// 6 ~ 5   一般
-// 5分以下 烂片
-
-int score = 0;
-cout &lt;&lt; &quot;请给电影打分&quot; &lt;&lt; endl;
-cin &gt;&gt; score;
-
-switch (score)
-&#123;
-case 10:
-case 9:
-	cout &lt;&lt; &quot;经典&quot; &lt;&lt; endl;
-	break;
-case 8:
-	cout &lt;&lt; &quot;非常好&quot; &lt;&lt; endl;
-	break;
-case 7:
-case 6:
-	cout &lt;&lt; &quot;一般&quot; &lt;&lt; endl;
-	break;
-default:
-	cout &lt;&lt; &quot;烂片&quot; &lt;&lt; endl;
-	break;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}</p>
-<p>4.2 循环结构<br>
- 4.2.1 while 循环语句</p>
-<p>** 作用：** 满足循环条件，执行循环语句</p>
-<p 循环语句="">语法：while (循环条件)</p>
-<p>解释：只要循环条件的结果为真，就执行循环语句</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>int num = 0;
-while (num &lt; 10)
-&#123;
-	cout &lt;&lt; &quot;num = &quot; &lt;&lt; num &lt;&lt; endl;
-	num++;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}</p>
-<p>while 循环练习案例：猜数字</p>
-<p>** 案例描述：** 系统随机生成一个 1 到 100 之间的数字，玩家进行猜测，如果猜错，提示玩家数字过大或过小，如果猜对恭喜玩家胜利，并且退出游戏。</p>
-<p>4.2.2 do…while 循环语句</p>
-<p>作用： 满足循环条件，执行循环语句</p>
-<p>语法： do {循环语句} while (循环条件);</p>
-<p>** 注意：** 与 while 的区别在于 do…while 会先执行一次循环语句，再判断循环条件</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>int num = 0;
-
-do
-&#123;
-	cout &lt;&lt; num &lt;&lt; endl;
-	num++;
-
-&#125; while (num &lt; 10);
-
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}</p>
-<p>练习案例：水仙花数</p>
-<p>** 案例描述：** 水仙花数是指一个 3 位数，它的每个位上的数字的 3 次幂之和等于它本身</p>
-<p>例如：1^3 + 5^3+ 3^3 = 153</p>
-<p>请利用 do…while 语句，求出所有 3 位数中的水仙花数</p>
-<p>4.2.3 for 循环语句</p>
-<p>作用： 满足循环条件，执行循环语句</p>
-<p 循环语句;="">语法：for (起始表达式；条件表达式；末尾循环体)</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>for (int i = 0; i &lt; 10; i++)
-&#123;
-	cout &lt;&lt; i &lt;&lt; endl;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}<br>
- 详解：</p>
-<p>练习案例：敲桌子</p>
-<p>案例描述：从 1 开始数到数字 100， 如果数字个位含有 7，或者数字十位含有 7，或者该数字是 7 的倍数，我们打印敲桌子，其余数字直接打印输出。</p>
-<p>4.2.4 嵌套循环</p>
-<p>作用： 在循环体中再嵌套一层循环，解决一些实际问题</p>
-<p>例如我们想在屏幕中打印如下图片，就需要利用嵌套循环</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>//外层循环执行1次，内层循环执行1轮
-for (int i = 0; i &lt; 10; i++)
-&#123;
-	for (int j = 0; j &lt; 10; j++)
-	&#123;
-		cout &lt;&lt; &quot;*&quot; &lt;&lt; &quot; &quot;;
-	&#125;
-	cout &lt;&lt; endl;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}<br>
-** 练习案例：** 乘法口诀表</p>
-<p>案例描述：利用嵌套循环，实现九九乘法表</p>
-<p>4.3 跳转语句<br>
- 4.3.1 break 语句</p>
-<p>作用: 用于跳出选择结构或者循环结构</p>
-<p>break 使用的时机：</p>
-<p>出现在 switch 条件语句中，作用是终止 case 并跳出 switch<br>
- 出现在循环语句中，作用是跳出当前的循环语句<br>
-出现在嵌套循环中，跳出最近的内层循环语句<br>
-示例 1：</p>
-<p>int main() {<br>
-//1、在 switch 语句中使用 break<br>
-cout &lt;&lt;“请选择您挑战副本的难度：” &lt;&lt; endl;<br>
-cout &lt;&lt;“1、普通” &lt;&lt; endl;<br>
-cout &lt;&lt;“2、中等” &lt;&lt; endl;<br>
-cout &lt;&lt;“3、困难” &lt;&lt; endl;</p>
-<pre><code>int num = 0;
-
-cin &gt;&gt; num;
-
-switch (num)
-&#123;
-case 1:
-	cout &lt;&lt; &quot;您选择的是普通难度&quot; &lt;&lt; endl;
-	break;
-case 2:
-	cout &lt;&lt; &quot;您选择的是中等难度&quot; &lt;&lt; endl;
-	break;
-case 3:
-	cout &lt;&lt; &quot;您选择的是困难难度&quot; &lt;&lt; endl;
-	break;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}<br>
- 示例 2：</p>
-<p>int main() {<br>
-//2、在循环语句中用 break<br>
-for (int i = 0; i &lt; 10; i++)<br>
-{<br>
-if (i == 5)<br>
-{<br>
-break; // 跳出循环语句<br>
-}<br>
-cout &lt;&lt; i &lt;&lt; endl;<br>
-}</p>
-<pre><code>system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}<br>
- 示例 3：</p>
-<p>int main() {<br>
-// 在嵌套循环语句中使用 break，退出内层循环<br>
- for (int i = 0; i &lt; 10; i++)<br>
-{<br>
-for (int j = 0; j &lt; 10; j++)<br>
-{<br>
-if (j == 5)<br>
-{<br>
-break;<br>
-}<br>
-cout &lt;&lt; “*” &lt;&lt; &quot; &quot;;<br>
-}<br>
-cout &lt;&lt; endl;<br>
-}</p>
-<pre><code>system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}<br>
- 4.3.2 continue 语句</p>
-<p>** 作用：** 在循环语句中，跳过本次循环中余下尚未执行的语句，继续执行下一次循环</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>for (int i = 0; i &lt; 100; i++)
-&#123;
-	if (i % 2 == 0)
-	&#123;
-		continue;
-	&#125;
-	cout &lt;&lt; i &lt;&lt; endl;
-&#125;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}</p>
-<p>4.3.3 goto 语句</p>
-<p>** 作用：** 可以无条件跳转语句</p>
-<p>语法： goto 标记；</p>
-<p>** 解释：** 如果标记的名称存在，执行到 goto 语句时，会跳转到标记的位置</p>
-<p>示例：</p>
-<p>int main() {</p>
-<pre><code>cout &lt;&lt; &quot;1&quot; &lt;&lt; endl;
-
-goto FLAG;
-
-cout &lt;&lt; &quot;2&quot; &lt;&lt; endl;
-cout &lt;&lt; &quot;3&quot; &lt;&lt; endl;
-cout &lt;&lt; &quot;4&quot; &lt;&lt; endl;
-
-FLAG:
-
-cout &lt;&lt; &quot;5&quot; &lt;&lt; endl;
-
-system(&quot;pause&quot;);
-
-return 0;
-</code></pre>
-<p>}</p>
-<p>​</p>
 
       
     </div>

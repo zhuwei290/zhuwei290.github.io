@@ -5,8 +5,418 @@
         <link>https://zhuwei290.github.io</link>
         <description></description>
         <language>zh-CN</language>
-        <pubDate>Sat, 07 Sep 2024 10:44:02 +0800</pubDate>
-        <lastBuildDate>Sat, 07 Sep 2024 10:44:02 +0800</lastBuildDate>
+        <pubDate>Sat, 14 Sep 2024 09:35:06 +0800</pubDate>
+        <lastBuildDate>Sat, 14 Sep 2024 09:35:06 +0800</lastBuildDate>
+        <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</guid>
+            <title>分布式缓存</title>
+            <link>https://zhuwei290.github.io/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</link>
+            <pubDate>Sat, 14 Sep 2024 09:35:06 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;分布式缓存&lt;/p&gt;
+&lt;p&gt;– 基于 Redis 集群解决单机 Redis 存在的问题&lt;/p&gt;
+&lt;p&gt;单机的 Redis 存在四大问题：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725144240631.png&#34; alt=&#34;image-20210725144240631&#34;&gt;&lt;/p&gt;
+&lt;p&gt;0. 学习目标&lt;/p&gt;
+&lt;p&gt;1.Redis 持久化&lt;/p&gt;
+&lt;p&gt;Redis 有两种持久化方案：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;RDB 持久化&lt;/li&gt;
+&lt;li&gt;AOF 持久化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1.1.RDB 持久化&lt;/p&gt;
+&lt;p&gt;RDB 全称 Redis Database Backup file（Redis 数据备份文件），也被叫做 Redis 数据快照。简单来说就是把内存中的所有数据都记录到磁盘中。当 Redis 实例故障重启后，从磁盘读取快照文件，恢复数据。快照文件称为 RDB 文件，默认是保存在当前运行目录。&lt;/p&gt;
+&lt;p&gt;1.1.1. 执行时机&lt;/p&gt;
+&lt;p&gt;RDB 持久化在四种情况下会执行：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;执行 save 命令&lt;/li&gt;
+&lt;li&gt;执行 bgsave 命令&lt;/li&gt;
+&lt;li&gt;Redis 停机时&lt;/li&gt;
+&lt;li&gt;触发 RDB 条件时&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;1）save 命令&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;执行下面的命令，可以立即执行一次 RDB：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725144536958.png&#34; alt=&#34;image-20210725144536958&#34;&gt;&lt;/p&gt;
+&lt;p&gt;save 命令会导致主进程执行 RDB，这个过程中其它所有命令都会被阻塞。只有在数据迁移时可能用到。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2）bgsave 命令&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;下面的命令可以异步执行 RDB：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725144725943.png&#34; alt=&#34;image-20210725144725943&#34;&gt;&lt;/p&gt;
+&lt;p&gt;这个命令执行后会开启独立进程完成 RDB，主进程可以持续处理用户请求，不受影响。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;3）停机时&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Redis 停机时会执行一次 save 命令，实现 RDB 持久化。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;4）触发 RDB 条件&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Redis 内部有触发 RDB 的机制，可以在 redis.conf 文件中找到，格式如下：&lt;/p&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;900秒内，如果至少有1个key被修改，则执行bgsave&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;， 如果是save &amp;quot;&amp;quot; 则表示禁用RDB&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;save&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;900 1  &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;save&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;300 10  &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;save&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;60 10000 &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;RDB 的其它配置也可以在 redis.conf 文件中设置：&lt;/p&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;是否压缩&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;,建议不开启，压缩也会消耗cpu，磁盘的话不值钱&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;rdbcompression&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;yes&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;RDB文件名称&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;dbfilename&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;dump.rdb  &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;文件保存的路径目录&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;dir&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;./ &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;1.1.2.RDB 原理&lt;/p&gt;
+&lt;p&gt;bgsave 开始时会 fork 主进程得到子进程，子进程共享主进程的内存数据。完成 fork 后读取内存数据并写入 RDB 文件。&lt;/p&gt;
+&lt;p&gt;fork 采用的是 copy-on-write 技术：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当主进程执行读操作时，访问共享内存；&lt;/li&gt;
+&lt;li&gt;当主进程执行写操作时，则会拷贝一份数据，执行写操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725151319695.png&#34; alt=&#34;image-20210725151319695&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.1.3. 小结&lt;/p&gt;
+&lt;p&gt;RDB 方式 bgsave 的基本流程？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;fork 主进程得到一个子进程，共享内存空间&lt;/li&gt;
+&lt;li&gt;子进程读取内存数据并写入新的 RDB 文件&lt;/li&gt;
+&lt;li&gt;用新 RDB 文件替换旧的 RDB 文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;RDB 会在什么时候执行？save 60 1000 代表什么含义？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;默认是服务停止时&lt;/li&gt;
+&lt;li&gt;代表 60 秒内至少执行 1000 次修改则触发 RDB&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;RDB 的缺点？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;RDB 执行间隔时间长，两次 RDB 之间写入数据有丢失的风险&lt;/li&gt;
+&lt;li&gt;fork 子进程、压缩、写出 RDB 文件都比较耗时&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1.2.AOF 持久化&lt;/p&gt;
+&lt;p&gt;1.2.1.AOF 原理&lt;/p&gt;
+&lt;p&gt;AOF 全称为 Append Only File（追加文件）。Redis 处理的每一个写命令都会记录在 AOF 文件，可以看做是命令日志文件。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725151543640.png&#34; alt=&#34;image-20210725151543640&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.2.2.AOF 配置&lt;/p&gt;
+&lt;p&gt;AOF 默认是关闭的，需要修改 redis.conf 配置文件来开启 AOF：&lt;/p&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;是否开启AOF功能，默认是no&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;appendonly&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;yes&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;AOF文件的名称&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;appendfilename&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;quot;appendonly.aof&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;AOF 的命令记录的频率也可以通过 redis.conf 文件来配：&lt;/p&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;表示每执行一次写命令，立即记录到AOF文件&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;appendfsync&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;always &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;写命令执行完先放入AOF缓冲区，然后表示每隔1秒将缓冲区数据写到AOF文件，是默认方案&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;appendfsync&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;everysec &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;写命令执行完先放入AOF缓冲区，由操作系统决定何时将缓冲区内容写回磁盘&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;appendfsync&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;no&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;三种策略对比：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725151654046.png&#34; alt=&#34;image-20210725151654046&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.2.3.AOF 文件重写&lt;/p&gt;
+&lt;p&gt;因为是记录命令，AOF 文件会比 RDB 文件大的多。而且 AOF 会记录对同一个 key 的多次写操作，但只有最后一次写操作才有意义。通过执行 bgrewriteaof 命令，可以让 AOF 文件执行重写功能，用最少的命令达到相同效果。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725151729118.png&#34; alt=&#34;image-20210725151729118&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如图，AOF 原本有三个命令，但是 &lt;code&gt;set num 123 和 set num 666&lt;/code&gt;  都是对 num 的操作，第二次会覆盖第一次的值，因此第一个命令记录下来没有意义。&lt;/p&gt;
+&lt;p&gt;所以重写命令后，AOF 文件内容就是： &lt;code&gt;mset name jack num 666&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Redis 也会在触发阈值时自动去重写 AOF 文件。阈值也可以在 redis.conf 中配置：&lt;/p&gt;
+&lt;figure class=&#34;highlight properties&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;AOF文件比上次文件&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;增长超过多少百分比则触发重写&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;auto-aof-rewrite-percentage&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;100&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt; &lt;span class=&#34;attr&#34;&gt;AOF文件体积最小多大以上才触发重写&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;auto-aof-rewrite-min-size&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;64mb &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;1.3.RDB 与 AOF 对比&lt;/p&gt;
+&lt;p&gt;RDB 和 AOF 各有自己的优缺点，如果对数据安全性要求较高，在实际开发中往往会&lt;strong&gt;结合&lt;/strong&gt;两者来使用。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725151940515.png&#34; alt=&#34;image-20210725151940515&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.Redis 主从&lt;/p&gt;
+&lt;p&gt;2.1. 搭建主从架构&lt;/p&gt;
+&lt;p&gt;单节点 Redis 的并发能力是有上限的，要进一步提高 Redis 的并发能力，就需要搭建主从集群，实现读写分离。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725152037611.png&#34; alt=&#34;image-20210725152037611&#34;&gt;&lt;/p&gt;
+&lt;p&gt;具体搭建流程参考课前资料《&lt;a href=&#34;http://xn--Redis-2o3nn90k.md&#34;&gt;Redis 集群.md&lt;/a&gt;》：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725152052501.png&#34; alt=&#34;image-20210725152052501&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.2. 主从数据同步原理&lt;/p&gt;
+&lt;p&gt;2.2.1. 全量同步&lt;/p&gt;
+&lt;p&gt;主从第一次建立连接时，会执行&lt;strong&gt;全量同步&lt;/strong&gt;，将 master 节点的所有数据都拷贝给 slave 节点，流程：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725152222497.png&#34; alt=&#34;image-20210725152222497&#34;&gt;&lt;/p&gt;
+&lt;p&gt;这里有一个问题，master 如何得知 salve 是第一次来连接呢？？&lt;/p&gt;
+&lt;p&gt;有几个概念，可以作为判断依据：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Replication Id&lt;/strong&gt;：简称 replid，是数据集的标记，id 一致则说明是同一数据集。每一个 master 都有唯一的 replid，slave 则会继承 master 节点的 replid&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;offset&lt;/strong&gt;：偏移量，随着记录在 repl_baklog 中的数据增多而逐渐增大。slave 完成同步时也会记录当前同步的 offset。如果 slave 的 offset 小于 master 的 offset，说明 slave 数据落后于 master，需要更新。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因此 slave 做数据同步，必须向 master 声明自己的 replication id 和 offset，master 才可以判断到底需要同步哪些数据。&lt;/p&gt;
+&lt;p&gt;因为 slave 原本也是一个 master，有自己的 replid 和 offset，当第一次变成 slave，与 master 建立连接时，发送的 replid 和 offset 是自己的 replid 和 offset。&lt;/p&gt;
+&lt;p&gt;master 判断发现 slave 发送来的 replid 与自己的不一致，说明这是一个全新的 slave，就知道要做全量同步了。&lt;/p&gt;
+&lt;p&gt;master 会将自己的 replid 和 offset 都发送给这个 slave，slave 保存这些信息。以后 slave 的 replid 就与 master 一致了。&lt;/p&gt;
+&lt;p&gt;因此，&lt;strong&gt;master 判断一个节点是否是第一次同步的依据，就是看 replid 是否一致&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725152700914.png&#34; alt=&#34;image-20210725152700914&#34;&gt;&lt;/p&gt;
+&lt;p&gt;完整流程描述：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;slave 节点请求增量同步&lt;/li&gt;
+&lt;li&gt;master 节点判断 replid，发现不一致，拒绝增量同步&lt;/li&gt;
+&lt;li&gt;master 将完整内存数据生成 RDB，发送 RDB 到 slave&lt;/li&gt;
+&lt;li&gt;slave 清空本地数据，加载 master 的 RDB&lt;/li&gt;
+&lt;li&gt;master 将 RDB 期间的命令记录在 repl_baklog，并持续将 log 中的命令发送给 slave&lt;/li&gt;
+&lt;li&gt;slave 执行接收到的命令，保持与 master 之间的同步&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.2.2. 增量同步&lt;/p&gt;
+&lt;p&gt;全量同步需要先做 RDB，然后将 RDB 文件通过网络传输个 slave，成本太高了。因此除了第一次做全量同步，其它大多数时候 slave 与 master 都是做&lt;strong&gt;增量同步&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;什么是增量同步？就是只更新 slave 与 master 存在差异的部分数据。如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725153201086.png&#34; alt=&#34;image-20210725153201086&#34;&gt;&lt;/p&gt;
+&lt;p&gt;那么 master 怎么知道 slave 与自己的数据差异在哪里呢？&lt;/p&gt;
+&lt;p&gt;2.2.3.repl_backlog 原理&lt;/p&gt;
+&lt;p&gt;master 怎么知道 slave 与自己的数据差异在哪里呢？&lt;/p&gt;
+&lt;p&gt;这就要说到全量同步时的 repl_baklog 文件了。&lt;/p&gt;
+&lt;p&gt;这个文件是一个固定大小的数组，只不过数组是环形，也就是说&lt;strong&gt;角标到达数组末尾后，会再次从 0 开始读写&lt;/strong&gt;，这样数组头部的数据就会被覆盖。&lt;/p&gt;
+&lt;p&gt;repl_baklog 中会记录 Redis 处理过的命令日志及 offset，包括 master 当前的 offset，和 slave 已经拷贝到的 offset：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725153359022.png&#34; alt=&#34;image-20210725153359022&#34;&gt;&lt;/p&gt;
+&lt;p&gt;slave 与 master 的 offset 之间的差异，就是 salve 需要增量拷贝的数据了。&lt;/p&gt;
+&lt;p&gt;随着不断有数据写入，master 的 offset 逐渐变大，slave 也不断的拷贝，追赶 master 的 offset：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725153524190.png&#34; alt=&#34;image-20210725153524190&#34;&gt;&lt;/p&gt;
+&lt;p&gt;直到数组被填满：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725153715910.png&#34; alt=&#34;image-20210725153715910&#34;&gt;&lt;/p&gt;
+&lt;p&gt;此时，如果有新的数据写入，就会覆盖数组中的旧数据。不过，旧的数据只要是绿色的，说明是已经被同步到 slave 的数据，即便被覆盖了也没什么影响。因为未同步的仅仅是红色部分。&lt;/p&gt;
+&lt;p&gt;但是，如果 slave 出现网络阻塞，导致 master 的 offset 远远超过了 slave 的 offset：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725153937031.png&#34; alt=&#34;image-20210725153937031&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如果 master 继续写入新数据，其 offset 就会覆盖旧的数据，直到将 slave 现在的 offset 也覆盖：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725154155984.png&#34; alt=&#34;image-20210725154155984&#34;&gt;&lt;/p&gt;
+&lt;p&gt;棕色框中的红色部分，就是尚未同步，但是却已经被覆盖的数据。此时如果 slave 恢复，需要同步，却发现自己的 offset 都没有了，无法完成增量同步了。只能做全量同步。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725154216392.png&#34; alt=&#34;image-20210725154216392&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.3. 主从同步优化&lt;/p&gt;
+&lt;p&gt;主从同步可以保证主从数据的一致性，非常重要。&lt;/p&gt;
+&lt;p&gt;可以从以下几个方面来优化 Redis 主从就集群：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 master 中配置 repl-diskless-sync yes 启用无磁盘复制，避免全量同步时的磁盘 IO。&lt;/li&gt;
+&lt;li&gt;Redis 单节点上的内存占用不要太大，减少 RDB 导致的过多磁盘 IO&lt;/li&gt;
+&lt;li&gt;适当提高 repl_baklog 的大小，发现 slave 宕机时尽快实现故障恢复，尽可能避免全量同步&lt;/li&gt;
+&lt;li&gt;限制一个 master 上的 slave 节点数量，如果实在是太多 slave，则可以采用主 - 从 - 从链式结构，减少 master 压力&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;主从从架构图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725154405899.png&#34; alt=&#34;image-20210725154405899&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.4. 小结&lt;/p&gt;
+&lt;p&gt;简述全量同步和增量同步区别？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;全量同步：master 将完整内存数据生成 RDB，发送 RDB 到 slave。后续命令则记录在 repl_baklog，逐个发送给 slave。&lt;/li&gt;
+&lt;li&gt;增量同步：slave 提交自己的 offset 到 master，master 获取 repl_baklog 中从 offset 之后的命令给 slave&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;什么时候执行全量同步？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;slave 节点第一次连接 master 节点时&lt;/li&gt;
+&lt;li&gt;slave 节点断开时间太久，repl_baklog 中的 offset 已经被覆盖时&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;什么时候执行增量同步？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;slave 节点断开又恢复，并且在 repl_baklog 中能找到 offset 时&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3.Redis 哨兵&lt;/p&gt;
+&lt;p&gt;Redis 提供了哨兵（Sentinel）机制来实现主从集群的自动故障恢复。&lt;/p&gt;
+&lt;p&gt;3.1. 哨兵原理&lt;/p&gt;
+&lt;p&gt;3.1.1. 集群结构和作用&lt;/p&gt;
+&lt;p&gt;哨兵的结构如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725154528072.png&#34; alt=&#34;image-20210725154528072&#34;&gt;&lt;/p&gt;
+&lt;p&gt;哨兵的作用如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;监控&lt;/strong&gt;：Sentinel 会不断检查您的 master 和 slave 是否按预期工作&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自动故障恢复&lt;/strong&gt;：如果 master 故障，Sentinel 会将一个 slave 提升为 master。当故障实例恢复后也以新的 master 为主&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;通知&lt;/strong&gt;：Sentinel 充当 Redis 客户端的服务发现来源，当集群发生故障转移时，会将最新信息推送给 Redis 的客户端&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3.1.2. 集群监控原理&lt;/p&gt;
+&lt;p&gt;Sentinel 基于心跳机制监测服务状态，每隔 1 秒向集群的每个实例发送 ping 命令：&lt;/p&gt;
+&lt;p&gt;・主观下线：如果某 sentinel 节点发现某实例未在规定时间响应，则认为该实例&lt;strong&gt;主观下线&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;・客观下线：若超过指定数量（quorum）的 sentinel 都认为该实例主观下线，则该实例&lt;strong&gt;客观下线&lt;/strong&gt;。quorum 值最好超过 Sentinel 实例数量的一半。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725154632354.png&#34; alt=&#34;image-20210725154632354&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.1.3. 集群故障恢复原理&lt;/p&gt;
+&lt;p&gt;一旦发现 master 故障，sentinel 需要在 salve 中选择一个作为新的 master，选择依据是这样的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;首先会判断 slave 节点与 master 节点断开时间长短，如果超过指定值（down-after-milliseconds * 10）则会排除该 slave 节点&lt;/li&gt;
+&lt;li&gt;然后判断 slave 节点的 slave-priority 值，越小优先级越高，如果是 0 则永不参与选举&lt;/li&gt;
+&lt;li&gt;如果 slave-prority 一样，则判断 slave 节点的 offset 值，越大说明数据越新，优先级越高&lt;/li&gt;
+&lt;li&gt;最后是判断 slave 节点的运行 id 大小，越小优先级越高。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当选出一个新的 master 后，该如何实现切换呢？&lt;/p&gt;
+&lt;p&gt;流程如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;sentinel 给备选的 slave1 节点发送 slaveof no one 命令，让该节点成为 master&lt;/li&gt;
+&lt;li&gt;sentinel 给所有其它 slave 发送 slaveof 192.168.150.101 7002 命令，让这些 slave 成为新 master 的从节点，开始从新的 master 上同步数据。&lt;/li&gt;
+&lt;li&gt;最后，sentinel 将故障节点标记为 slave，当故障节点恢复后会自动成为新的 master 的 slave 节点&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725154816841.png&#34; alt=&#34;image-20210725154816841&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.1.4. 小结&lt;/p&gt;
+&lt;p&gt;Sentinel 的三个作用是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;监控&lt;/li&gt;
+&lt;li&gt;故障转移&lt;/li&gt;
+&lt;li&gt;通知&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Sentinel 如何判断一个 redis 实例是否健康？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每隔 1 秒发送一次 ping 命令，如果超过一定时间没有相向则认为是主观下线&lt;/li&gt;
+&lt;li&gt;如果大多数 sentinel 都认为实例主观下线，则判定服务下线&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;故障转移步骤有哪些？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;首先选定一个 slave 作为新的 master，执行 slaveof no one&lt;/li&gt;
+&lt;li&gt;然后让所有节点都执行 slaveof 新 master&lt;/li&gt;
+&lt;li&gt;修改故障节点配置，添加 slaveof 新 master&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3.2. 搭建哨兵集群&lt;/p&gt;
+&lt;p&gt;具体搭建流程参考课前资料《&lt;a href=&#34;http://xn--Redis-2o3nn90k.md&#34;&gt;Redis 集群.md&lt;/a&gt;》：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725155019276.png&#34; alt=&#34;image-20210725155019276&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.3.RedisTemplate&lt;/p&gt;
+&lt;p&gt;在 Sentinel 集群监管下的 Redis 主从集群，其节点会因为自动故障转移而发生变化，Redis 的客户端必须感知这种变化，及时更新连接信息。Spring 的 RedisTemplate 底层利用 lettuce 实现了节点的感知和自动切换。&lt;/p&gt;
+&lt;p&gt;下面，我们通过一个测试来实现 RedisTemplate 集成哨兵机制。&lt;/p&gt;
+&lt;p&gt;3.3.1. 导入 Demo 工程&lt;/p&gt;
+&lt;p&gt;首先，我们引入课前资料提供的 Demo 工程：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725155124958.png&#34; alt=&#34;image-20210725155124958&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.3.2. 引入依赖&lt;/p&gt;
+&lt;p&gt;在项目的 pom 文件中引入依赖：&lt;/p&gt;
+&lt;figure class=&#34;highlight xml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;groupId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;tag&#34;&gt;&amp;lt;&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;spring-boot-starter-data-redis&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;artifactId&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;tag&#34;&gt;&amp;lt;/&lt;span class=&#34;name&#34;&gt;dependency&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;3.3.3. 配置 Redis 地址&lt;/p&gt;
+&lt;p&gt;然后在配置文件 application.yml 中指定 redis 的 sentinel 相关信息：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;spring:&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  redis:&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    sentinel:&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      master: mymaster&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      nodes:&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        - &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;:&lt;span class=&#34;number&#34;&gt;27001&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        - &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;:&lt;span class=&#34;number&#34;&gt;27002&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        - &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;:&lt;span class=&#34;number&#34;&gt;27003&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;3.3.4. 配置读写分离&lt;/p&gt;
+&lt;p&gt;在项目的启动类中，添加一个新的 bean：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; LettuceClientConfigurationBuilderCustomizer &lt;span class=&#34;title function_&#34;&gt;clientConfigurationBuilderCustomizer&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; clientConfigurationBuilder -&amp;gt; clientConfigurationBuilder.readFrom(ReadFrom.REPLICA_PREFERRED);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这个 bean 中配置的就是读写策略，包括四种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MASTER：从主节点读取&lt;/li&gt;
+&lt;li&gt;MASTER_PREFERRED：优先从 master 节点读取，master 不可用才读取 replica&lt;/li&gt;
+&lt;li&gt;REPLICA：从 slave（replica）节点读取&lt;/li&gt;
+&lt;li&gt;REPLICA _PREFERRED：优先从 slave（replica）节点读取，所有的 slave 都不可用才读取 master&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.Redis 分片集群&lt;/p&gt;
+&lt;p&gt;4.1. 搭建分片集群&lt;/p&gt;
+&lt;p&gt;主从和哨兵可以解决高可用、高并发读的问题。但是依然有两个问题没有解决：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;海量数据存储问题&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;高并发写的问题&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用分片集群可以解决上述问题，如图:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725155747294.png&#34; alt=&#34;image-20210725155747294&#34;&gt;&lt;/p&gt;
+&lt;p&gt;分片集群特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;集群中有多个 master，每个 master 保存不同数据&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;每个 master 都可以有多个 slave 节点&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;master 之间通过 ping 监测彼此健康状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;客户端请求可以访问集群任意节点，最终都会被转发到正确节点&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;具体搭建流程参考课前资料《&lt;a href=&#34;http://xn--Redis-2o3nn90k.md&#34;&gt;Redis 集群.md&lt;/a&gt;》：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725155806288.png&#34; alt=&#34;image-20210725155806288&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.2. 散列插槽&lt;/p&gt;
+&lt;p&gt;4.2.1. 插槽原理&lt;/p&gt;
+&lt;p&gt;Redis 会把每一个 master 节点映射到 0~16383 共 16384 个插槽（hash slot）上，查看集群信息时就能看到：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725155820320.png&#34; alt=&#34;image-20210725155820320&#34;&gt;&lt;/p&gt;
+&lt;p&gt;数据 key 不是与节点绑定，而是与插槽绑定。redis 会根据 key 的有效部分计算插槽值，分两种情况：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;key 中包含 &amp;quot;{}&amp;quot;，且 “{}” 中至少包含 1 个字符，“{}” 中的部分是有效部分&lt;/li&gt;
+&lt;li&gt;key 中不包含 “{}”，整个 key 都是有效部分&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;例如：key 是 num，那么就根据 num 计算，如果是 {itcast} num，则根据 itcast 计算。计算方式是利用 CRC16 算法得到一个 hash 值，然后对 16384 取余，得到的结果就是 slot 值。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725155850200.png&#34; alt=&#34;image-20210725155850200&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如图，在 7001 这个节点执行 set a 1 时，对 a 做 hash 运算，对 16384 取余，得到的结果是 15495，因此要存储到 103 节点。&lt;/p&gt;
+&lt;p&gt;到了 7003 后，执行 &lt;code&gt;get num&lt;/code&gt;  时，对 num 做 hash 运算，对 16384 取余，得到的结果是 2765，因此需要切换到 7001 节点&lt;/p&gt;
+&lt;p&gt;4.2.1. 小结&lt;/p&gt;
+&lt;p&gt;Redis 如何判断某个 key 应该在哪个实例？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将 16384 个插槽分配到不同的实例&lt;/li&gt;
+&lt;li&gt;根据 key 的有效部分计算哈希值，对 16384 取余&lt;/li&gt;
+&lt;li&gt;余数作为插槽，寻找插槽所在实例即可&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如何将同一类数据固定的保存在同一个 Redis 实例？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;这一类数据使用相同的有效部分，例如 key 都以 {typeId} 为前缀&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.3. 集群伸缩&lt;/p&gt;
+&lt;p&gt;redis-cli --cluster 提供了很多操作集群的命令，可以通过下面方式查看：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725160138290.png&#34; alt=&#34;image-20210725160138290&#34;&gt;&lt;/p&gt;
+&lt;p&gt;比如，添加节点的命令：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725160448139.png&#34; alt=&#34;image-20210725160448139&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.3.1. 需求分析&lt;/p&gt;
+&lt;p&gt;需求：向集群中添加一个新的 master 节点，并向其中存储 num = 10&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;启动一个新的 redis 实例，端口为 7004&lt;/li&gt;
+&lt;li&gt;添加 7004 到之前的集群，并作为一个 master 节点&lt;/li&gt;
+&lt;li&gt;给 7004 节点分配插槽，使得 num 这个 key 可以存储到 7004 实例&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里需要两个新的功能：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;添加一个节点到集群中&lt;/li&gt;
+&lt;li&gt;将部分插槽分配到新插槽&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.3.2. 创建新的 redis 实例&lt;/p&gt;
+&lt;p&gt;创建一个文件夹：&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;mkdir&lt;/span&gt; 7004&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;拷贝配置文件：&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;cp&lt;/span&gt; redis.conf /7004&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;修改配置文件：&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;sed /s/6379/7004/g 7004/redis.conf&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;启动&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;redis-server 7004/redis.conf&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;4.3.3. 添加新节点到 redis&lt;/p&gt;
+&lt;p&gt;添加节点的语法如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725160448139.png&#34; alt=&#34;image-20210725160448139&#34;&gt;&lt;/p&gt;
+&lt;p&gt;执行命令：&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;redis-cli --cluster add-node  192.168.150.101:7004 192.168.150.101:7001&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;通过命令查看集群状态：&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;redis-cli -p 7001 cluster nodes&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;如图，7004 加入了集群，并且默认是一个 master 节点：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725161007099.png&#34; alt=&#34;image-20210725161007099&#34;&gt;&lt;/p&gt;
+&lt;p&gt;但是，可以看到 7004 节点的插槽数量为 0，因此没有任何数据可以存储到 7004 上&lt;/p&gt;
+&lt;p&gt;4.3.4. 转移插槽&lt;/p&gt;
+&lt;p&gt;我们要将 num 存储到 7004 节点，因此需要先看看 num 的插槽是多少：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725161241793.png&#34; alt=&#34;image-20210725161241793&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如上图所示，num 的插槽为 2765.&lt;/p&gt;
+&lt;p&gt;我们可以将 0~3000 的插槽从 7001 转移到 7004，命令格式如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725161401925.png&#34; alt=&#34;image-20210725161401925&#34;&gt;&lt;/p&gt;
+&lt;p&gt;具体命令如下：&lt;/p&gt;
+&lt;p&gt;建立连接：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725161506241.png&#34; alt=&#34;image-20210725161506241&#34;&gt;&lt;/p&gt;
+&lt;p&gt;得到下面的反馈：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725161540841.png&#34; alt=&#34;image-20210725161540841&#34;&gt;&lt;/p&gt;
+&lt;p&gt;询问要移动多少个插槽，我们计划是 3000 个：&lt;/p&gt;
+&lt;p&gt;新的问题来了：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725161637152.png&#34; alt=&#34;image-20210725161637152&#34;&gt;&lt;/p&gt;
+&lt;p&gt;那个 node 来接收这些插槽？？&lt;/p&gt;
+&lt;p&gt;显然是 7004，那么 7004 节点的 id 是多少呢？&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725161731738.png&#34; alt=&#34;image-20210725161731738&#34;&gt;&lt;/p&gt;
+&lt;p&gt;复制这个 id，然后拷贝到刚才的控制台后：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725161817642.png&#34; alt=&#34;image-20210725161817642&#34;&gt;&lt;/p&gt;
+&lt;p&gt;这里询问，你的插槽是从哪里移动过来的？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;all：代表全部，也就是三个节点各转移一部分&lt;/li&gt;
+&lt;li&gt;具体的 id：目标节点的 id&lt;/li&gt;
+&lt;li&gt;done：没有了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里我们要从 7001 获取，因此填写 7001 的 id：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725162030478.png&#34; alt=&#34;image-20210725162030478&#34;&gt;&lt;/p&gt;
+&lt;p&gt;填完后，点击 done，这样插槽转移就准备好了：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725162101228.png&#34; alt=&#34;image-20210725162101228&#34;&gt;&lt;/p&gt;
+&lt;p&gt;确认要转移吗？输入 yes：&lt;/p&gt;
+&lt;p&gt;然后，通过命令查看结果：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725162145497.png&#34; alt=&#34;image-20210725162145497&#34;&gt;&lt;/p&gt;
+&lt;p&gt;可以看到：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725162224058.png&#34; alt=&#34;image-20210725162224058&#34;&gt;&lt;/p&gt;
+&lt;p&gt;目的达成。&lt;/p&gt;
+&lt;p&gt;4.4. 故障转移&lt;/p&gt;
+&lt;p&gt;集群初识状态是这样的：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210727161152065.png&#34; alt=&#34;image-20210727161152065&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其中 7001、7002、7003 都是 master，我们计划让 7002 宕机。&lt;/p&gt;
+&lt;p&gt;4.4.1. 自动故障转移&lt;/p&gt;
+&lt;p&gt;当集群中有一个 master 宕机会发生什么呢？&lt;/p&gt;
+&lt;p&gt;直接停止一个 redis 实例，例如 7002：&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;redis-cli -p 7002 shutdown&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;1）首先是该实例与其它实例失去连接&lt;/p&gt;
+&lt;p&gt;2）然后是疑似宕机：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725162319490.png&#34; alt=&#34;image-20210725162319490&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3）最后是确定下线，自动提升一个 slave 为新的 master：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725162408979.png&#34; alt=&#34;image-20210725162408979&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4）当 7002 再次启动，就会变为一个 slave 节点了：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210727160803386.png&#34; alt=&#34;image-20210727160803386&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.4.2. 手动故障转移&lt;/p&gt;
+&lt;p&gt;利用 cluster failover 命令可以手动让集群中的某个 master 宕机，切换到执行 cluster failover 命令的这个 slave 节点，实现无感知的数据迁移。其流程如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210725162441407.png&#34; alt=&#34;image-20210725162441407&#34;&gt;&lt;/p&gt;
+&lt;p&gt;这种 failover 命令可以指定三种模式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;缺省：默认的流程，如图 1~6 歩&lt;/li&gt;
+&lt;li&gt;force：省略了对 offset 的一致性校验&lt;/li&gt;
+&lt;li&gt;takeover：直接执行第 5 歩，忽略数据一致性、忽略 master 状态和其它 master 的意见&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;案例需求&lt;/strong&gt;：在 7002 这个 slave 节点执行手动故障转移，重新夺回 master 地位&lt;/p&gt;
+&lt;p&gt;步骤如下：&lt;/p&gt;
+&lt;p&gt;1）利用 redis-cli 连接 7002 这个节点&lt;/p&gt;
+&lt;p&gt;2）执行 cluster failover 命令&lt;/p&gt;
+&lt;p&gt;如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210727160037766.png&#34; alt=&#34;image-20210727160037766&#34;&gt;&lt;/p&gt;
+&lt;p&gt;效果：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210727161152065.png&#34; alt=&#34;image-20210727161152065&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.5.RedisTemplate 访问分片集群&lt;/p&gt;
+&lt;p&gt;RedisTemplate 底层同样基于 lettuce 实现了分片集群的支持，而使用的步骤与哨兵模式基本一致：&lt;/p&gt;
+&lt;p&gt;1）引入 redis 的 starter 依赖&lt;/p&gt;
+&lt;p&gt;2）配置分片集群地址&lt;/p&gt;
+&lt;p&gt;3）配置读写分离&lt;/p&gt;
+&lt;p&gt;与哨兵模式相比，其中只有分片集群的配置方式略有差异，如下：&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;spring:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;redis:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;cluster:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;nodes:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;&lt;span class=&#34;string&#34;&gt;:7001&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;&lt;span class=&#34;string&#34;&gt;:7002&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;&lt;span class=&#34;string&#34;&gt;:7003&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;&lt;span class=&#34;string&#34;&gt;:8001&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;&lt;span class=&#34;string&#34;&gt;:8002&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.101&lt;/span&gt;&lt;span class=&#34;string&#34;&gt;:8003&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+ ]]></description>
+        </item>
         <item>
             <guid isPermalink="true">https://zhuwei290.github.io/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/</guid>
             <title>分布式事务</title>
@@ -5916,432 +6326,6 @@ DI （ Dependency Injection ）依赖注入&lt;br&gt;
  ]]></description>
         </item>
         <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</guid>
-            <title>c++基础入门笔记(4)</title>
-            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</link>
-            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
-            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
-4 程序流程结构&lt;br&gt;
- C/C++ 支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构&lt;/p&gt;
-&lt;p&gt;顺序结构：程序按顺序执行，不发生跳转&lt;br&gt;
-选择结构：依据条件是否满足，有选择的执行相应功能&lt;br&gt;
-循环结构：依据条件是否满足，循环多次执行某段代码&lt;br&gt;
- 4.1 选择结构&lt;br&gt;
- 4.1.1 if 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 执行满足条件的语句&lt;/p&gt;
-&lt;p&gt;if 语句的三种形式&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//选择结构-单行if语句
-//输入一个分数，如果分数大于600分，视为考上一本大学，并在屏幕上打印
-
-int score = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请输入一个分数：&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; score;
-
-cout &amp;lt;&amp;lt; &amp;quot;您输入的分数为： &amp;quot; &amp;lt;&amp;lt; score &amp;lt;&amp;lt; endl;
-
-//if语句
-//注意事项，在if判断语句后面，不要加分号
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学！！！&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;多行格式 if 语句：if (条件){ 条件满足执行的语句 } else { 条件不满足执行的语句 };&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int score = 0;
-
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
-
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 多条件的 if 语句：if (条件 1){ 条件 1 满足执行的语句 } else if (条件 2){条件 2 满足执行的语句}… else { 都不满足执行的语句}&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int main() &amp;#123;
-
-int score = 0;
-
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
-
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 500)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 400)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-​&lt;/p&gt;
-&lt;p&gt;嵌套 if 语句：在 if 语句中，可以嵌套使用 if 语句，达到更精确的条件判断&lt;/p&gt;
-&lt;p&gt;案例需求：&lt;/p&gt;
-&lt;p&gt;提示用户输入一个高考考试分数，根据分数做如下判断&lt;br&gt;
-分数如果大于 600 分视为考上一本，大于 500 分考上二本，大于 400 考上三本，其余视为未考上本科；&lt;br&gt;
-在一本分数中，如果大于 700 分，考入北大，大于 650 分，考入清华，大于 600 考入人大。&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int score = 0;
-
-cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
-
-cin &amp;gt;&amp;gt; score;
-
-if (score &amp;gt; 600)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
-	if (score &amp;gt; 700)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了北大&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	else if (score &amp;gt; 650)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了清华&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	else
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;我考上了人大&amp;quot; &amp;lt;&amp;lt; endl;
-	&amp;#125;
-	
-&amp;#125;
-else if (score &amp;gt; 500)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else if (score &amp;gt; 400)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-else
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 练习案例： 三只小猪称体重&lt;/p&gt;
-&lt;p&gt;有三只小猪 ABC，请分别输入三只小猪的体重，并且判断哪只小猪最重？&lt;/p&gt;
-&lt;p&gt;4.1.2 三目运算符&lt;/p&gt;
-&lt;p&gt;作用： 通过三目运算符实现简单的判断&lt;/p&gt;
-&lt;p&gt;语法：表达式 1 ? 表达式 2 ：表达式 3&lt;/p&gt;
-&lt;p&gt;解释：&lt;/p&gt;
-&lt;p&gt;如果表达式 1 的值为真，执行表达式 2，并返回表达式 2 的结果；&lt;/p&gt;
-&lt;p&gt;如果表达式 1 的值为假，执行表达式 3，并返回表达式 3 的结果。&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 20;
-int c = 0;
-
-c = a &amp;gt; b ? a : b;
-cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
-
-//C++中三目运算符返回的是变量,可以继续赋值
-
-(a &amp;gt; b ? a : b) = 100;
-
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.1.3 switch 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 执行多条件分支语句&lt;/p&gt;
-&lt;p&gt;语法：&lt;/p&gt;
-&lt;p&gt;switch (表达式)&lt;/p&gt;
-&lt;p&gt;{&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;case 结果1：执行语句;break;
-
-case 结果2：执行语句;break;
-
-...
-
-default:执行语句;break;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//请给电影评分 
-//10 ~ 9   经典   
-// 8 ~ 7   非常好
-// 6 ~ 5   一般
-// 5分以下 烂片
-
-int score = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请给电影打分&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; score;
-
-switch (score)
-&amp;#123;
-case 10:
-case 9:
-	cout &amp;lt;&amp;lt; &amp;quot;经典&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 8:
-	cout &amp;lt;&amp;lt; &amp;quot;非常好&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 7:
-case 6:
-	cout &amp;lt;&amp;lt; &amp;quot;一般&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-default:
-	cout &amp;lt;&amp;lt; &amp;quot;烂片&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.2 循环结构&lt;br&gt;
- 4.2.1 while 循环语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p 循环语句=&#34;&#34;&gt;语法：while (循环条件)&lt;/p&gt;
-&lt;p&gt;解释：只要循环条件的结果为真，就执行循环语句&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-while (num &amp;lt; 10)
-&amp;#123;
-	cout &amp;lt;&amp;lt; &amp;quot;num = &amp;quot; &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
-	num++;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;while 循环练习案例：猜数字&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 系统随机生成一个 1 到 100 之间的数字，玩家进行猜测，如果猜错，提示玩家数字过大或过小，如果猜对恭喜玩家胜利，并且退出游戏。&lt;/p&gt;
-&lt;p&gt;4.2.2 do…while 循环语句&lt;/p&gt;
-&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p&gt;语法： do {循环语句} while (循环条件);&lt;/p&gt;
-&lt;p&gt;** 注意：** 与 while 的区别在于 do…while 会先执行一次循环语句，再判断循环条件&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-
-do
-&amp;#123;
-	cout &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
-	num++;
-
-&amp;#125; while (num &amp;lt; 10);
-
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;练习案例：水仙花数&lt;/p&gt;
-&lt;p&gt;** 案例描述：** 水仙花数是指一个 3 位数，它的每个位上的数字的 3 次幂之和等于它本身&lt;/p&gt;
-&lt;p&gt;例如：1^3 + 5^3+ 3^3 = 153&lt;/p&gt;
-&lt;p&gt;请利用 do…while 语句，求出所有 3 位数中的水仙花数&lt;/p&gt;
-&lt;p&gt;4.2.3 for 循环语句&lt;/p&gt;
-&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
-&lt;p 循环语句;=&#34;&#34;&gt;语法：for (起始表达式；条件表达式；末尾循环体)&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 详解：&lt;/p&gt;
-&lt;p&gt;练习案例：敲桌子&lt;/p&gt;
-&lt;p&gt;案例描述：从 1 开始数到数字 100， 如果数字个位含有 7，或者数字十位含有 7，或者该数字是 7 的倍数，我们打印敲桌子，其余数字直接打印输出。&lt;/p&gt;
-&lt;p&gt;4.2.4 嵌套循环&lt;/p&gt;
-&lt;p&gt;作用： 在循环体中再嵌套一层循环，解决一些实际问题&lt;/p&gt;
-&lt;p&gt;例如我们想在屏幕中打印如下图片，就需要利用嵌套循环&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//外层循环执行1次，内层循环执行1轮
-for (int i = 0; i &amp;lt; 10; i++)
-&amp;#123;
-	for (int j = 0; j &amp;lt; 10; j++)
-	&amp;#123;
-		cout &amp;lt;&amp;lt; &amp;quot;*&amp;quot; &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-** 练习案例：** 乘法口诀表&lt;/p&gt;
-&lt;p&gt;案例描述：利用嵌套循环，实现九九乘法表&lt;/p&gt;
-&lt;p&gt;4.3 跳转语句&lt;br&gt;
- 4.3.1 break 语句&lt;/p&gt;
-&lt;p&gt;作用: 用于跳出选择结构或者循环结构&lt;/p&gt;
-&lt;p&gt;break 使用的时机：&lt;/p&gt;
-&lt;p&gt;出现在 switch 条件语句中，作用是终止 case 并跳出 switch&lt;br&gt;
- 出现在循环语句中，作用是跳出当前的循环语句&lt;br&gt;
-出现在嵌套循环中，跳出最近的内层循环语句&lt;br&gt;
-示例 1：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-//1、在 switch 语句中使用 break&lt;br&gt;
-cout &amp;lt;&amp;lt;“请选择您挑战副本的难度：” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“1、普通” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“2、中等” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt;“3、困难” &amp;lt;&amp;lt; endl;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int num = 0;
-
-cin &amp;gt;&amp;gt; num;
-
-switch (num)
-&amp;#123;
-case 1:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是普通难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 2:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是中等难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-case 3:
-	cout &amp;lt;&amp;lt; &amp;quot;您选择的是困难难度&amp;quot; &amp;lt;&amp;lt; endl;
-	break;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 示例 2：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-//2、在循环语句中用 break&lt;br&gt;
-for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
-{&lt;br&gt;
-if (i == 5)&lt;br&gt;
-{&lt;br&gt;
-break; // 跳出循环语句&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 示例 3：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;br&gt;
-// 在嵌套循环语句中使用 break，退出内层循环&lt;br&gt;
- for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
-{&lt;br&gt;
-for (int j = 0; j &amp;lt; 10; j++)&lt;br&gt;
-{&lt;br&gt;
-if (j == 5)&lt;br&gt;
-{&lt;br&gt;
-break;&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; “*” &amp;lt;&amp;lt; &amp;quot; &amp;quot;;&lt;br&gt;
-}&lt;br&gt;
-cout &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 4.3.2 continue 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 在循环语句中，跳过本次循环中余下尚未执行的语句，继续执行下一次循环&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 100; i++)
-&amp;#123;
-	if (i % 2 == 0)
-	&amp;#123;
-		continue;
-	&amp;#125;
-	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
-&amp;#125;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;4.3.3 goto 语句&lt;/p&gt;
-&lt;p&gt;** 作用：** 可以无条件跳转语句&lt;/p&gt;
-&lt;p&gt;语法： goto 标记；&lt;/p&gt;
-&lt;p&gt;** 解释：** 如果标记的名称存在，执行到 goto 语句时，会跳转到标记的位置&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;1&amp;quot; &amp;lt;&amp;lt; endl;
-
-goto FLAG;
-
-cout &amp;lt;&amp;lt; &amp;quot;2&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;3&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
-
-FLAG:
-
-cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
- ]]></description>
-        </item>
-        <item>
             <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</guid>
             <title>c++基础入门笔记(2)</title>
             <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</link>
@@ -6868,192 +6852,422 @@ return 0;
  ]]></description>
         </item>
         <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</guid>
-            <title>c++基础入门笔记(6)</title>
-            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</link>
+            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</guid>
+            <title>c++基础入门笔记(4)</title>
+            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</link>
             <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
             <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
-6 函数&lt;br&gt;
- 6.1 概述&lt;br&gt;
- ** 作用：** 将一段经常使用的代码封装起来，减少重复代码&lt;/p&gt;
-&lt;p&gt;一个较大的程序，一般分为若干个程序块，每个模块实现特定的功能。&lt;/p&gt;
-&lt;p&gt;6.2 函数的定义&lt;br&gt;
-函数的定义一般主要有 5 个步骤：&lt;/p&gt;
-&lt;p&gt;1、返回值类型&lt;/p&gt;
-&lt;p&gt;2、函数名&lt;/p&gt;
-&lt;p&gt;3、参数表列&lt;/p&gt;
-&lt;p&gt;4、函数体语句&lt;/p&gt;
-&lt;p&gt;5、return 表达式&lt;/p&gt;
-&lt;p&gt;语法：&lt;/p&gt;
-&lt;p&gt;返回值类型 函数名 （参数列表）&lt;br&gt;
-{&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;   函数体语句
-
-   return表达式
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 返回值类型 ：一个函数可以返回一个值。在函数定义中&lt;br&gt;
-函数名：给函数起个名称&lt;br&gt;
-参数列表：使用该函数时，传入的数据&lt;br&gt;
-函数体语句：花括号内的代码，函数内需要执行的语句&lt;br&gt;
- return 表达式： 和返回值类型挂钩，函数执行完后，返回相应的数据&lt;br&gt;
- ** 示例：** 定义一个加法函数，实现两个数相加&lt;/p&gt;
-&lt;p&gt;// 函数定义&lt;br&gt;
- int add (int num1, int num2)&lt;br&gt;
-{&lt;br&gt;
-int sum = num1 + num2;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;br&gt;
- 6.3 函数的调用&lt;br&gt;
- ** 功能：** 使用定义好的函数&lt;/p&gt;
-&lt;p&gt;语法：函数名（参数）&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;// 函数定义&lt;br&gt;
- int add (int num1, int num2) // 定义中的 num1,num2 称为形式参数，简称形参&lt;br&gt;
- {&lt;br&gt;
-int sum = num1 + num2;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;/p&gt;
+4 程序流程结构&lt;br&gt;
+ C/C++ 支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构&lt;/p&gt;
+&lt;p&gt;顺序结构：程序按顺序执行，不发生跳转&lt;br&gt;
+选择结构：依据条件是否满足，有选择的执行相应功能&lt;br&gt;
+循环结构：依据条件是否满足，循环多次执行某段代码&lt;br&gt;
+ 4.1 选择结构&lt;br&gt;
+ 4.1.1 if 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 执行满足条件的语句&lt;/p&gt;
+&lt;p&gt;if 语句的三种形式&lt;/p&gt;
 &lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-//调用add函数
-int sum = add(a, b);//调用时的a，b称为实际参数，简称实参
-cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+&lt;pre&gt;&lt;code&gt;//选择结构-单行if语句
+//输入一个分数，如果分数大于600分，视为考上一本大学，并在屏幕上打印
 
-a = 100;
-b = 100;
+int score = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请输入一个分数：&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; score;
 
-sum = add(a, b);
-cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;您输入的分数为： &amp;quot; &amp;lt;&amp;lt; score &amp;lt;&amp;lt; endl;
+
+//if语句
+//注意事项，在if判断语句后面，不要加分号
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学！！！&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
 
 system(&amp;quot;pause&amp;quot;);
 
 return 0;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;6.4 值传递&lt;br&gt;
-所谓值传递，就是函数调用时实参将数值传入给形参&lt;br&gt;
-值传递时，如果形参发生，并不会影响实参&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;void swap(int num1, int num2)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; “交换前：” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int temp = num1;
-num1 = num2;
-num2 = temp;
+&lt;p&gt;多行格式 if 语句：if (条件){ 条件满足执行的语句 } else { 条件不满足执行的语句 };&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int score = 0;
 
-cout &amp;lt;&amp;lt; &amp;quot;交换后：&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
 
-//return ; 当函数声明时候，不需要返回值，可以不写return
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;}&lt;br&gt;
+ 多条件的 if 语句：if (条件 1){ 条件 1 满足执行的语句 } else if (条件 2){条件 2 满足执行的语句}… else { 都不满足执行的语句}&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int main() &amp;#123;
+
+int score = 0;
+
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 500)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 400)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+​&lt;/p&gt;
+&lt;p&gt;嵌套 if 语句：在 if 语句中，可以嵌套使用 if 语句，达到更精确的条件判断&lt;/p&gt;
+&lt;p&gt;案例需求：&lt;/p&gt;
+&lt;p&gt;提示用户输入一个高考考试分数，根据分数做如下判断&lt;br&gt;
+分数如果大于 600 分视为考上一本，大于 500 分考上二本，大于 400 考上三本，其余视为未考上本科；&lt;br&gt;
+在一本分数中，如果大于 700 分，考入北大，大于 650 分，考入清华，大于 600 考入人大。&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int score = 0;
+
+cout &amp;lt;&amp;lt; &amp;quot;请输入考试分数：&amp;quot; &amp;lt;&amp;lt; endl;
+
+cin &amp;gt;&amp;gt; score;
+
+if (score &amp;gt; 600)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了一本大学&amp;quot; &amp;lt;&amp;lt; endl;
+	if (score &amp;gt; 700)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了北大&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	else if (score &amp;gt; 650)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了清华&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	else
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;我考上了人大&amp;quot; &amp;lt;&amp;lt; endl;
+	&amp;#125;
+	
+&amp;#125;
+else if (score &amp;gt; 500)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了二本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else if (score &amp;gt; 400)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我考上了三本大学&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+else
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;我未考上本科&amp;quot; &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 练习案例： 三只小猪称体重&lt;/p&gt;
+&lt;p&gt;有三只小猪 ABC，请分别输入三只小猪的体重，并且判断哪只小猪最重？&lt;/p&gt;
+&lt;p&gt;4.1.2 三目运算符&lt;/p&gt;
+&lt;p&gt;作用： 通过三目运算符实现简单的判断&lt;/p&gt;
+&lt;p&gt;语法：表达式 1 ? 表达式 2 ：表达式 3&lt;/p&gt;
+&lt;p&gt;解释：&lt;/p&gt;
+&lt;p&gt;如果表达式 1 的值为真，执行表达式 2，并返回表达式 2 的结果；&lt;/p&gt;
+&lt;p&gt;如果表达式 1 的值为假，执行表达式 3，并返回表达式 3 的结果。&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
 &lt;p&gt;int main() {&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;int a = 10;
 int b = 20;
+int c = 0;
 
-swap(a, b);
+c = a &amp;gt; b ? a : b;
+cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
 
-cout &amp;lt;&amp;lt; &amp;quot;mian中的 a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;mian中的 b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+//C++中三目运算符返回的是变量,可以继续赋值
+
+(a &amp;gt; b ? a : b) = 100;
+
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;c = &amp;quot; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; endl;
 
 system(&amp;quot;pause&amp;quot;);
 
 return 0;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;6.5 函数的常见样式&lt;br&gt;
-常见的函数样式有 4 种&lt;/p&gt;
-&lt;p&gt;无参无返&lt;br&gt;
-有参无返&lt;br&gt;
-无参有返&lt;br&gt;
-有参有返&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;// 函数常见样式&lt;br&gt;
- //1、 无参无返&lt;br&gt;
- void test01 ()&lt;br&gt;
-{&lt;br&gt;
-//void a = 10; // 无类型不可以创建变量，原因无法分配内存&lt;br&gt;
- cout &amp;lt;&amp;lt;“this is test01” &amp;lt;&amp;lt; endl;&lt;br&gt;
-//test01 (); 函数调用&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//2、 有参无返&lt;br&gt;
- void test02 (int a)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; “this is test02” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//3、无参有返&lt;br&gt;
- int test03 ()&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;this is test03 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
-return 10;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//4、有参有返&lt;br&gt;
- int test04 (int a, int b)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;this is test04 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
-int sum = a + b;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;br&gt;
- 6.6 函数的声明&lt;br&gt;
-作用： 告诉编译器函数名称及如何调用函数。函数的实际主体可以单独定义。&lt;/p&gt;
-&lt;p&gt;函数的声明可以多次，但是函数的定义只能有一次&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;// 声明可以多次，定义只能一次&lt;br&gt;
- // 声明&lt;br&gt;
- int max (int a, int b);&lt;br&gt;
-int max(int a, int b);&lt;br&gt;
-// 定义&lt;br&gt;
- int max (int a, int b)&lt;br&gt;
-{&lt;br&gt;
-return a &amp;gt; b ? a : b;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 100;
-int b = 200;
+&lt;p&gt;4.1.3 switch 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 执行多条件分支语句&lt;/p&gt;
+&lt;p&gt;语法：&lt;/p&gt;
+&lt;p&gt;switch (表达式)&lt;/p&gt;
+&lt;p&gt;{&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;case 结果1：执行语句;break;
 
-cout &amp;lt;&amp;lt; max(a, b) &amp;lt;&amp;lt; endl;
+case 结果2：执行语句;break;
+
+...
+
+default:执行语句;break;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//请给电影评分 
+//10 ~ 9   经典   
+// 8 ~ 7   非常好
+// 6 ~ 5   一般
+// 5分以下 烂片
+
+int score = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请给电影打分&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; score;
+
+switch (score)
+&amp;#123;
+case 10:
+case 9:
+	cout &amp;lt;&amp;lt; &amp;quot;经典&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 8:
+	cout &amp;lt;&amp;lt; &amp;quot;非常好&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 7:
+case 6:
+	cout &amp;lt;&amp;lt; &amp;quot;一般&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+default:
+	cout &amp;lt;&amp;lt; &amp;quot;烂片&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;4.2 循环结构&lt;br&gt;
+ 4.2.1 while 循环语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p 循环语句=&#34;&#34;&gt;语法：while (循环条件)&lt;/p&gt;
+&lt;p&gt;解释：只要循环条件的结果为真，就执行循环语句&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+while (num &amp;lt; 10)
+&amp;#123;
+	cout &amp;lt;&amp;lt; &amp;quot;num = &amp;quot; &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
+	num++;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;while 循环练习案例：猜数字&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 系统随机生成一个 1 到 100 之间的数字，玩家进行猜测，如果猜错，提示玩家数字过大或过小，如果猜对恭喜玩家胜利，并且退出游戏。&lt;/p&gt;
+&lt;p&gt;4.2.2 do…while 循环语句&lt;/p&gt;
+&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p&gt;语法： do {循环语句} while (循环条件);&lt;/p&gt;
+&lt;p&gt;** 注意：** 与 while 的区别在于 do…while 会先执行一次循环语句，再判断循环条件&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+
+do
+&amp;#123;
+	cout &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;
+	num++;
+
+&amp;#125; while (num &amp;lt; 10);
+
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;练习案例：水仙花数&lt;/p&gt;
+&lt;p&gt;** 案例描述：** 水仙花数是指一个 3 位数，它的每个位上的数字的 3 次幂之和等于它本身&lt;/p&gt;
+&lt;p&gt;例如：1^3 + 5^3+ 3^3 = 153&lt;/p&gt;
+&lt;p&gt;请利用 do…while 语句，求出所有 3 位数中的水仙花数&lt;/p&gt;
+&lt;p&gt;4.2.3 for 循环语句&lt;/p&gt;
+&lt;p&gt;作用： 满足循环条件，执行循环语句&lt;/p&gt;
+&lt;p 循环语句;=&#34;&#34;&gt;语法：for (起始表达式；条件表达式；末尾循环体)&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
+&amp;#125;
 
 system(&amp;quot;pause&amp;quot;);
 
 return 0;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;}&lt;br&gt;
- 6.7 函数的分文件编写&lt;br&gt;
- ** 作用：** 让代码结构更加清晰&lt;/p&gt;
-&lt;p&gt;函数分文件编写一般有 4 个步骤&lt;/p&gt;
-&lt;p&gt;创建后缀名为.h 的头文件&lt;br&gt;
-创建后缀名为.cpp 的源文件&lt;br&gt;
-在头文件中写函数的声明&lt;br&gt;
-在源文件中写函数的定义&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;//swap.xn--h-216a053e&#34;&gt;//swap.h 文件&lt;/a&gt;&lt;br&gt;
- #include&lt;iostream&gt;&lt;br&gt;
-using namespace std;&lt;/p&gt;
-&lt;p&gt;// 实现两个数字交换的函数声明&lt;br&gt;
- void swap (int a, int b);&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;//swap.xn--cpp-wu9dq54h&#34;&gt;//swap.cpp 文件&lt;/a&gt;&lt;br&gt;
- #include “swap.h”&lt;/p&gt;
-&lt;p&gt;void swap(int a, int b)&lt;br&gt;
-{&lt;br&gt;
-int temp = a;&lt;br&gt;
-a = b;&lt;br&gt;
-b = temp;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+ 详解：&lt;/p&gt;
+&lt;p&gt;练习案例：敲桌子&lt;/p&gt;
+&lt;p&gt;案例描述：从 1 开始数到数字 100， 如果数字个位含有 7，或者数字十位含有 7，或者该数字是 7 的倍数，我们打印敲桌子，其余数字直接打印输出。&lt;/p&gt;
+&lt;p&gt;4.2.4 嵌套循环&lt;/p&gt;
+&lt;p&gt;作用： 在循环体中再嵌套一层循环，解决一些实际问题&lt;/p&gt;
+&lt;p&gt;例如我们想在屏幕中打印如下图片，就需要利用嵌套循环&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//外层循环执行1次，内层循环执行1轮
+for (int i = 0; i &amp;lt; 10; i++)
+&amp;#123;
+	for (int j = 0; j &amp;lt; 10; j++)
+	&amp;#123;
+		cout &amp;lt;&amp;lt; &amp;quot;*&amp;quot; &amp;lt;&amp;lt; &amp;quot; &amp;quot;;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;}&lt;br&gt;
-//main 函数文件&lt;br&gt;
- #include “swap.h”&lt;br&gt;
-int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 100;
-int b = 200;
-swap(a, b);
+** 练习案例：** 乘法口诀表&lt;/p&gt;
+&lt;p&gt;案例描述：利用嵌套循环，实现九九乘法表&lt;/p&gt;
+&lt;p&gt;4.3 跳转语句&lt;br&gt;
+ 4.3.1 break 语句&lt;/p&gt;
+&lt;p&gt;作用: 用于跳出选择结构或者循环结构&lt;/p&gt;
+&lt;p&gt;break 使用的时机：&lt;/p&gt;
+&lt;p&gt;出现在 switch 条件语句中，作用是终止 case 并跳出 switch&lt;br&gt;
+ 出现在循环语句中，作用是跳出当前的循环语句&lt;br&gt;
+出现在嵌套循环中，跳出最近的内层循环语句&lt;br&gt;
+示例 1：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+//1、在 switch 语句中使用 break&lt;br&gt;
+cout &amp;lt;&amp;lt;“请选择您挑战副本的难度：” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“1、普通” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“2、中等” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt;“3、困难” &amp;lt;&amp;lt; endl;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+
+cin &amp;gt;&amp;gt; num;
+
+switch (num)
+&amp;#123;
+case 1:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是普通难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 2:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是中等难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+case 3:
+	cout &amp;lt;&amp;lt; &amp;quot;您选择的是困难难度&amp;quot; &amp;lt;&amp;lt; endl;
+	break;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 示例 2：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+//2、在循环语句中用 break&lt;br&gt;
+for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
+{&lt;br&gt;
+if (i == 5)&lt;br&gt;
+{&lt;br&gt;
+break; // 跳出循环语句&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 示例 3：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;br&gt;
+// 在嵌套循环语句中使用 break，退出内层循环&lt;br&gt;
+ for (int i = 0; i &amp;lt; 10; i++)&lt;br&gt;
+{&lt;br&gt;
+for (int j = 0; j &amp;lt; 10; j++)&lt;br&gt;
+{&lt;br&gt;
+if (j == 5)&lt;br&gt;
+{&lt;br&gt;
+break;&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; “*” &amp;lt;&amp;lt; &amp;quot; &amp;quot;;&lt;br&gt;
+}&lt;br&gt;
+cout &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 4.3.2 continue 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 在循环语句中，跳过本次循环中余下尚未执行的语句，继续执行下一次循环&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;for (int i = 0; i &amp;lt; 100; i++)
+&amp;#123;
+	if (i % 2 == 0)
+	&amp;#123;
+		continue;
+	&amp;#125;
+	cout &amp;lt;&amp;lt; i &amp;lt;&amp;lt; endl;
+&amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;4.3.3 goto 语句&lt;/p&gt;
+&lt;p&gt;** 作用：** 可以无条件跳转语句&lt;/p&gt;
+&lt;p&gt;语法： goto 标记；&lt;/p&gt;
+&lt;p&gt;** 解释：** 如果标记的名称存在，执行到 goto 语句时，会跳转到标记的位置&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;1&amp;quot; &amp;lt;&amp;lt; endl;
+
+goto FLAG;
+
+cout &amp;lt;&amp;lt; &amp;quot;2&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;3&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
+
+FLAG:
+
+cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
 
 system(&amp;quot;pause&amp;quot;);
 
@@ -7301,6 +7515,202 @@ for (int i = 0; i &amp;lt; 3; i++)
 	&amp;#125;
 	cout &amp;lt;&amp;lt; names[i] &amp;lt;&amp;lt; &amp;quot;同学总成绩为： &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
 &amp;#125;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+ ]]></description>
+        </item>
+        <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</guid>
+            <title>c++基础入门笔记(6)</title>
+            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</link>
+            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
+6 函数&lt;br&gt;
+ 6.1 概述&lt;br&gt;
+ ** 作用：** 将一段经常使用的代码封装起来，减少重复代码&lt;/p&gt;
+&lt;p&gt;一个较大的程序，一般分为若干个程序块，每个模块实现特定的功能。&lt;/p&gt;
+&lt;p&gt;6.2 函数的定义&lt;br&gt;
+函数的定义一般主要有 5 个步骤：&lt;/p&gt;
+&lt;p&gt;1、返回值类型&lt;/p&gt;
+&lt;p&gt;2、函数名&lt;/p&gt;
+&lt;p&gt;3、参数表列&lt;/p&gt;
+&lt;p&gt;4、函数体语句&lt;/p&gt;
+&lt;p&gt;5、return 表达式&lt;/p&gt;
+&lt;p&gt;语法：&lt;/p&gt;
+&lt;p&gt;返回值类型 函数名 （参数列表）&lt;br&gt;
+{&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;   函数体语句
+
+   return表达式
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 返回值类型 ：一个函数可以返回一个值。在函数定义中&lt;br&gt;
+函数名：给函数起个名称&lt;br&gt;
+参数列表：使用该函数时，传入的数据&lt;br&gt;
+函数体语句：花括号内的代码，函数内需要执行的语句&lt;br&gt;
+ return 表达式： 和返回值类型挂钩，函数执行完后，返回相应的数据&lt;br&gt;
+ ** 示例：** 定义一个加法函数，实现两个数相加&lt;/p&gt;
+&lt;p&gt;// 函数定义&lt;br&gt;
+ int add (int num1, int num2)&lt;br&gt;
+{&lt;br&gt;
+int sum = num1 + num2;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;br&gt;
+ 6.3 函数的调用&lt;br&gt;
+ ** 功能：** 使用定义好的函数&lt;/p&gt;
+&lt;p&gt;语法：函数名（参数）&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;// 函数定义&lt;br&gt;
+ int add (int num1, int num2) // 定义中的 num1,num2 称为形式参数，简称形参&lt;br&gt;
+ {&lt;br&gt;
+int sum = num1 + num2;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+//调用add函数
+int sum = add(a, b);//调用时的a，b称为实际参数，简称实参
+cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+
+a = 100;
+b = 100;
+
+sum = add(a, b);
+cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;6.4 值传递&lt;br&gt;
+所谓值传递，就是函数调用时实参将数值传入给形参&lt;br&gt;
+值传递时，如果形参发生，并不会影响实参&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;void swap(int num1, int num2)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; “交换前：” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int temp = num1;
+num1 = num2;
+num2 = temp;
+
+cout &amp;lt;&amp;lt; &amp;quot;交换后：&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;
+
+//return ; 当函数声明时候，不需要返回值，可以不写return
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 20;
+
+swap(a, b);
+
+cout &amp;lt;&amp;lt; &amp;quot;mian中的 a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;mian中的 b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;6.5 函数的常见样式&lt;br&gt;
+常见的函数样式有 4 种&lt;/p&gt;
+&lt;p&gt;无参无返&lt;br&gt;
+有参无返&lt;br&gt;
+无参有返&lt;br&gt;
+有参有返&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;// 函数常见样式&lt;br&gt;
+ //1、 无参无返&lt;br&gt;
+ void test01 ()&lt;br&gt;
+{&lt;br&gt;
+//void a = 10; // 无类型不可以创建变量，原因无法分配内存&lt;br&gt;
+ cout &amp;lt;&amp;lt;“this is test01” &amp;lt;&amp;lt; endl;&lt;br&gt;
+//test01 (); 函数调用&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//2、 有参无返&lt;br&gt;
+ void test02 (int a)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; “this is test02” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//3、无参有返&lt;br&gt;
+ int test03 ()&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;this is test03 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
+return 10;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//4、有参有返&lt;br&gt;
+ int test04 (int a, int b)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;this is test04 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
+int sum = a + b;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;br&gt;
+ 6.6 函数的声明&lt;br&gt;
+作用： 告诉编译器函数名称及如何调用函数。函数的实际主体可以单独定义。&lt;/p&gt;
+&lt;p&gt;函数的声明可以多次，但是函数的定义只能有一次&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;// 声明可以多次，定义只能一次&lt;br&gt;
+ // 声明&lt;br&gt;
+ int max (int a, int b);&lt;br&gt;
+int max(int a, int b);&lt;br&gt;
+// 定义&lt;br&gt;
+ int max (int a, int b)&lt;br&gt;
+{&lt;br&gt;
+return a &amp;gt; b ? a : b;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 100;
+int b = 200;
+
+cout &amp;lt;&amp;lt; max(a, b) &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 6.7 函数的分文件编写&lt;br&gt;
+ ** 作用：** 让代码结构更加清晰&lt;/p&gt;
+&lt;p&gt;函数分文件编写一般有 4 个步骤&lt;/p&gt;
+&lt;p&gt;创建后缀名为.h 的头文件&lt;br&gt;
+创建后缀名为.cpp 的源文件&lt;br&gt;
+在头文件中写函数的声明&lt;br&gt;
+在源文件中写函数的定义&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;//swap.xn--h-216a053e&#34;&gt;//swap.h 文件&lt;/a&gt;&lt;br&gt;
+ #include&lt;iostream&gt;&lt;br&gt;
+using namespace std;&lt;/p&gt;
+&lt;p&gt;// 实现两个数字交换的函数声明&lt;br&gt;
+ void swap (int a, int b);&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;//swap.xn--cpp-wu9dq54h&#34;&gt;//swap.cpp 文件&lt;/a&gt;&lt;br&gt;
+ #include “swap.h”&lt;/p&gt;
+&lt;p&gt;void swap(int a, int b)&lt;br&gt;
+{&lt;br&gt;
+int temp = a;&lt;br&gt;
+a = b;&lt;br&gt;
+b = temp;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+//main 函数文件&lt;br&gt;
+ #include “swap.h”&lt;br&gt;
+int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 100;
+int b = 200;
+swap(a, b);
 
 system(&amp;quot;pause&amp;quot;);
 
