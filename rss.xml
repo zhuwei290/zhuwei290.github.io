@@ -5,8 +5,417 @@
         <link>https://zhuwei290.github.io</link>
         <description></description>
         <language>zh-CN</language>
-        <pubDate>Sat, 21 Sep 2024 10:54:19 +0800</pubDate>
-        <lastBuildDate>Sat, 21 Sep 2024 10:54:19 +0800</lastBuildDate>
+        <pubDate>Sat, 28 Sep 2024 20:51:47 +0800</pubDate>
+        <lastBuildDate>Sat, 28 Sep 2024 20:51:47 +0800</lastBuildDate>
+        <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/RabbitMQ-%E9%AB%98%E7%BA%A7%E7%AF%87/</guid>
+            <title>RabbitMQ-高级篇</title>
+            <link>https://zhuwei290.github.io/RabbitMQ-%E9%AB%98%E7%BA%A7%E7%AF%87/</link>
+            <pubDate>Sat, 28 Sep 2024 20:51:47 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;服务异步通信 - 高级篇&lt;/p&gt;
+&lt;p&gt;消息队列在使用过程中，面临着很多实际问题需要思考：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718155003157.png&#34; alt=&#34;image-20210718155003157&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1. 消息可靠性&lt;/p&gt;
+&lt;p&gt;消息从发送，到消费者接收，会经理多个过程：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718155059371.png&#34; alt=&#34;image-20210718155059371&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其中的每一步都可能导致消息丢失，常见的丢失原因包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;发送时丢失：
+&lt;ul&gt;
+&lt;li&gt;生产者发送的消息未送达 exchange&lt;/li&gt;
+&lt;li&gt;消息到达 exchange 后未到达 queue&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;MQ 宕机，queue 将消息丢失&lt;/li&gt;
+&lt;li&gt;consumer 接收到消息后未消费就宕机&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;针对这些问题，RabbitMQ 分别给出了解决方案：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;生产者确认机制&lt;/li&gt;
+&lt;li&gt;mq 持久化&lt;/li&gt;
+&lt;li&gt;消费者确认机制&lt;/li&gt;
+&lt;li&gt;失败重试机制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;下面我们就通过案例来演示每一个步骤。&lt;/p&gt;
+&lt;p&gt;首先，导入课前资料提供的 demo 工程：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718155328927.png&#34; alt=&#34;image-20210718155328927&#34;&gt;&lt;/p&gt;
+&lt;p&gt;项目结构如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718155448734.png&#34; alt=&#34;image-20210718155448734&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.1. 生产者消息确认&lt;/p&gt;
+&lt;p&gt;RabbitMQ 提供了 publisher confirm 机制来避免消息发送到 MQ 过程中丢失。这种机制必须给每个消息指定一个唯一 ID。消息发送到 MQ 以后，会返回一个结果给发送者，表示消息是否处理成功。&lt;/p&gt;
+&lt;p&gt;返回结果有两种方式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;publisher-confirm，发送者确认
+&lt;ul&gt;
+&lt;li&gt;消息成功投递到交换机，返回 ack&lt;/li&gt;
+&lt;li&gt;消息未投递到交换机，返回 nack&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;publisher-return，发送者回执
+&lt;ul&gt;
+&lt;li&gt;消息投递到交换机了，但是没有路由到队列。返回 ACK，及路由失败原因。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718160907166.png&#34; alt=&#34;image-20210718160907166&#34;&gt;&lt;/p&gt;
+&lt;p&gt;注意：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718161707992.png&#34; alt=&#34;image-20210718161707992&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.1.1. 修改配置&lt;/p&gt;
+&lt;p&gt;首先，修改 publisher 服务中的 application.yml 文件，添加下面的内容：&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;spring:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;rabbitmq:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;publisher-confirm-type:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;correlated&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;publisher-returns:&lt;/span&gt; &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;template:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;mandatory:&lt;/span&gt; &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;   &lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;说明：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;publish-confirm-type&lt;/code&gt; ：开启 publisher-confirm，这里支持两种类型：
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;simple&lt;/code&gt; ：同步等待 confirm 结果，直到超时&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;correlated&lt;/code&gt; ：异步回调，定义 ConfirmCallback，MQ 返回结果时会回调这个 ConfirmCallback&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;publish-returns&lt;/code&gt; ：开启 publish-return 功能，同样是基于 callback 机制，不过是定义 ReturnCallback&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;template.mandatory&lt;/code&gt; ：定义消息路由失败时的策略。true，则调用 ReturnCallback；false：则直接丢弃消息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1.1.2. 定义 Return 回调&lt;/p&gt;
+&lt;p&gt;每个 RabbitTemplate 只能配置一个 ReturnCallback，因此需要在项目加载时配置：&lt;/p&gt;
+&lt;p&gt;修改 publisher 服务，添加一个：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;package&lt;/span&gt; cn.itcast.mq.config;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; lombok.extern.slf4j.Slf4j;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.amqp.rabbit.core.RabbitTemplate;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.beans.BeansException;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.context.ApplicationContext;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.context.ApplicationContextAware;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.context.annotation.Configuration;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Slf4j&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Configuration&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;CommonConfig&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;implements&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;ApplicationContextAware&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Override&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;setApplicationContext&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(ApplicationContext applicationContext)&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;throws&lt;/span&gt; BeansException &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 获取RabbitTemplate&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;type&#34;&gt;RabbitTemplate&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;rabbitTemplate&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; applicationContext.getBean(RabbitTemplate.class);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;comment&#34;&gt;// 设置ReturnCallback&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;comment&#34;&gt;// 投递失败，记录日志&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            log.info(&lt;span class=&#34;string&#34;&gt;&amp;quot;消息发送失败，应答码&amp;#123;&amp;#125;，原因&amp;#123;&amp;#125;，交换机&amp;#123;&amp;#125;，路由键&amp;#123;&amp;#125;,消息&amp;#123;&amp;#125;&amp;quot;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                     replyCode, replyText, exchange, routingKey, message.toString());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;comment&#34;&gt;// 如果有业务需要，可以重发消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &amp;#125;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;1.1.3. 定义 ConfirmCallback&lt;/p&gt;
+&lt;p&gt;ConfirmCallback 可以在发送消息时指定，因为每个业务处理 confirm 成功或失败的逻辑不一定相同。&lt;/p&gt;
+&lt;p&gt;在 publisher 服务的 cn.itcast.mq.spring.SpringAmqpTest 类中，定义一个单元测试方法：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testSendMessage2SimpleQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;throws&lt;/span&gt; InterruptedException &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 1.消息体&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;message&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;quot;hello, spring amqp!&amp;quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 2.全局唯一的消息ID，需要封装到CorrelationData中&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;CorrelationData&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;correlationData&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;CorrelationData&lt;/span&gt;(UUID.randomUUID().toString());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 3.添加callback&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    correlationData.getFuture().addCallback(&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        result -&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &lt;span class=&#34;keyword&#34;&gt;if&lt;/span&gt;(result.isAck())&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                &lt;span class=&#34;comment&#34;&gt;// 3.1.ack，消息成功&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                log.debug(&lt;span class=&#34;string&#34;&gt;&amp;quot;消息发送成功, ID:&amp;#123;&amp;#125;&amp;quot;&lt;/span&gt;, correlationData.getId());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &amp;#125;&lt;span class=&#34;keyword&#34;&gt;else&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                &lt;span class=&#34;comment&#34;&gt;// 3.2.nack，消息失败&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;                log.error(&lt;span class=&#34;string&#34;&gt;&amp;quot;消息发送失败, ID:&amp;#123;&amp;#125;, 原因&amp;#123;&amp;#125;&amp;quot;&lt;/span&gt;,correlationData.getId(), result.getReason());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &amp;#125;,&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        ex -&amp;gt; log.error(&lt;span class=&#34;string&#34;&gt;&amp;quot;消息发送异常, ID:&amp;#123;&amp;#125;, 原因&amp;#123;&amp;#125;&amp;quot;&lt;/span&gt;,correlationData.getId(),ex.getMessage())&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    );&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 4.发送消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    rabbitTemplate.convertAndSend(&lt;span class=&#34;string&#34;&gt;&amp;quot;task.direct&amp;quot;&lt;/span&gt;, &lt;span class=&#34;string&#34;&gt;&amp;quot;task&amp;quot;&lt;/span&gt;, message, correlationData);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 休眠一会儿，等待ack回执&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    Thread.sleep(&lt;span class=&#34;number&#34;&gt;2000&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;1.2. 消息持久化&lt;/p&gt;
+&lt;p&gt;生产者确认可以确保消息投递到 RabbitMQ 的队列中，但是消息发送到 RabbitMQ 以后，如果突然宕机，也可能导致消息丢失。&lt;/p&gt;
+&lt;p&gt;要想确保消息在 RabbitMQ 中安全保存，必须开启消息持久化机制。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;交换机持久化&lt;/li&gt;
+&lt;li&gt;队列持久化&lt;/li&gt;
+&lt;li&gt;消息持久化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1.2.1. 交换机持久化&lt;/p&gt;
+&lt;p&gt;RabbitMQ 中交换机默认是非持久化的，mq 重启后就丢失。&lt;/p&gt;
+&lt;p&gt;SpringAMQP 中可以通过代码指定交换机持久化：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; DirectExchange &lt;span class=&#34;title function_&#34;&gt;simpleExchange&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 三个参数：交换机名称、是否持久化、当没有queue与其绑定时是否自动删除&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;DirectExchange&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;simple.direct&amp;quot;&lt;/span&gt;, &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;, &lt;span class=&#34;literal&#34;&gt;false&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;事实上，默认情况下，由 SpringAMQP 声明的交换机都是持久化的。&lt;/p&gt;
+&lt;p&gt;可以在 RabbitMQ 控制台看到持久化的交换机都会带上 &lt;code&gt;D&lt;/code&gt;  的标示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718164412450.png&#34; alt=&#34;image-20210718164412450&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.2.2. 队列持久化&lt;/p&gt;
+&lt;p&gt;RabbitMQ 中队列默认是非持久化的，mq 重启后就丢失。&lt;/p&gt;
+&lt;p&gt;SpringAMQP 中可以通过代码指定交换机持久化：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Queue &lt;span class=&#34;title function_&#34;&gt;simpleQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 使用QueueBuilder构建队列，durable就是持久化的&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; QueueBuilder.durable(&lt;span class=&#34;string&#34;&gt;&amp;quot;simple.queue&amp;quot;&lt;/span&gt;).build();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;事实上，默认情况下，由 SpringAMQP 声明的队列都是持久化的。&lt;/p&gt;
+&lt;p&gt;可以在 RabbitMQ 控制台看到持久化的队列都会带上 &lt;code&gt;D&lt;/code&gt;  的标示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718164729543.png&#34; alt=&#34;image-20210718164729543&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.2.3. 消息持久化&lt;/p&gt;
+&lt;p&gt;利用 SpringAMQP 发送消息时，可以设置消息的属性（MessageProperties），指定 delivery-mode：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1：非持久化&lt;/li&gt;
+&lt;li&gt;2：持久化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用 java 代码指定：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718165100016.png&#34; alt=&#34;image-20210718165100016&#34;&gt;&lt;/p&gt;
+&lt;p&gt;默认情况下，SpringAMQP 发出的任何消息都是持久化的，不用特意指定。&lt;/p&gt;
+&lt;p&gt;1.3. 消费者消息确认&lt;/p&gt;
+&lt;p&gt;RabbitMQ 是&lt;strong&gt;阅后即焚&lt;/strong&gt;机制，RabbitMQ 确认消息被消费者消费后会立刻删除。&lt;/p&gt;
+&lt;p&gt;而 RabbitMQ 是通过消费者回执来确认消费者是否成功处理消息的：消费者获取消息后，应该向 RabbitMQ 发送 ACK 回执，表明自己已经处理消息。&lt;/p&gt;
+&lt;p&gt;设想这样的场景：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1）RabbitMQ 投递消息给消费者&lt;/li&gt;
+&lt;li&gt;2）消费者获取消息后，返回 ACK 给 RabbitMQ&lt;/li&gt;
+&lt;li&gt;3）RabbitMQ 删除消息&lt;/li&gt;
+&lt;li&gt;4）消费者宕机，消息尚未处理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这样，消息就丢失了。因此消费者返回 ACK 的时机非常重要。&lt;/p&gt;
+&lt;p&gt;而 SpringAMQP 则允许配置三种确认模式：&lt;/p&gt;
+&lt;p&gt;・manual：手动 ack，需要在业务代码结束后，调用 api 发送 ack。&lt;/p&gt;
+&lt;p&gt;・auto：自动 ack，由 spring 监测 listener 代码是否出现异常，没有异常则返回 ack；抛出异常则返回 nack&lt;/p&gt;
+&lt;p&gt;・none：关闭 ack，MQ 假定消费者获取消息后会成功处理，因此消息投递后立即被删除&lt;/p&gt;
+&lt;p&gt;由此可知：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;none 模式下，消息投递是不可靠的，可能丢失&lt;/li&gt;
+&lt;li&gt;auto 模式类似事务机制，出现异常时返回 nack，消息回滚到 mq；没有异常，返回 ack&lt;/li&gt;
+&lt;li&gt;manual：自己根据业务情况，判断什么时候该 ack&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一般，我们都是使用默认的 auto 即可。&lt;/p&gt;
+&lt;p&gt;1.3.1. 演示 none 模式&lt;/p&gt;
+&lt;p&gt;修改 consumer 服务的 application.yml 文件，添加下面内容：&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;spring:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;rabbitmq:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;listener:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;simple:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;attr&#34;&gt;acknowledge-mode:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;none&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;关闭ack&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;修改 consumer 服务的 SpringRabbitListener 类中的方法，模拟一个消息处理异常：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RabbitListener(queues = &amp;quot;simple.queue&amp;quot;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;listenSimpleQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String msg)&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    log.info(&lt;span class=&#34;string&#34;&gt;&amp;quot;消费者接收到simple.queue的消息：【&amp;#123;&amp;#125;】&amp;quot;&lt;/span&gt;, msg);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 模拟异常&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    System.out.println(&lt;span class=&#34;number&#34;&gt;1&lt;/span&gt; / &lt;span class=&#34;number&#34;&gt;0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    log.debug(&lt;span class=&#34;string&#34;&gt;&amp;quot;消息处理完成！&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;测试可以发现，当消息处理抛异常时，消息依然被 RabbitMQ 删除了。&lt;/p&gt;
+&lt;p&gt;1.3.2. 演示 auto 模式&lt;/p&gt;
+&lt;p&gt;再次把确认机制修改为 auto:&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;spring:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;rabbitmq:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;listener:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;simple:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;attr&#34;&gt;acknowledge-mode:&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;auto&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;关闭ack&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;在异常位置打断点，再次发送消息，程序卡在断点时，可以发现此时消息状态为 unack（未确定状态）：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718171705383.png&#34; alt=&#34;image-20210718171705383&#34;&gt;&lt;/p&gt;
+&lt;p&gt;抛出异常后，因为 Spring 会自动返回 nack，所以消息恢复至 Ready 状态，并且没有被 RabbitMQ 删除：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718171759179.png&#34; alt=&#34;image-20210718171759179&#34;&gt;&lt;/p&gt;
+&lt;p&gt;1.4. 消费失败重试机制&lt;/p&gt;
+&lt;p&gt;当消费者出现异常后，消息会不断 requeue（重入队）到队列，再重新发送给消费者，然后再次异常，再次 requeue，无限循环，导致 mq 的消息处理飙升，带来不必要的压力：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718172746378.png&#34; alt=&#34;image-20210718172746378&#34;&gt;&lt;/p&gt;
+&lt;p&gt;怎么办呢？&lt;/p&gt;
+&lt;p&gt;1.4.1. 本地重试&lt;/p&gt;
+&lt;p&gt;我们可以利用 Spring 的 retry 机制，在消费者出现异常时利用本地重试，而不是无限制的 requeue 到 mq 队列。&lt;/p&gt;
+&lt;p&gt;修改 consumer 服务的 application.yml 文件，添加内容：&lt;/p&gt;
+&lt;figure class=&#34;highlight yaml&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;attr&#34;&gt;spring:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  &lt;span class=&#34;attr&#34;&gt;rabbitmq:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;attr&#34;&gt;listener:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;      &lt;span class=&#34;attr&#34;&gt;simple:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;attr&#34;&gt;retry:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;          &lt;span class=&#34;attr&#34;&gt;enabled:&lt;/span&gt; &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;开启消费者失败重试&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;          &lt;span class=&#34;attr&#34;&gt;initial-interval:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;1000&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;初识的失败等待时长为1秒&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;          &lt;span class=&#34;attr&#34;&gt;multiplier:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;失败的等待时长倍数，下次等待时长&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;multiplier&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;last-interval&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;          &lt;span class=&#34;attr&#34;&gt;max-attempts:&lt;/span&gt; &lt;span class=&#34;number&#34;&gt;3&lt;/span&gt;  &lt;span class=&#34;string&#34;&gt;最大重试次数&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;          &lt;span class=&#34;attr&#34;&gt;stateless:&lt;/span&gt; &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;  &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;string&#34;&gt;无状态；false有状态。如果业务中包含事务，这里改为false&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;重启 consumer 服务，重复之前的测试。可以发现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在重试 3 次后，SpringAMQP 会抛出异常 AmqpRejectAndDontRequeueException，说明本地重试触发了&lt;/li&gt;
+&lt;li&gt;查看 RabbitMQ 控制台，发现消息被删除了，说明最后 SpringAMQP 返回的是 ack，mq 删除消息了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;结论：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;开启本地重试时，消息处理过程中抛出异常，不会 requeue 到队列，而是在消费者本地重试&lt;/li&gt;
+&lt;li&gt;重试达到最大次数后，Spring 会返回 ack，消息会被丢弃&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1.4.2. 失败策略&lt;/p&gt;
+&lt;p&gt;在之前的测试中，达到最大重试次数后，消息会被丢弃，这是由 Spring 内部机制决定的。&lt;/p&gt;
+&lt;p&gt;在开启重试模式后，重试次数耗尽，如果消息依然失败，则需要有 MessageRecovery 接口来处理，它包含三种不同的实现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;RejectAndDontRequeueRecoverer：重试耗尽后，直接 reject，丢弃消息。默认就是这种方式&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;ImmediateRequeueMessageRecoverer：重试耗尽后，返回 nack，消息重新入队&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;RepublishMessageRecoverer：重试耗尽后，将失败消息投递到指定的交换机&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;比较优雅的一种处理方案是 RepublishMessageRecoverer，失败后将消息投递到一个指定的，专门存放异常消息的队列，后续由人工集中处理。&lt;/p&gt;
+&lt;p&gt;1）在 consumer 服务中定义处理失败消息的交换机和队列&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; DirectExchange &lt;span class=&#34;title function_&#34;&gt;errorMessageExchange&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;DirectExchange&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;error.direct&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Queue &lt;span class=&#34;title function_&#34;&gt;errorQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Queue&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;error.queue&amp;quot;&lt;/span&gt;, &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Binding &lt;span class=&#34;title function_&#34;&gt;errorBinding&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Queue errorQueue, DirectExchange errorMessageExchange)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; BindingBuilder.bind(errorQueue).to(errorMessageExchange).with(&lt;span class=&#34;string&#34;&gt;&amp;quot;error&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2）定义一个 RepublishMessageRecoverer，关联队列和交换机&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; MessageRecoverer &lt;span class=&#34;title function_&#34;&gt;republishMessageRecoverer&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(RabbitTemplate rabbitTemplate)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;RepublishMessageRecoverer&lt;/span&gt;(rabbitTemplate, &lt;span class=&#34;string&#34;&gt;&amp;quot;error.direct&amp;quot;&lt;/span&gt;, &lt;span class=&#34;string&#34;&gt;&amp;quot;error&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;完整代码：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;31&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;package&lt;/span&gt; cn.itcast.mq.config;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.amqp.core.Binding;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.amqp.core.BindingBuilder;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.amqp.core.DirectExchange;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.amqp.core.Queue;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.amqp.rabbit.core.RabbitTemplate;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.amqp.rabbit.retry.MessageRecoverer;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.amqp.rabbit.retry.RepublishMessageRecoverer;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;import&lt;/span&gt; org.springframework.context.annotation.Bean;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Configuration&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;ErrorMessageConfig&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; DirectExchange &lt;span class=&#34;title function_&#34;&gt;errorMessageExchange&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;DirectExchange&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;error.direct&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Queue &lt;span class=&#34;title function_&#34;&gt;errorQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Queue&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;error.queue&amp;quot;&lt;/span&gt;, &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Binding &lt;span class=&#34;title function_&#34;&gt;errorBinding&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(Queue errorQueue, DirectExchange errorMessageExchange)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; BindingBuilder.bind(errorQueue).to(errorMessageExchange).with(&lt;span class=&#34;string&#34;&gt;&amp;quot;error&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; MessageRecoverer &lt;span class=&#34;title function_&#34;&gt;republishMessageRecoverer&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(RabbitTemplate rabbitTemplate)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;RepublishMessageRecoverer&lt;/span&gt;(rabbitTemplate, &lt;span class=&#34;string&#34;&gt;&amp;quot;error.direct&amp;quot;&lt;/span&gt;, &lt;span class=&#34;string&#34;&gt;&amp;quot;error&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;1.5. 总结&lt;/p&gt;
+&lt;p&gt;如何确保 RabbitMQ 消息的可靠性？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;开启生产者确认机制，确保生产者的消息能到达队列&lt;/li&gt;
+&lt;li&gt;开启持久化功能，确保消息未消费前在队列中不会丢失&lt;/li&gt;
+&lt;li&gt;开启消费者确认机制为 auto，由 spring 确认消息处理成功后完成 ack&lt;/li&gt;
+&lt;li&gt;开启消费者失败重试机制，并设置 MessageRecoverer，多次重试失败后将消息投递到异常交换机，交由人工处理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2. 死信交换机&lt;/p&gt;
+&lt;p&gt;2.1. 初识死信交换机&lt;/p&gt;
+&lt;p&gt;2.1.1. 什么是死信交换机&lt;/p&gt;
+&lt;p&gt;什么是死信？&lt;/p&gt;
+&lt;p&gt;当一个队列中的消息满足下列情况之一时，可以成为死信（dead letter）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;消费者使用 basic.reject 或 basic.nack 声明消费失败，并且消息的 requeue 参数设置为 false&lt;/li&gt;
+&lt;li&gt;消息是一个过期消息，超时无人消费&lt;/li&gt;
+&lt;li&gt;要投递的队列消息满了，无法投递&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果这个包含死信的队列配置了 &lt;code&gt;dead-letter-exchange&lt;/code&gt;  属性，指定了一个交换机，那么队列中的死信就会投递到这个交换机中，而这个交换机称为&lt;strong&gt;死信交换机&lt;/strong&gt;（Dead Letter Exchange，检查 DLX）。&lt;/p&gt;
+&lt;p&gt;如图，一个消息被消费者拒绝了，变成了死信：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718174328383.png&#34; alt=&#34;image-20210718174328383&#34;&gt;&lt;/p&gt;
+&lt;p&gt;因为 simple.queue 绑定了死信交换机 dl.direct，因此死信会投递给这个交换机：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718174416160.png&#34; alt=&#34;image-20210718174416160&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如果这个死信交换机也绑定了一个队列，则消息最终会进入这个存放死信的队列：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718174506856.png&#34; alt=&#34;image-20210718174506856&#34;&gt;&lt;/p&gt;
+&lt;p&gt;另外，队列将死信投递给死信交换机时，必须知道两个信息：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;死信交换机名称&lt;/li&gt;
+&lt;li&gt;死信交换机与死信队列绑定的 RoutingKey&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这样才能确保投递的消息能到达死信交换机，并且正确的路由到死信队列。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210821073801398.png&#34; alt=&#34;image-20210821073801398&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.1.2. 利用死信交换机接收死信（拓展）&lt;/p&gt;
+&lt;p&gt;在失败重试策略中，默认的 RejectAndDontRequeueRecoverer 会在本地重试次数耗尽后，发送 reject 给 RabbitMQ，消息变成死信，被丢弃。&lt;/p&gt;
+&lt;p&gt;我们可以给 simple.queue 添加一个死信交换机，给死信交换机绑定一个队列。这样消息变成死信后也不会丢弃，而是最终投递到死信交换机，路由到与死信交换机绑定的队列。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718174506856.png&#34; alt=&#34;image-20210718174506856&#34;&gt;&lt;/p&gt;
+&lt;p&gt;我们在 consumer 服务中，定义一组死信交换机、死信队列：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;// 声明普通的 simple.queue队列，并且为其指定死信交换机：dl.direct&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Queue &lt;span class=&#34;title function_&#34;&gt;simpleQueue2&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; QueueBuilder.durable(&lt;span class=&#34;string&#34;&gt;&amp;quot;simple.queue&amp;quot;&lt;/span&gt;) &lt;span class=&#34;comment&#34;&gt;// 指定队列名称，并持久化&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .deadLetterExchange(&lt;span class=&#34;string&#34;&gt;&amp;quot;dl.direct&amp;quot;&lt;/span&gt;) &lt;span class=&#34;comment&#34;&gt;// 指定死信交换机&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .build();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;// 声明死信交换机 dl.direct&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; DirectExchange &lt;span class=&#34;title function_&#34;&gt;dlExchange&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;DirectExchange&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;dl.direct&amp;quot;&lt;/span&gt;, &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;, &lt;span class=&#34;literal&#34;&gt;false&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;// 声明存储死信的队列 dl.queue&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Queue &lt;span class=&#34;title function_&#34;&gt;dlQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;Queue&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;dl.queue&amp;quot;&lt;/span&gt;, &lt;span class=&#34;literal&#34;&gt;true&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;// 将死信队列 与 死信交换机绑定&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Binding &lt;span class=&#34;title function_&#34;&gt;dlBinding&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; BindingBuilder.bind(dlQueue()).to(dlExchange()).with(&lt;span class=&#34;string&#34;&gt;&amp;quot;simple&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2.1.3. 总结&lt;/p&gt;
+&lt;p&gt;什么样的消息会成为死信？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;消息被消费者 reject 或者返回 nack&lt;/li&gt;
+&lt;li&gt;消息超时未消费&lt;/li&gt;
+&lt;li&gt;队列满了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;死信交换机的使用场景是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果队列绑定了死信交换机，死信会投递到死信交换机；&lt;/li&gt;
+&lt;li&gt;可以利用死信交换机收集所有消费者处理失败的消息（死信），交由人工处理，进一步提高消息队列的可靠性。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.2.TTL&lt;/p&gt;
+&lt;p&gt;一个队列中的消息如果超时未消费，则会变为死信，超时分为两种情况：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;消息所在的队列设置了超时时间&lt;/li&gt;
+&lt;li&gt;消息本身设置了超时时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718182643311.png&#34; alt=&#34;image-20210718182643311&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.2.1. 接收超时死信的死信交换机&lt;/p&gt;
+&lt;p&gt;在 consumer 服务的 SpringRabbitListener 中，定义一个新的消费者，并且声明 死信交换机、死信队列：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@RabbitListener(bindings = @QueueBinding(&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;    value = @Queue(name = &amp;quot;dl.ttl.queue&amp;quot;, durable = &amp;quot;true&amp;quot;),&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;    exchange = @Exchange(name = &amp;quot;dl.ttl.direct&amp;quot;),&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;    key = &amp;quot;ttl&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;))&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;listenDlQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;(String msg)&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    log.info(&lt;span class=&#34;string&#34;&gt;&amp;quot;接收到 dl.ttl.queue的延迟消息：&amp;#123;&amp;#125;&amp;quot;&lt;/span&gt;, msg);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;2.2.2. 声明一个队列，并且指定 TTL&lt;/p&gt;
+&lt;p&gt;要给队列设置超时时间，需要在声明队列时配置 x-message-ttl 属性：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Queue &lt;span class=&#34;title function_&#34;&gt;ttlQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; QueueBuilder.durable(&lt;span class=&#34;string&#34;&gt;&amp;quot;ttl.queue&amp;quot;&lt;/span&gt;) &lt;span class=&#34;comment&#34;&gt;// 指定队列名称，并持久化&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .ttl(&lt;span class=&#34;number&#34;&gt;10000&lt;/span&gt;) &lt;span class=&#34;comment&#34;&gt;// 设置队列的超时时间，10秒&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .deadLetterExchange(&lt;span class=&#34;string&#34;&gt;&amp;quot;dl.ttl.direct&amp;quot;&lt;/span&gt;) &lt;span class=&#34;comment&#34;&gt;// 指定死信交换机&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .build();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;注意，这个队列设定了死信交换机为 &lt;code&gt;dl.ttl.direct&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;声明交换机，将 ttl 与交换机绑定：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; DirectExchange &lt;span class=&#34;title function_&#34;&gt;ttlExchange&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;DirectExchange&lt;/span&gt;(&lt;span class=&#34;string&#34;&gt;&amp;quot;ttl.direct&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Binding &lt;span class=&#34;title function_&#34;&gt;ttlBinding&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; BindingBuilder.bind(ttlQueue()).to(ttlExchange()).with(&lt;span class=&#34;string&#34;&gt;&amp;quot;ttl&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;发送消息，但是不要指定 TTL：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testTTLQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 创建消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;message&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;quot;hello, ttl queue&amp;quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 消息ID，需要封装到CorrelationData中&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;CorrelationData&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;correlationData&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;CorrelationData&lt;/span&gt;(UUID.randomUUID().toString());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 发送消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    rabbitTemplate.convertAndSend(&lt;span class=&#34;string&#34;&gt;&amp;quot;ttl.direct&amp;quot;&lt;/span&gt;, &lt;span class=&#34;string&#34;&gt;&amp;quot;ttl&amp;quot;&lt;/span&gt;, message, correlationData);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 记录日志&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    log.debug(&lt;span class=&#34;string&#34;&gt;&amp;quot;发送消息成功&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;发送消息的日志：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718191657478.png&#34; alt=&#34;image-20210718191657478&#34;&gt;&lt;/p&gt;
+&lt;p&gt;查看下接收消息的日志：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718191738706.png&#34; alt=&#34;image-20210718191738706&#34;&gt;&lt;/p&gt;
+&lt;p&gt;因为队列的 TTL 值是 10000ms，也就是 10 秒。可以看到消息发送与接收之间的时差刚好是 10 秒。&lt;/p&gt;
+&lt;p&gt;2.2.3. 发送消息时，设定 TTL&lt;/p&gt;
+&lt;p&gt;在发送消息时，也可以指定 TTL：&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testTTLMsg&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 创建消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;Message&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;message&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; MessageBuilder&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .withBody(&lt;span class=&#34;string&#34;&gt;&amp;quot;hello, ttl message&amp;quot;&lt;/span&gt;.getBytes(StandardCharsets.UTF_8))&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .setExpiration(&lt;span class=&#34;string&#34;&gt;&amp;quot;5000&amp;quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .build();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 消息ID，需要封装到CorrelationData中&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;CorrelationData&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;correlationData&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;title class_&#34;&gt;CorrelationData&lt;/span&gt;(UUID.randomUUID().toString());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;// 发送消息&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    rabbitTemplate.convertAndSend(&lt;span class=&#34;string&#34;&gt;&amp;quot;ttl.direct&amp;quot;&lt;/span&gt;, &lt;span class=&#34;string&#34;&gt;&amp;quot;ttl&amp;quot;&lt;/span&gt;, message, correlationData);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    log.debug(&lt;span class=&#34;string&#34;&gt;&amp;quot;发送消息成功&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;查看发送消息日志：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718191939140.png&#34; alt=&#34;image-20210718191939140&#34;&gt;&lt;/p&gt;
+&lt;p&gt;接收消息日志：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718192004662.png&#34; alt=&#34;image-20210718192004662&#34;&gt;&lt;/p&gt;
+&lt;p&gt;这次，发送与接收的延迟只有 5 秒。说明当队列、消息都设置了 TTL 时，任意一个到期就会成为死信。&lt;/p&gt;
+&lt;p&gt;2.2.4. 总结&lt;/p&gt;
+&lt;p&gt;消息超时的两种方式是？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;给队列设置 ttl 属性，进入队列后超过 ttl 时间的消息变为死信&lt;/li&gt;
+&lt;li&gt;给消息设置 ttl 属性，队列接收到消息超过 ttl 时间后变为死信&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如何实现发送一个消息 20 秒后消费者才收到消息？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;给消息的目标队列指定死信交换机&lt;/li&gt;
+&lt;li&gt;将消费者监听的队列绑定到死信交换机&lt;/li&gt;
+&lt;li&gt;发送消息时给消息设置超时时间为 20 秒&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.3. 延迟队列&lt;/p&gt;
+&lt;p&gt;利用 TTL 结合死信交换机，我们实现了消息发出后，消费者延迟收到消息的效果。这种消息模式就称为延迟队列（Delay Queue）模式。&lt;/p&gt;
+&lt;p&gt;延迟队列的使用场景包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;延迟发送短信&lt;/li&gt;
+&lt;li&gt;用户下单，如果用户在 15 分钟内未支付，则自动取消&lt;/li&gt;
+&lt;li&gt;预约工作会议，20 分钟后自动通知所有参会人员&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因为延迟队列的需求非常多，所以 RabbitMQ 的官方也推出了一个插件，原生支持延迟队列效果。&lt;/p&gt;
+&lt;p&gt;这个插件就是 DelayExchange 插件。参考 RabbitMQ 的插件列表页面：&lt;a href=&#34;https://www.rabbitmq.com/community-plugins.html&#34;&gt;https://www.rabbitmq.com/community-plugins.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718192529342.png&#34; alt=&#34;image-20210718192529342&#34;&gt;&lt;/p&gt;
+&lt;p&gt;使用方式可以参考官网地址：&lt;a href=&#34;https://blog.rabbitmq.com/posts/2015/04/scheduling-messages-with-rabbitmq&#34;&gt;https://blog.rabbitmq.com/posts/2015/04/scheduling-messages-with-rabbitmq&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;2.3.1. 安装 DelayExchange 插件&lt;/p&gt;
+&lt;p&gt;参考课前资料：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718193409812.png&#34; alt=&#34;image-20210718193409812&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.3.2.DelayExchange 原理&lt;/p&gt;
+&lt;p&gt;DelayExchange 需要将一个交换机声明为 delayed 类型。当我们发送消息到 delayExchange 时，流程如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;接收消息&lt;/li&gt;
+&lt;li&gt;判断消息是否具备 x-delay 属性&lt;/li&gt;
+&lt;li&gt;如果有 x-delay 属性，说明是延迟消息，持久化到硬盘，读取 x-delay 值，作为延迟时间&lt;/li&gt;
+&lt;li&gt;返回 routing not found 结果给消息发送者&lt;/li&gt;
+&lt;li&gt;x-delay 时间到期后，重新投递消息到指定队列&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.3.3. 使用 DelayExchange&lt;/p&gt;
+&lt;p&gt;插件的使用也非常简单：声明一个交换机，交换机的类型可以是任意类型，只需要设定 delayed 属性为 true 即可，然后声明队列与其绑定即可。&lt;/p&gt;
+&lt;p&gt;1）声明 DelayExchange 交换机&lt;/p&gt;
+&lt;p&gt;基于注解方式（推荐）：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718193747649.png&#34; alt=&#34;image-20210718193747649&#34;&gt;&lt;/p&gt;
+&lt;p&gt;也可以基于 @Bean 的方式：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718193831076.png&#34; alt=&#34;image-20210718193831076&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2）发送消息&lt;/p&gt;
+&lt;p&gt;发送消息时，一定要携带 x-delay 属性，指定延迟的时间：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718193917009.png&#34; alt=&#34;image-20210718193917009&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2.3.4. 总结&lt;/p&gt;
+&lt;p&gt;延迟队列插件的使用步骤包括哪些？&lt;/p&gt;
+&lt;p&gt;・声明一个交换机，添加 delayed 属性为 true&lt;/p&gt;
+&lt;p&gt;・发送消息时，添加 x-delay 头，值为超时时间&lt;/p&gt;
+&lt;p&gt;3. 惰性队列&lt;/p&gt;
+&lt;p&gt;3.1. 消息堆积问题&lt;/p&gt;
+&lt;p&gt;当生产者发送消息的速度超过了消费者处理消息的速度，就会导致队列中的消息堆积，直到队列存储消息达到上限。之后发送的消息就会成为死信，可能会被丢弃，这就是消息堆积问题。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718194040498.png&#34; alt=&#34;image-20210718194040498&#34;&gt;&lt;/p&gt;
+&lt;p&gt;解决消息堆积有两种思路：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;增加更多消费者，提高消费速度。也就是我们之前说的 work queue 模式&lt;/li&gt;
+&lt;li&gt;扩大队列容积，提高堆积上限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;要提升队列容积，把消息保存在内存中显然是不行的。&lt;/p&gt;
+&lt;p&gt;3.2. 惰性队列&lt;/p&gt;
+&lt;p&gt;从 RabbitMQ 的 3.6.0 版本开始，就增加了 Lazy Queues 的概念，也就是惰性队列。惰性队列的特征如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;接收到消息后直接存入磁盘而非内存&lt;/li&gt;
+&lt;li&gt;消费者要消费消息时才会从磁盘中读取并加载到内存&lt;/li&gt;
+&lt;li&gt;支持数百万条的消息存储&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3.2.1. 基于命令行设置 lazy-queue&lt;/p&gt;
+&lt;p&gt;而要设置一个队列为惰性队列，只需要在声明队列时，指定 x-queue-mode 属性为 lazy 即可。可以通过命令行将一个运行中的队列修改为惰性队列：&lt;/p&gt;
+&lt;figure class=&#34;highlight sh&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;rabbitmqctl set_policy Lazy &lt;span class=&#34;string&#34;&gt;&amp;quot;^lazy-queue$&amp;quot;&lt;/span&gt; &lt;span class=&#34;string&#34;&gt;&amp;#x27;&amp;#123;&amp;quot;queue-mode&amp;quot;:&amp;quot;lazy&amp;quot;&amp;#125;&amp;#x27;&lt;/span&gt; --apply-to queues  &lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;命令解读：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;rabbitmqctl&lt;/code&gt;  ：RabbitMQ 的命令行工具&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;set_policy&lt;/code&gt;  ：添加一个策略&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Lazy&lt;/code&gt;  ：策略名称，可以自定义&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;quot;^lazy-queue$&amp;quot;&lt;/code&gt;  ：用正则表达式匹配队列的名字&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&#39;&amp;#123;&amp;quot;queue-mode&amp;quot;:&amp;quot;lazy&amp;quot;&amp;#125;&#39;&lt;/code&gt;  ：设置队列模式为 lazy 模式&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--apply-to queues  &lt;/code&gt; ：策略的作用对象，是所有的队列&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3.2.2. 基于 @Bean 声明 lazy-queue&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718194522223.png&#34; alt=&#34;image-20210718194522223&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.2.3. 基于 @RabbitListener 声明 LazyQueue&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718194539054.png&#34; alt=&#34;image-20210718194539054&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3.3. 总结&lt;/p&gt;
+&lt;p&gt;消息堆积问题的解决方案？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;队列上绑定多个消费者，提高消费速度&lt;/li&gt;
+&lt;li&gt;使用惰性队列，可以再 mq 中保存更多消息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;惰性队列的优点有哪些？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基于磁盘存储，消息上限高&lt;/li&gt;
+&lt;li&gt;没有间歇性的 page-out，性能比较稳定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;惰性队列的缺点有哪些？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基于磁盘存储，消息时效性会降低&lt;/li&gt;
+&lt;li&gt;性能受限于磁盘的 IO&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.MQ 集群&lt;/p&gt;
+&lt;p&gt;4.1. 集群分类&lt;/p&gt;
+&lt;p&gt;RabbitMQ 的是基于 Erlang 语言编写，而 Erlang 又是一个面向并发的语言，天然支持集群模式。RabbitMQ 的集群有两种模式：&lt;/p&gt;
+&lt;p&gt;•&lt;strong&gt;普通集群&lt;/strong&gt;：是一种分布式集群，将队列分散到集群的各个节点，从而提高整个集群的并发能力。&lt;/p&gt;
+&lt;p&gt;•&lt;strong&gt;镜像集群&lt;/strong&gt;：是一种主从集群，普通集群的基础上，添加了主从备份功能，提高集群的数据可用性。&lt;/p&gt;
+&lt;p&gt;镜像集群虽然支持主从，但主从同步并不是强一致的，某些情况下可能有数据丢失的风险。因此在 RabbitMQ 的 3.8 版本以后，推出了新的功能：&lt;strong&gt;仲裁队列&lt;/strong&gt;来代替镜像集群，底层采用 Raft 协议确保主从的数据一致性。&lt;/p&gt;
+&lt;p&gt;4.2. 普通集群&lt;/p&gt;
+&lt;p&gt;4.2.1. 集群结构和特征&lt;/p&gt;
+&lt;p&gt;普通集群，或者叫标准集群（classic cluster），具备下列特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;会在集群的各个节点间共享部分数据，包括：交换机、队列元信息。不包含队列中的消息。&lt;/li&gt;
+&lt;li&gt;当访问集群某节点时，如果队列不在该节点，会从数据所在节点传递到当前节点并返回&lt;/li&gt;
+&lt;li&gt;队列所在节点宕机，队列中的消息就会丢失&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;结构如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718220843323.png&#34; alt=&#34;image-20210718220843323&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.2.2. 部署&lt;/p&gt;
+&lt;p&gt;参考课前资料：《&lt;a href=&#34;http://xn--RabbitMQ-q29mo90kol6dt10b.md&#34;&gt;RabbitMQ 部署指南.md&lt;/a&gt;》&lt;/p&gt;
+&lt;p&gt;4.3. 镜像集群&lt;/p&gt;
+&lt;p&gt;4.3.1. 集群结构和特征&lt;/p&gt;
+&lt;p&gt;镜像集群：本质是主从模式，具备下面的特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;交换机、队列、队列中的消息会在各个 mq 的镜像节点之间同步备份。&lt;/li&gt;
+&lt;li&gt;创建队列的节点被称为该队列的&lt;strong&gt;主节点，&lt;strong&gt;备份到的其它节点叫做该队列的&lt;/strong&gt;镜像&lt;/strong&gt;节点。&lt;/li&gt;
+&lt;li&gt;一个队列的主节点可能是另一个队列的镜像节点&lt;/li&gt;
+&lt;li&gt;所有操作都是主节点完成，然后同步给镜像节点&lt;/li&gt;
+&lt;li&gt;主宕机后，镜像节点会替代成新的主&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;结构如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/image-20210718221039542.png&#34; alt=&#34;image-20210718221039542&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4.3.2. 部署&lt;/p&gt;
+&lt;p&gt;参考课前资料：《&lt;a href=&#34;http://xn--RabbitMQ-q29mo90kol6dt10b.md&#34;&gt;RabbitMQ 部署指南.md&lt;/a&gt;》&lt;/p&gt;
+&lt;p&gt;4.4. 仲裁队列&lt;/p&gt;
+&lt;p&gt;4.4.1. 集群特征&lt;/p&gt;
+&lt;p&gt;仲裁队列：仲裁队列是 3.8 版本以后才有的新功能，用来替代镜像队列，具备下列特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;与镜像队列一样，都是主从模式，支持主从数据同步&lt;/li&gt;
+&lt;li&gt;使用非常简单，没有复杂的配置&lt;/li&gt;
+&lt;li&gt;主从同步基于 Raft 协议，强一致&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4.4.2. 部署&lt;/p&gt;
+&lt;p&gt;参考课前资料：《&lt;a href=&#34;http://xn--RabbitMQ-q29mo90kol6dt10b.md&#34;&gt;RabbitMQ 部署指南.md&lt;/a&gt;》&lt;/p&gt;
+&lt;p&gt;4.4.3.Java 代码创建仲裁队列&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Bean&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; Queue &lt;span class=&#34;title function_&#34;&gt;quorumQueue&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;return&lt;/span&gt; QueueBuilder&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .durable(&lt;span class=&#34;string&#34;&gt;&amp;quot;quorum.queue&amp;quot;&lt;/span&gt;) &lt;span class=&#34;comment&#34;&gt;// 持久化&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .quorum() &lt;span class=&#34;comment&#34;&gt;// 仲裁队列&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        .build();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;4.4.4.SpringAMQP 连接 MQ 集群&lt;/p&gt;
+&lt;p&gt;注意，这里用 address 来代替 host、port 方式&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;spring:&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;  rabbitmq:&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    addresses: &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.105&lt;/span&gt;:&lt;span class=&#34;number&#34;&gt;8071&lt;/span&gt;, &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.105&lt;/span&gt;:&lt;span class=&#34;number&#34;&gt;8072&lt;/span&gt;, &lt;span class=&#34;number&#34;&gt;192.168&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.150&lt;/span&gt;&lt;span class=&#34;number&#34;&gt;.105&lt;/span&gt;:&lt;span class=&#34;number&#34;&gt;8073&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    username: itcast&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    password: &lt;span class=&#34;number&#34;&gt;123321&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    virtual-host: /&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+ ]]></description>
+        </item>
         <item>
             <guid isPermalink="true">https://zhuwei290.github.io/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</guid>
             <title>多级缓存</title>
@@ -2513,22 +2922,6 @@ wskcli 是 Apache OpenWhisk 的命令行接口（CLI），用来与 OpenWhisk �
 &lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;37&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;/**&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt; * 操作ZSet类型的数据&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;*/&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testZset&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;ZSetOperations&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;zSetOperations&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; redisTemplate.opsForZSet();&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//存值&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    zSetOperations.add(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;,&lt;span class=&#34;string&#34;&gt;&amp;quot;a&amp;quot;&lt;/span&gt;,&lt;span class=&#34;number&#34;&gt;10.0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    zSetOperations.add(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;,&lt;span class=&#34;string&#34;&gt;&amp;quot;b&amp;quot;&lt;/span&gt;,&lt;span class=&#34;number&#34;&gt;11.0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    zSetOperations.add(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;,&lt;span class=&#34;string&#34;&gt;&amp;quot;c&amp;quot;&lt;/span&gt;,&lt;span class=&#34;number&#34;&gt;12.0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    zSetOperations.add(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;,&lt;span class=&#34;string&#34;&gt;&amp;quot;a&amp;quot;&lt;/span&gt;,&lt;span class=&#34;number&#34;&gt;13.0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//取值&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    Set&amp;lt;String&amp;gt; myZset = zSetOperations.range(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;, &lt;span class=&#34;number&#34;&gt;0&lt;/span&gt;, -&lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;for&lt;/span&gt; (String s : myZset) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(s);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//修改分数&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    zSetOperations.incrementScore(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;,&lt;span class=&#34;string&#34;&gt;&amp;quot;b&amp;quot;&lt;/span&gt;,&lt;span class=&#34;number&#34;&gt;20.0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//取值&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    myZset = zSetOperations.range(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;, &lt;span class=&#34;number&#34;&gt;0&lt;/span&gt;, -&lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;for&lt;/span&gt; (String s : myZset) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(s);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//删除成员&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    zSetOperations.remove(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;,&lt;span class=&#34;string&#34;&gt;&amp;quot;a&amp;quot;&lt;/span&gt;,&lt;span class=&#34;string&#34;&gt;&amp;quot;b&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//取值&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    myZset = zSetOperations.range(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;, &lt;span class=&#34;number&#34;&gt;0&lt;/span&gt;, -&lt;span class=&#34;number&#34;&gt;1&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;for&lt;/span&gt; (String s : myZset) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(s);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;5.3.2.7 通用操作&lt;/p&gt;
 &lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;/**&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt; * 通用操作，针对不同的数据类型都可以操作&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;*/&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;meta&#34;&gt;@Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;keyword&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;title function_&#34;&gt;testCommon&lt;/span&gt;&lt;span class=&#34;params&#34;&gt;()&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//获取Redis中所有的key&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    Set&amp;lt;String&amp;gt; keys = redisTemplate.keys(&lt;span class=&#34;string&#34;&gt;&amp;quot;*&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;keyword&#34;&gt;for&lt;/span&gt; (String key : keys) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;        System.out.println(key);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//判断某个key是否存在&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;Boolean&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;itcast&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; redisTemplate.hasKey(&lt;span class=&#34;string&#34;&gt;&amp;quot;itcast&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    System.out.println(itcast);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//删除指定key&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    redisTemplate.delete(&lt;span class=&#34;string&#34;&gt;&amp;quot;myZset&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;comment&#34;&gt;//获取指定key对应的value的数据类型&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    &lt;span class=&#34;type&#34;&gt;DataType&lt;/span&gt; &lt;span class=&#34;variable&#34;&gt;dataType&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; redisTemplate.type(&lt;span class=&#34;string&#34;&gt;&amp;quot;myset&amp;quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;    System.out.println(dataType.name());&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
- ]]></description>
-        </item>
-        <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/%E8%80%83%E8%AF%95%E5%91%A82/</guid>
-            <title>考试周2</title>
-            <link>https://zhuwei290.github.io/%E8%80%83%E8%AF%95%E5%91%A82/</link>
-            <pubDate>Sun, 07 Jul 2024 09:06:15 +0800</pubDate>
-            <description><![CDATA[ &lt;p&gt;考完了期末考试，开摆物联网挑战赛&lt;/p&gt;
- ]]></description>
-        </item>
-        <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/%E5%A4%8D%E4%B9%A0%E8%80%83%E8%AF%95%E5%91%A81/</guid>
-            <title>复习考试周1</title>
-            <link>https://zhuwei290.github.io/%E5%A4%8D%E4%B9%A0%E8%80%83%E8%AF%95%E5%91%A81/</link>
-            <pubDate>Sat, 29 Jun 2024 18:27:03 +0800</pubDate>
-            <description><![CDATA[ &lt;p&gt;本周复习和考试 1…&lt;/p&gt;
  ]]></description>
         </item>
         <item>
@@ -6802,252 +7195,6 @@ DI （ Dependency Injection ）依赖注入&lt;br&gt;
  ]]></description>
         </item>
         <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</guid>
-            <title>c++基础入门笔记(2)</title>
-            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</link>
-            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
-            <description><![CDATA[ &lt;p&gt;2 数据类型&lt;br&gt;
- C++ 规定在创建一个变量或者常量时，必须要指定出相应的数据类型，否则无法给变量分配内存&lt;/p&gt;
-&lt;p&gt;2.1 整型&lt;br&gt;
-作用：整型变量表示的是整数类型的数据&lt;/p&gt;
-&lt;p&gt;C++ 中能够表示整型的类型有以下几种方式，区别在于所占内存空间不同：&lt;/p&gt;
-&lt;p&gt;数据类型	占用空间	取值范围&lt;br&gt;
- short (短整型)	2 字节	(-2^15 ~ 2^15-1)&lt;br&gt;
- int (整型)	4 字节	(-2^31 ~ 2^31-1)&lt;br&gt;
- long (长整形)	Windows 为 4 字节，Linux 为 4 字节 (32 位)，8 字节 (64 位)	(-2^31 ~ 2^31-1)&lt;br&gt;
- long long (长长整形)	8 字节	(-2^63 ~ 2^63-1)&lt;br&gt;
- 2.2 sizeof 关键字&lt;br&gt;
-作用：利用 sizeof 关键字可以统计数据类型所占内存大小&lt;/p&gt;
-&lt;p&gt;语法： sizeof (数据类型 / 变量)&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;short 类型所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(short) &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;int 类型所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(int) &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;long 类型所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(long) &amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;long long 类型所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(long long) &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;整型结论：short &amp;lt; int &amp;lt;= long &amp;lt;= long long&lt;/p&gt;
-&lt;p&gt;2.3 实型（浮点型）&lt;br&gt;
-作用：用于表示小数&lt;/p&gt;
-&lt;p&gt;浮点型变量分为两种：&lt;/p&gt;
-&lt;p&gt;单精度 float&lt;br&gt;
- 双精度 double&lt;br&gt;
- 两者的区别在于表示的有效数字范围不同。&lt;/p&gt;
-&lt;p&gt;数据类型	占用空间	有效数字范围&lt;br&gt;
- float	4 字节	7 位有效数字&lt;br&gt;
- double	8 字节	15～16 位有效数字&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;float f1 = 3.14f;
-double d1 = 3.14;
-
-cout &amp;lt;&amp;lt; f1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; d1&amp;lt;&amp;lt; endl;
-
-cout &amp;lt;&amp;lt; &amp;quot;float  sizeof = &amp;quot; &amp;lt;&amp;lt; sizeof(f1) &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;double sizeof = &amp;quot; &amp;lt;&amp;lt; sizeof(d1) &amp;lt;&amp;lt; endl;
-
-//科学计数法
-float f2 = 3e2; // 3 * 10 ^ 2 
-cout &amp;lt;&amp;lt; &amp;quot;f2 = &amp;quot; &amp;lt;&amp;lt; f2 &amp;lt;&amp;lt; endl;
-
-float f3 = 3e-2;  // 3 * 0.1 ^ 2
-cout &amp;lt;&amp;lt; &amp;quot;f3 = &amp;quot; &amp;lt;&amp;lt; f3 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;2.4 字符型&lt;br&gt;
-作用：字符型变量用于显示单个字符&lt;/p&gt;
-&lt;p&gt;语法：char ch = ‘a’;&lt;/p&gt;
-&lt;p&gt;注意 1：在显示字符型变量时，用单引号将字符括起来，不要用双引号&lt;/p&gt;
-&lt;p&gt;注意 2：单引号内只能有一个字符，不可以是字符串&lt;/p&gt;
-&lt;p&gt;C 和 C++ 中字符型变量只占用 1 个字节。&lt;br&gt;
-字符型变量并不是把字符本身放到内存中存储，而是将对应的 ASCII 编码放入到存储单元&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;char ch = &#39;a&#39;;
-cout &amp;lt;&amp;lt; ch &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; sizeof(char) &amp;lt;&amp;lt; endl;
-
-//ch = &amp;quot;abcde&amp;quot;; //错误，不可以用双引号
-//ch = &#39;abcde&#39;; //错误，单引号内只能引用一个字符
-
-cout &amp;lt;&amp;lt; (int)ch &amp;lt;&amp;lt; endl;  //查看字符a对应的ASCII码
-ch = 97; //可以直接用ASCII给字符型变量赋值
-cout &amp;lt;&amp;lt; ch &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;ASCII 码表格：&lt;/p&gt;
-&lt;p&gt;ASCII 值	控制字符	ASCII 值	字符	ASCII 值	字符	ASCII 值	字符&lt;br&gt;
- 0	NUT	32	(space)	64	@	96	、&lt;br&gt;
-1	SOH	33	!	65	A	97	a&lt;br&gt;
-2	STX	34	&amp;quot;	66	B	98	b&lt;br&gt;
-3	ETX	35	#	67	C	99	c&lt;br&gt;
-4	EOT	36	$	68	D	100	d&lt;br&gt;
-5	ENQ	37	%	69	E	101	e&lt;br&gt;
-6	ACK	38	&amp;amp;	70	F	102	f&lt;br&gt;
-7	BEL	39	,	71	G	103	g&lt;br&gt;
-8	BS	40	(	72	H	104	h&lt;br&gt;
-9	HT	41	)	73	I	105	i&lt;br&gt;
-10	LF	42	*	74	J	106	j&lt;br&gt;
-11	VT	43	+	75	K	107	k&lt;br&gt;
-12	FF	44	,	76	L	108	l&lt;br&gt;
-13	CR	45	-	77	M	109	m&lt;br&gt;
-14	SO	46	.	78	N	110	n&lt;br&gt;
-15	SI	47	/	79	O	111	o&lt;br&gt;
-16	DLE	48	0	80	P	112	p&lt;br&gt;
-17	DCI	49	1	81	Q	113	q&lt;br&gt;
-18	DC2	50	2	82	R	114	r&lt;br&gt;
-19	DC3	51	3	83	S	115	s&lt;br&gt;
-20	DC4	52	4	84	T	116	t&lt;br&gt;
-21	NAK	53	5	85	U	117	u&lt;br&gt;
-22	SYN	54	6	86	V	118	v&lt;br&gt;
-23	TB	55	7	87	W	119	w&lt;br&gt;
-24	CAN	56	8	88	X	120	x&lt;br&gt;
-25	EM	57	9	89	Y	121	y&lt;br&gt;
-26	SUB	58	:	90	Z	122	z&lt;br&gt;
-27	ESC	59	;	91	[	123	{&lt;br&gt;
-28	FS	60	&amp;lt;	92	/	124	|&lt;br&gt;
-29	GS	61	=	93	]	125	}&lt;br&gt;
-30	RS	62	&amp;gt;	94	^	126	`&lt;br&gt;
-31	US	63	?	95	_	127	DEL&lt;br&gt;
-ASCII 码大致由以下两部分组成：&lt;/p&gt;
-&lt;p&gt;ASCII 非打印控制字符： ASCII 表上的数字 0-31 分配给了控制字符，用于控制像打印机等一些外围设备。&lt;br&gt;
-ASCII 打印字符：数字 32-126 分配给了能在键盘上找到的字符，当查看或打印文档时就会出现。&lt;br&gt;
-2.5 转义字符&lt;br&gt;
- ** 作用：** 用于表示一些不能显示出来的 ASCII 字符&lt;/p&gt;
-&lt;p&gt;现阶段我们常用的转义字符有：\n \ \t&lt;/p&gt;
-&lt;p&gt;转义字符	含义	ASCII 码值（十进制）&lt;br&gt;
-\a	警报	007&lt;br&gt;
-\b	退格 (BS) ，将当前位置移到前一列	008&lt;br&gt;
-\f	换页 (FF)，将当前位置移到下页开头	012&lt;br&gt;
-\n	换行 (LF) ，将当前位置移到下一行开头	010&lt;br&gt;
-\r	回车 (CR) ，将当前位置移到本行开头	013&lt;br&gt;
-\t	水平制表 (HT) （跳到下一个 TAB 位置）	009&lt;br&gt;
-\v	垂直制表 (VT)	011&lt;br&gt;
-\	代表一个反斜线字符 &amp;quot;&amp;quot;	092&lt;br&gt;
-’	代表一个单引号（撇号）字符	039&lt;br&gt;
-&amp;quot;	代表一个双引号字符	034&lt;br&gt;
-?	代表一个问号	063&lt;br&gt;
-\0	数字 0	000&lt;br&gt;
-\ddd	8 进制转义字符，d 范围 0~7	3 位 8 进制&lt;br&gt;
- \xhh	16 进制转义字符，h 范围 09，af，A~F	3 位 16 进制&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;\\&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;\tHello&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;\n&amp;quot; &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;2.6 字符串型&lt;br&gt;
-作用：用于表示一串字符&lt;/p&gt;
-&lt;p&gt;两种风格&lt;/p&gt;
-&lt;p&gt;C 风格字符串： char 变量名 [] = “字符串值”&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;char str1[] = &amp;quot;hello world&amp;quot;;
-cout &amp;lt;&amp;lt; str1 &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;注意：C 风格的字符串要用双引号括起来&lt;/p&gt;
-&lt;p&gt;C++ 风格字符串： string 变量名 = “字符串值”&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;string str = &amp;quot;hello world&amp;quot;;
-cout &amp;lt;&amp;lt; str &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;注意：C++ 风格字符串，需要加入头文件 ==#include&lt;string&gt;==&lt;/p&gt;
-&lt;p&gt;2.7 布尔类型 bool&lt;br&gt;
-** 作用：** 布尔数据类型代表真或假的值&lt;/p&gt;
-&lt;p&gt;bool 类型只有两个值：&lt;/p&gt;
-&lt;p&gt;true — 真（本质是 1）&lt;br&gt;
-false — 假（本质是 0）&lt;br&gt;
-bool 类型占 1 个字节大小&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;bool flag = true;
-cout &amp;lt;&amp;lt; flag &amp;lt;&amp;lt; endl; // 1
-
-flag = false;
-cout &amp;lt;&amp;lt; flag &amp;lt;&amp;lt; endl; // 0
-
-cout &amp;lt;&amp;lt; &amp;quot;size of bool = &amp;quot; &amp;lt;&amp;lt; sizeof(bool) &amp;lt;&amp;lt; endl; //1
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;2.8 数据的输入&lt;br&gt;
-作用：用于从键盘获取数据&lt;/p&gt;
-&lt;p&gt;** 关键字：**cin&lt;/p&gt;
-&lt;p&gt;语法： cin &amp;gt;&amp;gt; 变量&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;int main(){&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;//整型输入
-int a = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请输入整型变量：&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; a;
-cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-
-//浮点型输入
-double d = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请输入浮点型变量：&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; d;
-cout &amp;lt;&amp;lt; d &amp;lt;&amp;lt; endl;
-
-//字符型输入
-char ch = 0;
-cout &amp;lt;&amp;lt; &amp;quot;请输入字符型变量：&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; ch;
-cout &amp;lt;&amp;lt; ch &amp;lt;&amp;lt; endl;
-
-//字符串型输入
-string str;
-cout &amp;lt;&amp;lt; &amp;quot;请输入字符串型变量：&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; str;
-cout &amp;lt;&amp;lt; str &amp;lt;&amp;lt; endl;
-
-//布尔类型输入
-bool flag = true;
-cout &amp;lt;&amp;lt; &amp;quot;请输入布尔型变量：&amp;quot; &amp;lt;&amp;lt; endl;
-cin &amp;gt;&amp;gt; flag;
-cout &amp;lt;&amp;lt; flag &amp;lt;&amp;lt; endl;
-system(&amp;quot;pause&amp;quot;);
-return EXIT_SUCCESS;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
- ]]></description>
-        </item>
-        <item>
             <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</guid>
             <title>c++基础入门笔记(3)</title>
             <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/</link>
@@ -7575,202 +7722,6 @@ return 0;
  ]]></description>
         </item>
         <item>
-            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</guid>
-            <title>c++基础入门笔记(6)</title>
-            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</link>
-            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
-            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
-6 函数&lt;br&gt;
- 6.1 概述&lt;br&gt;
- ** 作用：** 将一段经常使用的代码封装起来，减少重复代码&lt;/p&gt;
-&lt;p&gt;一个较大的程序，一般分为若干个程序块，每个模块实现特定的功能。&lt;/p&gt;
-&lt;p&gt;6.2 函数的定义&lt;br&gt;
-函数的定义一般主要有 5 个步骤：&lt;/p&gt;
-&lt;p&gt;1、返回值类型&lt;/p&gt;
-&lt;p&gt;2、函数名&lt;/p&gt;
-&lt;p&gt;3、参数表列&lt;/p&gt;
-&lt;p&gt;4、函数体语句&lt;/p&gt;
-&lt;p&gt;5、return 表达式&lt;/p&gt;
-&lt;p&gt;语法：&lt;/p&gt;
-&lt;p&gt;返回值类型 函数名 （参数列表）&lt;br&gt;
-{&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;   函数体语句
-
-   return表达式
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 返回值类型 ：一个函数可以返回一个值。在函数定义中&lt;br&gt;
-函数名：给函数起个名称&lt;br&gt;
-参数列表：使用该函数时，传入的数据&lt;br&gt;
-函数体语句：花括号内的代码，函数内需要执行的语句&lt;br&gt;
- return 表达式： 和返回值类型挂钩，函数执行完后，返回相应的数据&lt;br&gt;
- ** 示例：** 定义一个加法函数，实现两个数相加&lt;/p&gt;
-&lt;p&gt;// 函数定义&lt;br&gt;
- int add (int num1, int num2)&lt;br&gt;
-{&lt;br&gt;
-int sum = num1 + num2;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;br&gt;
- 6.3 函数的调用&lt;br&gt;
- ** 功能：** 使用定义好的函数&lt;/p&gt;
-&lt;p&gt;语法：函数名（参数）&lt;/p&gt;
-&lt;p&gt;示例：&lt;/p&gt;
-&lt;p&gt;// 函数定义&lt;br&gt;
- int add (int num1, int num2) // 定义中的 num1,num2 称为形式参数，简称形参&lt;br&gt;
- {&lt;br&gt;
-int sum = num1 + num2;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 10;
-//调用add函数
-int sum = add(a, b);//调用时的a，b称为实际参数，简称实参
-cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-
-a = 100;
-b = 100;
-
-sum = add(a, b);
-cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;6.4 值传递&lt;br&gt;
-所谓值传递，就是函数调用时实参将数值传入给形参&lt;br&gt;
-值传递时，如果形参发生，并不会影响实参&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;void swap(int num1, int num2)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; “交换前：” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int temp = num1;
-num1 = num2;
-num2 = temp;
-
-cout &amp;lt;&amp;lt; &amp;quot;交换后：&amp;quot; &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;
-
-//return ; 当函数声明时候，不需要返回值，可以不写return
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 10;
-int b = 20;
-
-swap(a, b);
-
-cout &amp;lt;&amp;lt; &amp;quot;mian中的 a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;mian中的 b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;6.5 函数的常见样式&lt;br&gt;
-常见的函数样式有 4 种&lt;/p&gt;
-&lt;p&gt;无参无返&lt;br&gt;
-有参无返&lt;br&gt;
-无参有返&lt;br&gt;
-有参有返&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;// 函数常见样式&lt;br&gt;
- //1、 无参无返&lt;br&gt;
- void test01 ()&lt;br&gt;
-{&lt;br&gt;
-//void a = 10; // 无类型不可以创建变量，原因无法分配内存&lt;br&gt;
- cout &amp;lt;&amp;lt;“this is test01” &amp;lt;&amp;lt; endl;&lt;br&gt;
-//test01 (); 函数调用&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//2、 有参无返&lt;br&gt;
- void test02 (int a)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; “this is test02” &amp;lt;&amp;lt; endl;&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//3、无参有返&lt;br&gt;
- int test03 ()&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;this is test03 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
-return 10;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;//4、有参有返&lt;br&gt;
- int test04 (int a, int b)&lt;br&gt;
-{&lt;br&gt;
-cout &amp;lt;&amp;lt; &amp;quot;this is test04 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
-int sum = a + b;&lt;br&gt;
-return sum;&lt;br&gt;
-}&lt;br&gt;
- 6.6 函数的声明&lt;br&gt;
-作用： 告诉编译器函数名称及如何调用函数。函数的实际主体可以单独定义。&lt;/p&gt;
-&lt;p&gt;函数的声明可以多次，但是函数的定义只能有一次&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;// 声明可以多次，定义只能一次&lt;br&gt;
- // 声明&lt;br&gt;
- int max (int a, int b);&lt;br&gt;
-int max(int a, int b);&lt;br&gt;
-// 定义&lt;br&gt;
- int max (int a, int b)&lt;br&gt;
-{&lt;br&gt;
-return a &amp;gt; b ? a : b;&lt;br&gt;
-}&lt;/p&gt;
-&lt;p&gt;int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 100;
-int b = 200;
-
-cout &amp;lt;&amp;lt; max(a, b) &amp;lt;&amp;lt; endl;
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
- 6.7 函数的分文件编写&lt;br&gt;
- ** 作用：** 让代码结构更加清晰&lt;/p&gt;
-&lt;p&gt;函数分文件编写一般有 4 个步骤&lt;/p&gt;
-&lt;p&gt;创建后缀名为.h 的头文件&lt;br&gt;
-创建后缀名为.cpp 的源文件&lt;br&gt;
-在头文件中写函数的声明&lt;br&gt;
-在源文件中写函数的定义&lt;br&gt;
-示例：&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;//swap.xn--h-216a053e&#34;&gt;//swap.h 文件&lt;/a&gt;&lt;br&gt;
- #include&lt;iostream&gt;&lt;br&gt;
-using namespace std;&lt;/p&gt;
-&lt;p&gt;// 实现两个数字交换的函数声明&lt;br&gt;
- void swap (int a, int b);&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;//swap.xn--cpp-wu9dq54h&#34;&gt;//swap.cpp 文件&lt;/a&gt;&lt;br&gt;
- #include “swap.h”&lt;/p&gt;
-&lt;p&gt;void swap(int a, int b)&lt;br&gt;
-{&lt;br&gt;
-int temp = a;&lt;br&gt;
-a = b;&lt;br&gt;
-b = temp;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
-cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;br&gt;
-//main 函数文件&lt;br&gt;
- #include “swap.h”&lt;br&gt;
-int main() {&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;int a = 100;
-int b = 200;
-swap(a, b);
-
-system(&amp;quot;pause&amp;quot;);
-
-return 0;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;​&lt;/p&gt;
- ]]></description>
-        </item>
-        <item>
             <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</guid>
             <title>c++基础入门笔记(4)</title>
             <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/</link>
@@ -8187,6 +8138,448 @@ cout &amp;lt;&amp;lt; &amp;quot;4&amp;quot; &amp;lt;&amp;lt; endl;
 FLAG:
 
 cout &amp;lt;&amp;lt; &amp;quot;5&amp;quot; &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+ ]]></description>
+        </item>
+        <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</guid>
+            <title>c++基础入门笔记(2)</title>
+            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-2/</link>
+            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;2 数据类型&lt;br&gt;
+ C++ 规定在创建一个变量或者常量时，必须要指定出相应的数据类型，否则无法给变量分配内存&lt;/p&gt;
+&lt;p&gt;2.1 整型&lt;br&gt;
+作用：整型变量表示的是整数类型的数据&lt;/p&gt;
+&lt;p&gt;C++ 中能够表示整型的类型有以下几种方式，区别在于所占内存空间不同：&lt;/p&gt;
+&lt;p&gt;数据类型	占用空间	取值范围&lt;br&gt;
+ short (短整型)	2 字节	(-2^15 ~ 2^15-1)&lt;br&gt;
+ int (整型)	4 字节	(-2^31 ~ 2^31-1)&lt;br&gt;
+ long (长整形)	Windows 为 4 字节，Linux 为 4 字节 (32 位)，8 字节 (64 位)	(-2^31 ~ 2^31-1)&lt;br&gt;
+ long long (长长整形)	8 字节	(-2^63 ~ 2^63-1)&lt;br&gt;
+ 2.2 sizeof 关键字&lt;br&gt;
+作用：利用 sizeof 关键字可以统计数据类型所占内存大小&lt;/p&gt;
+&lt;p&gt;语法： sizeof (数据类型 / 变量)&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;short 类型所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(short) &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;int 类型所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(int) &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;long 类型所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(long) &amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;long long 类型所占内存空间为： &amp;quot; &amp;lt;&amp;lt; sizeof(long long) &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;整型结论：short &amp;lt; int &amp;lt;= long &amp;lt;= long long&lt;/p&gt;
+&lt;p&gt;2.3 实型（浮点型）&lt;br&gt;
+作用：用于表示小数&lt;/p&gt;
+&lt;p&gt;浮点型变量分为两种：&lt;/p&gt;
+&lt;p&gt;单精度 float&lt;br&gt;
+ 双精度 double&lt;br&gt;
+ 两者的区别在于表示的有效数字范围不同。&lt;/p&gt;
+&lt;p&gt;数据类型	占用空间	有效数字范围&lt;br&gt;
+ float	4 字节	7 位有效数字&lt;br&gt;
+ double	8 字节	15～16 位有效数字&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;float f1 = 3.14f;
+double d1 = 3.14;
+
+cout &amp;lt;&amp;lt; f1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; d1&amp;lt;&amp;lt; endl;
+
+cout &amp;lt;&amp;lt; &amp;quot;float  sizeof = &amp;quot; &amp;lt;&amp;lt; sizeof(f1) &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;double sizeof = &amp;quot; &amp;lt;&amp;lt; sizeof(d1) &amp;lt;&amp;lt; endl;
+
+//科学计数法
+float f2 = 3e2; // 3 * 10 ^ 2 
+cout &amp;lt;&amp;lt; &amp;quot;f2 = &amp;quot; &amp;lt;&amp;lt; f2 &amp;lt;&amp;lt; endl;
+
+float f3 = 3e-2;  // 3 * 0.1 ^ 2
+cout &amp;lt;&amp;lt; &amp;quot;f3 = &amp;quot; &amp;lt;&amp;lt; f3 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;2.4 字符型&lt;br&gt;
+作用：字符型变量用于显示单个字符&lt;/p&gt;
+&lt;p&gt;语法：char ch = ‘a’;&lt;/p&gt;
+&lt;p&gt;注意 1：在显示字符型变量时，用单引号将字符括起来，不要用双引号&lt;/p&gt;
+&lt;p&gt;注意 2：单引号内只能有一个字符，不可以是字符串&lt;/p&gt;
+&lt;p&gt;C 和 C++ 中字符型变量只占用 1 个字节。&lt;br&gt;
+字符型变量并不是把字符本身放到内存中存储，而是将对应的 ASCII 编码放入到存储单元&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;char ch = &#39;a&#39;;
+cout &amp;lt;&amp;lt; ch &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; sizeof(char) &amp;lt;&amp;lt; endl;
+
+//ch = &amp;quot;abcde&amp;quot;; //错误，不可以用双引号
+//ch = &#39;abcde&#39;; //错误，单引号内只能引用一个字符
+
+cout &amp;lt;&amp;lt; (int)ch &amp;lt;&amp;lt; endl;  //查看字符a对应的ASCII码
+ch = 97; //可以直接用ASCII给字符型变量赋值
+cout &amp;lt;&amp;lt; ch &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;ASCII 码表格：&lt;/p&gt;
+&lt;p&gt;ASCII 值	控制字符	ASCII 值	字符	ASCII 值	字符	ASCII 值	字符&lt;br&gt;
+ 0	NUT	32	(space)	64	@	96	、&lt;br&gt;
+1	SOH	33	!	65	A	97	a&lt;br&gt;
+2	STX	34	&amp;quot;	66	B	98	b&lt;br&gt;
+3	ETX	35	#	67	C	99	c&lt;br&gt;
+4	EOT	36	$	68	D	100	d&lt;br&gt;
+5	ENQ	37	%	69	E	101	e&lt;br&gt;
+6	ACK	38	&amp;amp;	70	F	102	f&lt;br&gt;
+7	BEL	39	,	71	G	103	g&lt;br&gt;
+8	BS	40	(	72	H	104	h&lt;br&gt;
+9	HT	41	)	73	I	105	i&lt;br&gt;
+10	LF	42	*	74	J	106	j&lt;br&gt;
+11	VT	43	+	75	K	107	k&lt;br&gt;
+12	FF	44	,	76	L	108	l&lt;br&gt;
+13	CR	45	-	77	M	109	m&lt;br&gt;
+14	SO	46	.	78	N	110	n&lt;br&gt;
+15	SI	47	/	79	O	111	o&lt;br&gt;
+16	DLE	48	0	80	P	112	p&lt;br&gt;
+17	DCI	49	1	81	Q	113	q&lt;br&gt;
+18	DC2	50	2	82	R	114	r&lt;br&gt;
+19	DC3	51	3	83	S	115	s&lt;br&gt;
+20	DC4	52	4	84	T	116	t&lt;br&gt;
+21	NAK	53	5	85	U	117	u&lt;br&gt;
+22	SYN	54	6	86	V	118	v&lt;br&gt;
+23	TB	55	7	87	W	119	w&lt;br&gt;
+24	CAN	56	8	88	X	120	x&lt;br&gt;
+25	EM	57	9	89	Y	121	y&lt;br&gt;
+26	SUB	58	:	90	Z	122	z&lt;br&gt;
+27	ESC	59	;	91	[	123	{&lt;br&gt;
+28	FS	60	&amp;lt;	92	/	124	|&lt;br&gt;
+29	GS	61	=	93	]	125	}&lt;br&gt;
+30	RS	62	&amp;gt;	94	^	126	`&lt;br&gt;
+31	US	63	?	95	_	127	DEL&lt;br&gt;
+ASCII 码大致由以下两部分组成：&lt;/p&gt;
+&lt;p&gt;ASCII 非打印控制字符： ASCII 表上的数字 0-31 分配给了控制字符，用于控制像打印机等一些外围设备。&lt;br&gt;
+ASCII 打印字符：数字 32-126 分配给了能在键盘上找到的字符，当查看或打印文档时就会出现。&lt;br&gt;
+2.5 转义字符&lt;br&gt;
+ ** 作用：** 用于表示一些不能显示出来的 ASCII 字符&lt;/p&gt;
+&lt;p&gt;现阶段我们常用的转义字符有：\n \ \t&lt;/p&gt;
+&lt;p&gt;转义字符	含义	ASCII 码值（十进制）&lt;br&gt;
+\a	警报	007&lt;br&gt;
+\b	退格 (BS) ，将当前位置移到前一列	008&lt;br&gt;
+\f	换页 (FF)，将当前位置移到下页开头	012&lt;br&gt;
+\n	换行 (LF) ，将当前位置移到下一行开头	010&lt;br&gt;
+\r	回车 (CR) ，将当前位置移到本行开头	013&lt;br&gt;
+\t	水平制表 (HT) （跳到下一个 TAB 位置）	009&lt;br&gt;
+\v	垂直制表 (VT)	011&lt;br&gt;
+\	代表一个反斜线字符 &amp;quot;&amp;quot;	092&lt;br&gt;
+’	代表一个单引号（撇号）字符	039&lt;br&gt;
+&amp;quot;	代表一个双引号字符	034&lt;br&gt;
+?	代表一个问号	063&lt;br&gt;
+\0	数字 0	000&lt;br&gt;
+\ddd	8 进制转义字符，d 范围 0~7	3 位 8 进制&lt;br&gt;
+ \xhh	16 进制转义字符，h 范围 09，af，A~F	3 位 16 进制&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;\\&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;\tHello&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;\n&amp;quot; &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;2.6 字符串型&lt;br&gt;
+作用：用于表示一串字符&lt;/p&gt;
+&lt;p&gt;两种风格&lt;/p&gt;
+&lt;p&gt;C 风格字符串： char 变量名 [] = “字符串值”&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;char str1[] = &amp;quot;hello world&amp;quot;;
+cout &amp;lt;&amp;lt; str1 &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;注意：C 风格的字符串要用双引号括起来&lt;/p&gt;
+&lt;p&gt;C++ 风格字符串： string 变量名 = “字符串值”&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;string str = &amp;quot;hello world&amp;quot;;
+cout &amp;lt;&amp;lt; str &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;注意：C++ 风格字符串，需要加入头文件 ==#include&lt;string&gt;==&lt;/p&gt;
+&lt;p&gt;2.7 布尔类型 bool&lt;br&gt;
+** 作用：** 布尔数据类型代表真或假的值&lt;/p&gt;
+&lt;p&gt;bool 类型只有两个值：&lt;/p&gt;
+&lt;p&gt;true — 真（本质是 1）&lt;br&gt;
+false — 假（本质是 0）&lt;br&gt;
+bool 类型占 1 个字节大小&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bool flag = true;
+cout &amp;lt;&amp;lt; flag &amp;lt;&amp;lt; endl; // 1
+
+flag = false;
+cout &amp;lt;&amp;lt; flag &amp;lt;&amp;lt; endl; // 0
+
+cout &amp;lt;&amp;lt; &amp;quot;size of bool = &amp;quot; &amp;lt;&amp;lt; sizeof(bool) &amp;lt;&amp;lt; endl; //1
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;2.8 数据的输入&lt;br&gt;
+作用：用于从键盘获取数据&lt;/p&gt;
+&lt;p&gt;** 关键字：**cin&lt;/p&gt;
+&lt;p&gt;语法： cin &amp;gt;&amp;gt; 变量&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;int main(){&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//整型输入
+int a = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请输入整型变量：&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; a;
+cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+
+//浮点型输入
+double d = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请输入浮点型变量：&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; d;
+cout &amp;lt;&amp;lt; d &amp;lt;&amp;lt; endl;
+
+//字符型输入
+char ch = 0;
+cout &amp;lt;&amp;lt; &amp;quot;请输入字符型变量：&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; ch;
+cout &amp;lt;&amp;lt; ch &amp;lt;&amp;lt; endl;
+
+//字符串型输入
+string str;
+cout &amp;lt;&amp;lt; &amp;quot;请输入字符串型变量：&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; str;
+cout &amp;lt;&amp;lt; str &amp;lt;&amp;lt; endl;
+
+//布尔类型输入
+bool flag = true;
+cout &amp;lt;&amp;lt; &amp;quot;请输入布尔型变量：&amp;quot; &amp;lt;&amp;lt; endl;
+cin &amp;gt;&amp;gt; flag;
+cout &amp;lt;&amp;lt; flag &amp;lt;&amp;lt; endl;
+system(&amp;quot;pause&amp;quot;);
+return EXIT_SUCCESS;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+ ]]></description>
+        </item>
+        <item>
+            <guid isPermalink="true">https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</guid>
+            <title>c++基础入门笔记(6)</title>
+            <link>https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-6/</link>
+            <pubDate>Tue, 31 Jan 2023 15:13:43 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;​&lt;br&gt;
+6 函数&lt;br&gt;
+ 6.1 概述&lt;br&gt;
+ ** 作用：** 将一段经常使用的代码封装起来，减少重复代码&lt;/p&gt;
+&lt;p&gt;一个较大的程序，一般分为若干个程序块，每个模块实现特定的功能。&lt;/p&gt;
+&lt;p&gt;6.2 函数的定义&lt;br&gt;
+函数的定义一般主要有 5 个步骤：&lt;/p&gt;
+&lt;p&gt;1、返回值类型&lt;/p&gt;
+&lt;p&gt;2、函数名&lt;/p&gt;
+&lt;p&gt;3、参数表列&lt;/p&gt;
+&lt;p&gt;4、函数体语句&lt;/p&gt;
+&lt;p&gt;5、return 表达式&lt;/p&gt;
+&lt;p&gt;语法：&lt;/p&gt;
+&lt;p&gt;返回值类型 函数名 （参数列表）&lt;br&gt;
+{&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;   函数体语句
+
+   return表达式
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 返回值类型 ：一个函数可以返回一个值。在函数定义中&lt;br&gt;
+函数名：给函数起个名称&lt;br&gt;
+参数列表：使用该函数时，传入的数据&lt;br&gt;
+函数体语句：花括号内的代码，函数内需要执行的语句&lt;br&gt;
+ return 表达式： 和返回值类型挂钩，函数执行完后，返回相应的数据&lt;br&gt;
+ ** 示例：** 定义一个加法函数，实现两个数相加&lt;/p&gt;
+&lt;p&gt;// 函数定义&lt;br&gt;
+ int add (int num1, int num2)&lt;br&gt;
+{&lt;br&gt;
+int sum = num1 + num2;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;br&gt;
+ 6.3 函数的调用&lt;br&gt;
+ ** 功能：** 使用定义好的函数&lt;/p&gt;
+&lt;p&gt;语法：函数名（参数）&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;// 函数定义&lt;br&gt;
+ int add (int num1, int num2) // 定义中的 num1,num2 称为形式参数，简称形参&lt;br&gt;
+ {&lt;br&gt;
+int sum = num1 + num2;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 10;
+//调用add函数
+int sum = add(a, b);//调用时的a，b称为实际参数，简称实参
+cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+
+a = 100;
+b = 100;
+
+sum = add(a, b);
+cout &amp;lt;&amp;lt; &amp;quot;sum = &amp;quot; &amp;lt;&amp;lt; sum &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;6.4 值传递&lt;br&gt;
+所谓值传递，就是函数调用时实参将数值传入给形参&lt;br&gt;
+值传递时，如果形参发生，并不会影响实参&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;void swap(int num1, int num2)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; “交换前：” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int temp = num1;
+num1 = num2;
+num2 = temp;
+
+cout &amp;lt;&amp;lt; &amp;quot;交换后：&amp;quot; &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;num1 = &amp;quot; &amp;lt;&amp;lt; num1 &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;num2 = &amp;quot; &amp;lt;&amp;lt; num2 &amp;lt;&amp;lt; endl;
+
+//return ; 当函数声明时候，不需要返回值，可以不写return
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int b = 20;
+
+swap(a, b);
+
+cout &amp;lt;&amp;lt; &amp;quot;mian中的 a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;mian中的 b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;6.5 函数的常见样式&lt;br&gt;
+常见的函数样式有 4 种&lt;/p&gt;
+&lt;p&gt;无参无返&lt;br&gt;
+有参无返&lt;br&gt;
+无参有返&lt;br&gt;
+有参有返&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;// 函数常见样式&lt;br&gt;
+ //1、 无参无返&lt;br&gt;
+ void test01 ()&lt;br&gt;
+{&lt;br&gt;
+//void a = 10; // 无类型不可以创建变量，原因无法分配内存&lt;br&gt;
+ cout &amp;lt;&amp;lt;“this is test01” &amp;lt;&amp;lt; endl;&lt;br&gt;
+//test01 (); 函数调用&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//2、 有参无返&lt;br&gt;
+ void test02 (int a)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; “this is test02” &amp;lt;&amp;lt; endl;&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//3、无参有返&lt;br&gt;
+ int test03 ()&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;this is test03 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
+return 10;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;//4、有参有返&lt;br&gt;
+ int test04 (int a, int b)&lt;br&gt;
+{&lt;br&gt;
+cout &amp;lt;&amp;lt; &amp;quot;this is test04 &amp;quot; &amp;lt;&amp;lt; endl;&lt;br&gt;
+int sum = a + b;&lt;br&gt;
+return sum;&lt;br&gt;
+}&lt;br&gt;
+ 6.6 函数的声明&lt;br&gt;
+作用： 告诉编译器函数名称及如何调用函数。函数的实际主体可以单独定义。&lt;/p&gt;
+&lt;p&gt;函数的声明可以多次，但是函数的定义只能有一次&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;// 声明可以多次，定义只能一次&lt;br&gt;
+ // 声明&lt;br&gt;
+ int max (int a, int b);&lt;br&gt;
+int max(int a, int b);&lt;br&gt;
+// 定义&lt;br&gt;
+ int max (int a, int b)&lt;br&gt;
+{&lt;br&gt;
+return a &amp;gt; b ? a : b;&lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 100;
+int b = 200;
+
+cout &amp;lt;&amp;lt; max(a, b) &amp;lt;&amp;lt; endl;
+
+system(&amp;quot;pause&amp;quot;);
+
+return 0;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+ 6.7 函数的分文件编写&lt;br&gt;
+ ** 作用：** 让代码结构更加清晰&lt;/p&gt;
+&lt;p&gt;函数分文件编写一般有 4 个步骤&lt;/p&gt;
+&lt;p&gt;创建后缀名为.h 的头文件&lt;br&gt;
+创建后缀名为.cpp 的源文件&lt;br&gt;
+在头文件中写函数的声明&lt;br&gt;
+在源文件中写函数的定义&lt;br&gt;
+示例：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;//swap.xn--h-216a053e&#34;&gt;//swap.h 文件&lt;/a&gt;&lt;br&gt;
+ #include&lt;iostream&gt;&lt;br&gt;
+using namespace std;&lt;/p&gt;
+&lt;p&gt;// 实现两个数字交换的函数声明&lt;br&gt;
+ void swap (int a, int b);&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;//swap.xn--cpp-wu9dq54h&#34;&gt;//swap.cpp 文件&lt;/a&gt;&lt;br&gt;
+ #include “swap.h”&lt;/p&gt;
+&lt;p&gt;void swap(int a, int b)&lt;br&gt;
+{&lt;br&gt;
+int temp = a;&lt;br&gt;
+a = b;&lt;br&gt;
+b = temp;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cout &amp;lt;&amp;lt; &amp;quot;a = &amp;quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; &amp;quot;b = &amp;quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;br&gt;
+//main 函数文件&lt;br&gt;
+ #include “swap.h”&lt;br&gt;
+int main() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 100;
+int b = 200;
+swap(a, b);
 
 system(&amp;quot;pause&amp;quot;);
 
