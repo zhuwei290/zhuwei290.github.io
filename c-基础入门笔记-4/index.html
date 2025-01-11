@@ -1,0 +1,515 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>c++基础入门笔记(4) | ZW</title>
+  <meta name="author" content="Zhu Wei">
+  
+  <meta name="description" content="​4 程序流程结构C&amp;#x2F;C++支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构
+顺序结构：程序按顺序执行，不发生跳转选择结构：依据条件是否满足，有选择的执行相应功能循环结构：依据条件是否满足，循环多次执行某段代码4.1 选择结构4.1.1 if语句
+**作用：**执行满足条件的语句">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="c++基础入门笔记(4)"/>
+  <meta property="og:site_name" content="ZW"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">ZW</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/null">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-c-基础入门笔记-4" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2023-01-31T07:13:43.000Z"><a href="/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/">2023-01-31</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">c++基础入门笔记(4)</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p>​<br>4 程序流程结构<br>C&#x2F;C++支持最基本的三种程序运行结构：顺序结构、选择结构、循环结构</p>
+<p>顺序结构：程序按顺序执行，不发生跳转<br>选择结构：依据条件是否满足，有选择的执行相应功能<br>循环结构：依据条件是否满足，循环多次执行某段代码<br>4.1 选择结构<br>4.1.1 if语句</p>
+<p>**作用：**执行满足条件的语句</p>
+<p>if语句的三种形式</p>
+<p>int main() {</p>
+<pre><code>//选择结构-单行if语句
+//输入一个分数，如果分数大于600分，视为考上一本大学，并在屏幕上打印
+
+int score = 0;
+cout &lt;&lt; &quot;请输入一个分数：&quot; &lt;&lt; endl;
+cin &gt;&gt; score;
+
+cout &lt;&lt; &quot;您输入的分数为： &quot; &lt;&lt; score &lt;&lt; endl;
+
+//if语句
+//注意事项，在if判断语句后面，不要加分号
+if (score &gt; 600)
+&#123;
+	cout &lt;&lt; &quot;我考上了一本大学！！！&quot; &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>多行格式if语句：if(条件){ 条件满足执行的语句 }else{ 条件不满足执行的语句 };<br>​</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>int score = 0;
+
+cout &lt;&lt; &quot;请输入考试分数：&quot; &lt;&lt; endl;
+
+cin &gt;&gt; score;
+
+if (score &gt; 600)
+&#123;
+	cout &lt;&lt; &quot;我考上了一本大学&quot; &lt;&lt; endl;
+&#125;
+else
+&#123;
+	cout &lt;&lt; &quot;我未考上一本大学&quot; &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>多条件的if语句：if(条件1){ 条件1满足执行的语句 }else if(条件2){条件2满足执行的语句}… else{ 都不满足执行的语句}<br>​</p>
+<p>​</p>
+<p>​</p>
+<p>示例：</p>
+<pre><code>int main() &#123;
+
+int score = 0;
+
+cout &lt;&lt; &quot;请输入考试分数：&quot; &lt;&lt; endl;
+
+cin &gt;&gt; score;
+
+if (score &gt; 600)
+&#123;
+	cout &lt;&lt; &quot;我考上了一本大学&quot; &lt;&lt; endl;
+&#125;
+else if (score &gt; 500)
+&#123;
+	cout &lt;&lt; &quot;我考上了二本大学&quot; &lt;&lt; endl;
+&#125;
+else if (score &gt; 400)
+&#123;
+	cout &lt;&lt; &quot;我考上了三本大学&quot; &lt;&lt; endl;
+&#125;
+else
+&#123;
+	cout &lt;&lt; &quot;我未考上本科&quot; &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>​</p>
+<p>嵌套if语句：在if语句中，可以嵌套使用if语句，达到更精确的条件判断</p>
+<p>案例需求：</p>
+<p>提示用户输入一个高考考试分数，根据分数做如下判断<br>分数如果大于600分视为考上一本，大于500分考上二本，大于400考上三本，其余视为未考上本科；<br>在一本分数中，如果大于700分，考入北大，大于650分，考入清华，大于600考入人大。<br>示例：</p>
+<p>int main() {</p>
+<pre><code>int score = 0;
+
+cout &lt;&lt; &quot;请输入考试分数：&quot; &lt;&lt; endl;
+
+cin &gt;&gt; score;
+
+if (score &gt; 600)
+&#123;
+	cout &lt;&lt; &quot;我考上了一本大学&quot; &lt;&lt; endl;
+	if (score &gt; 700)
+	&#123;
+		cout &lt;&lt; &quot;我考上了北大&quot; &lt;&lt; endl;
+	&#125;
+	else if (score &gt; 650)
+	&#123;
+		cout &lt;&lt; &quot;我考上了清华&quot; &lt;&lt; endl;
+	&#125;
+	else
+	&#123;
+		cout &lt;&lt; &quot;我考上了人大&quot; &lt;&lt; endl;
+	&#125;
+	
+&#125;
+else if (score &gt; 500)
+&#123;
+	cout &lt;&lt; &quot;我考上了二本大学&quot; &lt;&lt; endl;
+&#125;
+else if (score &gt; 400)
+&#123;
+	cout &lt;&lt; &quot;我考上了三本大学&quot; &lt;&lt; endl;
+&#125;
+else
+&#123;
+	cout &lt;&lt; &quot;我未考上本科&quot; &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>练习案例： 三只小猪称体重</p>
+<p>有三只小猪ABC，请分别输入三只小猪的体重，并且判断哪只小猪最重？</p>
+<p>4.1.2 三目运算符</p>
+<p>作用： 通过三目运算符实现简单的判断</p>
+<p>语法：表达式1 ? 表达式2 ：表达式3</p>
+<p>解释：</p>
+<p>如果表达式1的值为真，执行表达式2，并返回表达式2的结果；</p>
+<p>如果表达式1的值为假，执行表达式3，并返回表达式3的结果。</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>int a = 10;
+int b = 20;
+int c = 0;
+
+c = a &gt; b ? a : b;
+cout &lt;&lt; &quot;c = &quot; &lt;&lt; c &lt;&lt; endl;
+
+//C++中三目运算符返回的是变量,可以继续赋值
+
+(a &gt; b ? a : b) = 100;
+
+cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
+cout &lt;&lt; &quot;b = &quot; &lt;&lt; b &lt;&lt; endl;
+cout &lt;&lt; &quot;c = &quot; &lt;&lt; c &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>4.1.3 switch语句</p>
+<p>**作用：**执行多条件分支语句</p>
+<p>语法：</p>
+<p>switch(表达式)</p>
+<p>{</p>
+<pre><code>case 结果1：执行语句;break;
+
+case 结果2：执行语句;break;
+
+...
+
+default:执行语句;break;
+</code></pre>
+<p>}</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>//请给电影评分 
+//10 ~ 9   经典   
+// 8 ~ 7   非常好
+// 6 ~ 5   一般
+// 5分以下 烂片
+
+int score = 0;
+cout &lt;&lt; &quot;请给电影打分&quot; &lt;&lt; endl;
+cin &gt;&gt; score;
+
+switch (score)
+&#123;
+case 10:
+case 9:
+	cout &lt;&lt; &quot;经典&quot; &lt;&lt; endl;
+	break;
+case 8:
+	cout &lt;&lt; &quot;非常好&quot; &lt;&lt; endl;
+	break;
+case 7:
+case 6:
+	cout &lt;&lt; &quot;一般&quot; &lt;&lt; endl;
+	break;
+default:
+	cout &lt;&lt; &quot;烂片&quot; &lt;&lt; endl;
+	break;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>4.2 循环结构<br>4.2.1 while循环语句</p>
+<p>**作用：**满足循环条件，执行循环语句</p>
+<p>语法：while(循环条件){ 循环语句 }</p>
+<p>解释：只要循环条件的结果为真，就执行循环语句</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>int num = 0;
+while (num &lt; 10)
+&#123;
+	cout &lt;&lt; &quot;num = &quot; &lt;&lt; num &lt;&lt; endl;
+	num++;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>while循环练习案例：猜数字</p>
+<p>**案例描述：**系统随机生成一个1到100之间的数字，玩家进行猜测，如果猜错，提示玩家数字过大或过小，如果猜对恭喜玩家胜利，并且退出游戏。</p>
+<p>4.2.2 do…while循环语句</p>
+<p>作用： 满足循环条件，执行循环语句</p>
+<p>语法： do{ 循环语句 } while(循环条件);</p>
+<p>**注意：**与while的区别在于do…while会先执行一次循环语句，再判断循环条件</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>int num = 0;
+
+do
+&#123;
+	cout &lt;&lt; num &lt;&lt; endl;
+	num++;
+
+&#125; while (num &lt; 10);
+
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>练习案例：水仙花数</p>
+<p>**案例描述：**水仙花数是指一个 3 位数，它的每个位上的数字的 3次幂之和等于它本身</p>
+<p>例如：1^3 + 5^3+ 3^3 &#x3D; 153</p>
+<p>请利用do…while语句，求出所有3位数中的水仙花数</p>
+<p>4.2.3 for循环语句</p>
+<p>作用： 满足循环条件，执行循环语句</p>
+<p>语法：for(起始表达式;条件表达式;末尾循环体) { 循环语句; }</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>for (int i = 0; i &lt; 10; i++)
+&#123;
+	cout &lt;&lt; i &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>详解：</p>
+<p>练习案例：敲桌子</p>
+<p>案例描述：从1开始数到数字100， 如果数字个位含有7，或者数字十位含有7，或者该数字是7的倍数，我们打印敲桌子，其余数字直接打印输出。</p>
+<p>4.2.4 嵌套循环</p>
+<p>作用： 在循环体中再嵌套一层循环，解决一些实际问题</p>
+<p>例如我们想在屏幕中打印如下图片，就需要利用嵌套循环</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>//外层循环执行1次，内层循环执行1轮
+for (int i = 0; i &lt; 10; i++)
+&#123;
+	for (int j = 0; j &lt; 10; j++)
+	&#123;
+		cout &lt;&lt; &quot;*&quot; &lt;&lt; &quot; &quot;;
+	&#125;
+	cout &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>**练习案例：**乘法口诀表</p>
+<p>案例描述：利用嵌套循环，实现九九乘法表</p>
+<p>4.3 跳转语句<br>4.3.1 break语句</p>
+<p>作用: 用于跳出选择结构或者循环结构</p>
+<p>break使用的时机：</p>
+<p>出现在switch条件语句中，作用是终止case并跳出switch<br>出现在循环语句中，作用是跳出当前的循环语句<br>出现在嵌套循环中，跳出最近的内层循环语句<br>示例1：</p>
+<p>int main() {<br>	&#x2F;&#x2F;1、在switch 语句中使用break<br>	cout &lt;&lt; “请选择您挑战副本的难度：” &lt;&lt; endl;<br>	cout &lt;&lt; “1、普通” &lt;&lt; endl;<br>	cout &lt;&lt; “2、中等” &lt;&lt; endl;<br>	cout &lt;&lt; “3、困难” &lt;&lt; endl;</p>
+<pre><code>int num = 0;
+
+cin &gt;&gt; num;
+
+switch (num)
+&#123;
+case 1:
+	cout &lt;&lt; &quot;您选择的是普通难度&quot; &lt;&lt; endl;
+	break;
+case 2:
+	cout &lt;&lt; &quot;您选择的是中等难度&quot; &lt;&lt; endl;
+	break;
+case 3:
+	cout &lt;&lt; &quot;您选择的是困难难度&quot; &lt;&lt; endl;
+	break;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>示例2：</p>
+<p>int main() {<br>	&#x2F;&#x2F;2、在循环语句中用break<br>	for (int i &#x3D; 0; i &lt; 10; i++)<br>	{<br>		if (i &#x3D;&#x3D; 5)<br>		{<br>			break; &#x2F;&#x2F;跳出循环语句<br>		}<br>		cout &lt;&lt; i &lt;&lt; endl;<br>	}</p>
+<pre><code>system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>示例3：</p>
+<p>int main() {<br>	&#x2F;&#x2F;在嵌套循环语句中使用break，退出内层循环<br>	for (int i &#x3D; 0; i &lt; 10; i++)<br>	{<br>		for (int j &#x3D; 0; j &lt; 10; j++)<br>		{<br>			if (j &#x3D;&#x3D; 5)<br>			{<br>				break;<br>			}<br>			cout &lt;&lt; “*” &lt;&lt; “ “;<br>		}<br>		cout &lt;&lt; endl;<br>	}<br>	<br>	system(“pause”);</p>
+<pre><code>return 0;
+</code></pre>
+<p>}<br>4.3.2 continue语句</p>
+<p>**作用：**在循环语句中，跳过本次循环中余下尚未执行的语句，继续执行下一次循环</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>for (int i = 0; i &lt; 100; i++)
+&#123;
+	if (i % 2 == 0)
+	&#123;
+		continue;
+	&#125;
+	cout &lt;&lt; i &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>4.3.3 goto语句</p>
+<p>**作用：**可以无条件跳转语句</p>
+<p>语法： goto 标记;</p>
+<p>**解释：**如果标记的名称存在，执行到goto语句时，会跳转到标记的位置</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>cout &lt;&lt; &quot;1&quot; &lt;&lt; endl;
+
+goto FLAG;
+
+cout &lt;&lt; &quot;2&quot; &lt;&lt; endl;
+cout &lt;&lt; &quot;3&quot; &lt;&lt; endl;
+cout &lt;&lt; &quot;4&quot; &lt;&lt; endl;
+
+FLAG:
+
+cout &lt;&lt; &quot;5&quot; &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>​</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-4/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="zhuwei290.github.io">
+  </form>
+</div>
+
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2025 Zhu Wei
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+
+
+<script src="/js/gallery.js"></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+<script>
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

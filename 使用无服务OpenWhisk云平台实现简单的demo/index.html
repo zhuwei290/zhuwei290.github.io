@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用无服务OpenWhisk云平台实现简单的demo | ZW</title>
+  <meta name="author" content="Zhu Wei">
+  
+  <meta name="description" content="1.OpenWhisk简介
+Apache OpenWhisk 是一个开源的分布式 无服务器 平台，可执行函数 ( fx ) 来响应任意规模的事件。OpenWhisk 使用 Docker 容器管理基础架构、服务器和扩展，因此您可以专注于构建出色且高效的应用程序。
+OpenWhisk 平台支持一种编程模">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用无服务OpenWhisk云平台实现简单的demo"/>
+  <meta property="og:site_name" content="ZW"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">ZW</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/null">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-使用无服务OpenWhisk云平台实现简单的demo" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2024-08-22T16:24:58.000Z"><a href="/%E4%BD%BF%E7%94%A8%E6%97%A0%E6%9C%8D%E5%8A%A1OpenWhisk%E4%BA%91%E5%B9%B3%E5%8F%B0%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84demo/">2024-08-23</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">使用无服务OpenWhisk云平台实现简单的demo</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p>1.OpenWhisk简介</p>
+<p>Apache OpenWhisk 是一个开源的分布式 无服务器 平台，可执行函数 ( fx ) 来响应任意规模的事件。OpenWhisk 使用 Docker 容器管理基础架构、服务器和扩展，因此您可以专注于构建出色且高效的应用程序。</p>
+<p>OpenWhisk 平台支持一种编程模型，开发人员可以使用任何受支持的编程语言编写功能逻辑（称为 操作），这些逻辑可以动态安排并响应 来自外部源（Feed ）或 HTTP 请求的相关事件（通过触发器）而运行。该项目包括基于 REST API 的命令行界面 (CLI) 以及其他工具，以支持打包、目录服务和许多流行的容器部署选项。</p>
+<p>2.在本地部署Openwhisk</p>
+<p>开始使用 OpenWhisk 的最简单方法是安装“独立”OpenWhisk 堆栈。这是一个功能齐全的 OpenWhisk 堆栈，为方便起见，以 Java 进程运行。无服务器函数在 Docker 容器中运行。您的机器上需要有 Docker、 Java和 Node.js。<br>具体步骤：<br>①安装Openwhisk</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ git clone https://github.com/apache/openwhisk.git</span><br><span class="line">$ <span class="built_in">cd</span> openwhisk</span><br><span class="line">$ ./gradlew core:standalone:bootRun</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>②安装wskcli和wskdeploy<br>(1)下载wskdeploy <a target="_blank" rel="noopener" href="https://github.com/apache/openwhisk-wskdeploy/releases">https://github.com/apache/openwhisk-wskdeploy/releases</a><br>(2)下载后解压，配置环境环境(如：Path：C:\Program Files\openwhisk_wskdeploy-1.2.0-windows-amd64)。<br>(3)验证安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wskdeploy --help</span><br></pre></td></tr></table></figure>
+<p>(4)下载wskcli  <a target="_blank" rel="noopener" href="https://s.apache.org/openwhisk-cli-download">https://s.apache.org/openwhisk-cli-download</a><br>同理wskdeploy，验证安装：<code>wsk</code>。</p>
+<p>(5)配置cli</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wsk property set \</span><br><span class="line">  --apihost &#x27;http://localhost:3233&#x27; \</span><br><span class="line">  --auth &#x27;23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP&#x27;</span><br></pre></td></tr></table></figure>
+<p>3.wskcli和wskdeploy的介绍</p>
+<p>①wskcli (OpenWhisk CLI) 主要用于日常管理和操作 OpenWhisk 资源。<br>wskcli 是 Apache OpenWhisk 的命令行接口（CLI），用来与 OpenWhisk 的 API 进行交互。通过 wskcli，你可以执行以下操作：</p>
+<p>创建和管理 Actions: 你可以创建、更新、删除和调用 OpenWhisk actions。</p>
+<p>管理 Triggers 和 Rules: Triggers 是事件源，Rules 将 Triggers 与 Actions 连接起来。你可以使用 CLI 管理这些资源。</p>
+<p>处理 Packages: 可以管理包含 actions 和 feeds 的 package。</p>
+<p>查看和管理 Activations: 你可以查看过去的 activations（action 执行记录），包括成功和失败的执行。</p>
+<p>基本用法示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wsk action create hello hello.js  //创建一个执行</span><br><span class="line">wsk action invoke hello --result //得到执行的结果</span><br><span class="line">wsk action list  //得到所有存在的执行</span><br></pre></td></tr></table></figure>
+<p>② wskdeploy (OpenWhisk Deployment Tool) 用于配置文件驱动的应用程序部署和管理</p>
+<p>wskdeploy 是用于 Apache OpenWhisk 的部署工具。它允许你使用配置文件（如 manifest.yml 和 deployment.yml）来描述和部署 OpenWhisk 应用程序。这些文件可以包括多个 actions、triggers、rules 和 packages。</p>
+<p>wskdeploy 的优势在于它支持将整个应用程序定义在一个配置文件中，然后通过一条命令进行部署。这非常适合管理复杂的 OpenWhisk 项目或在不同环境之间迁移应用程序。</p>
+<p>基本用法示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wskdeploy -m manifest.yml</span><br></pre></td></tr></table></figure>
+
+<p>4.构建简单的网页</p>
+<p>①启动openwhisk</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew core:standalone:bootRun</span><br></pre></td></tr></table></figure>
+<p>成功运行图：<br><img src="/img/openwhisk1.png" alt="openwhisk1.png"></p>
+<p>②创建actioon</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">wsk action create register register.zip --kind nodejs:20 --web true //处理注册请求</span><br><span class="line">wsk action create login login.zip --kind nodejs:20 --web true //处理登录请求</span><br><span class="line">wsk action create static static.zip --kind nodejs:20 --web true //登录和注册页面</span><br><span class="line">wsk action create brand brand.zip --kind nodejs:20 --web true //主页面</span><br><span class="line">wsk action create selectAll selectAll.zip --kind nodejs:20 --web true //查询数据库数据</span><br></pre></td></tr></table></figure>
+<p>③运行action的url</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsk action get static --url //得到url链接</span><br></pre></td></tr></table></figure>
+<p>注册和登录成功运行图：<br><img src="/img/openwhisk2.png" alt="openwhisk2.png"></p>
+<p>主页面图：<br><img src="/img/openwhisk3.png" alt="openwhisk3.png"></p>
+<p>5.关于Apache的开源数据库CouchDB<br>①简介<br>CouchDB是一个开源的NoSQL数据库，它使用JSON来存储数据，JavaScript作为其查询语言，以及HTTP API来处理数据。CouchDB的设计理念是提供易用性、可扩展性、高可用性和容错性。<br>②使用步骤<br>(1)通过docker启动CDB</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name couchdb -p 5984:5984 -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password couchdb</span><br><span class="line">//不设置管理账户会报错</span><br></pre></td></tr></table></figure>
+<p>(2)通过 <a target="_blank" rel="noopener" href="http://localhost:5984/_utils">http://localhost:5984/_utils</a> 访问CDB数据库管理页面<br>页面图：<br><img src="/img/openwhisk4.png" alt="openwhisk4.png"></p>
+<p>(3)创建数据库<br><img src="/img/openwhisk5.png" alt="openwhisk5.png"></p>
+<p>③存在问题<br>部署的action的js文件，访问数据库无法通过 <a target="_blank" rel="noopener" href="http://localhost:5984/_utils">http://localhost:5984/_utils</a> ，只能将本地端口5984通过ngrok进行内网穿透(将本地服务器暴露到互联网上，创建一个安全的隧道，允许通过公共URL访问本地服务)。<br><img src="/img/openwhisk6.png" alt="openwhisk6.png"><br>将本地端口5984穿透后，action的js程序就可以访问到CDB</p>
+<p>6.关于使用无服务平台的看法<br>优点：<br>①：只需编写执行代码，通过创建action即可在线运行。<br>②：能够使用配套的数据库<br>缺点：<br>①：运行action的url网站的请求和响应时间较慢。<br>②：部署成action的程序，无法访问本地资源，只能http链接进行访问。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://zhuwei290.github.io/%E4%BD%BF%E7%94%A8%E6%97%A0%E6%9C%8D%E5%8A%A1OpenWhisk%E4%BA%91%E5%B9%B3%E5%8F%B0%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84demo/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="zhuwei290.github.io">
+  </form>
+</div>
+
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2025 Zhu Wei
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+
+
+<script src="/js/gallery.js"></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+<script>
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

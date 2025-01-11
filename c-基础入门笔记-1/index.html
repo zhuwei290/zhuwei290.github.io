@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>c++基础入门笔记(1) | ZW</title>
+  <meta name="author" content="Zhu Wei">
+  
+  <meta name="description" content="​1 C++初识1.1 第一个C++程序编写一个C++程序总共分为4个步骤
+创建项目创建文件编写代码运行程序1.1.1 创建项目
+​ Visual Studio是我们用来编写C++程序的主要工具，我们先将它打开
+1.1.2 创建文件
+右键源文件，选择添加-&amp;gt;新建项
+给C++文件起个名称，然后点">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="c++基础入门笔记(1)"/>
+  <meta property="og:site_name" content="ZW"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">ZW</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/null">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-c-基础入门笔记-1" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2023-01-31T07:13:32.000Z"><a href="/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-1/">2023-01-31</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">c++基础入门笔记(1)</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p>​<br>1 C++初识<br>1.1 第一个C++程序<br>编写一个C++程序总共分为4个步骤</p>
+<p>创建项目<br>创建文件<br>编写代码<br>运行程序<br>1.1.1 创建项目</p>
+<p>​ Visual Studio是我们用来编写C++程序的主要工具，我们先将它打开</p>
+<p>1.1.2 创建文件</p>
+<p>右键源文件，选择添加-&gt;新建项</p>
+<p>给C++文件起个名称，然后点击添加即可。</p>
+<p>1.1.3 编写代码</p>
+<p>#include<iostream><br>using namespace std;</p>
+<p>int main() {</p>
+<pre><code>cout &lt;&lt; &quot;Hello world&quot; &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>1.1.4 运行程序</p>
+<p>1.2 注释<br>作用：在代码中加一些说明和解释，方便自己或其他程序员程序员阅读代码</p>
+<p>两种格式</p>
+<p>单行注释：&#x2F;&#x2F; 描述信息<br>通常放在一行代码的上方，或者一条语句的末尾，对该行代码说明<br>多行注释： &#x2F;* 描述信息 *&#x2F;<br>通常放在一段代码的上方，对该段代码做整体说明</p>
+<p>1.3 变量<br>作用：给一段指定的内存空间起名，方便操作这段内存</p>
+<p>语法：数据类型 变量名 &#x3D; 初始值;</p>
+<p>示例：</p>
+<p>#include<iostream><br>using namespace std;</p>
+<p>int main() {</p>
+<pre><code>//变量的定义
+//语法：数据类型  变量名 = 初始值
+
+int a = 10;
+
+cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>1.4 常量<br>作用：用于记录程序中不可更改的数据</p>
+<p>C++定义常量两种方式</p>
+<p>#define 宏常量： #define 常量名 常量值<br>通常在文件上方定义，表示一个常量<br>const修饰的变量 const 数据类型 常量名 &#x3D; 常量值<br>通常在变量定义前加关键字const，修饰该变量为常量，不可修改<br>示例：</p>
+<p>&#x2F;&#x2F;1、宏常量<br>#define day 7</p>
+<p>int main() {</p>
+<pre><code>cout &lt;&lt; &quot;一周里总共有 &quot; &lt;&lt; day &lt;&lt; &quot; 天&quot; &lt;&lt; endl;
+//day = 8;  //报错，宏常量不可以修改
+
+//2、const修饰变量
+const int month = 12;
+cout &lt;&lt; &quot;一年里总共有 &quot; &lt;&lt; month &lt;&lt; &quot; 个月份&quot; &lt;&lt; endl;
+//month = 24; //报错，常量是不可以修改的
+
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>1.5 关键字<br>**作用：**关键字是C++中预先保留的单词（标识符）</p>
+<p>在定义变量或者常量时候，不要用关键字<br>C++关键字如下：</p>
+<p>asm	do	if	return	typedef<br>auto	double	inline	short	typeid<br>bool	dynamic_cast	int	signed	typename<br>break	else	long	sizeof	union<br>case	enum	mutable	static	unsigned<br>catch	explicit	namespace	static_cast	using<br>char	export	new	struct	virtual<br>class	extern	operator	switch	void<br>const	false	private	template	volatile<br>const_cast	float	protected	this	wchar_t<br>continue	for	public	throw	while<br>default	friend	register	true	<br>delete	goto	reinterpret_cast	try	<br>提示：在给变量或者常量起名称时候，不要用C++得关键字，否则会产生歧义。</p>
+<p>1.6 标识符命名规则<br>作用：C++规定给标识符（变量、常量）命名时，有一套自己的规则</p>
+<p>标识符不能是关键字<br>标识符只能由字母、数字、下划线组成<br>第一个字符必须为字母或下划线<br>标识符中字母区分大小写</p>
+<p>​</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-1/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="zhuwei290.github.io">
+  </form>
+</div>
+
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2025 Zhu Wei
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+
+
+<script src="/js/gallery.js"></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+<script>
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>c++基础入门笔记(5) | ZW</title>
+  <meta name="author" content="Zhu Wei">
+  
+  <meta name="description" content="​5 数组5.1 概述所谓数组，就是一个集合，里面存放了相同类型的数据元素
+**特点1：**数组中的每个数据元素都是相同的数据类型
+**特点2：**数组是由连续的内存位置组成的
+5.2 一维数组5.2.1 一维数组定义方式
+一维数组定义的三种方式：
+数据类型 数组名[ 数组长度 ];数据类型 数组名">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="c++基础入门笔记(5)"/>
+  <meta property="og:site_name" content="ZW"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">ZW</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/null">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-c-基础入门笔记-5" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2023-01-31T07:13:43.000Z"><a href="/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/">2023-01-31</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">c++基础入门笔记(5)</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p>​<br>5 数组<br>5.1 概述<br>所谓数组，就是一个集合，里面存放了相同类型的数据元素</p>
+<p>**特点1：**数组中的每个数据元素都是相同的数据类型</p>
+<p>**特点2：**数组是由连续的内存位置组成的</p>
+<p>5.2 一维数组<br>5.2.1 一维数组定义方式</p>
+<p>一维数组定义的三种方式：</p>
+<p>数据类型 数组名[ 数组长度 ];<br>数据类型 数组名[ 数组长度 ] &#x3D; { 值1，值2 …};<br>数据类型 数组名[ ] &#x3D; { 值1，值2 …};<br>示例</p>
+<p>int main() {</p>
+<pre><code>//定义方式1
+//数据类型 数组名[元素个数];
+int score[10];
+
+//利用下标赋值
+score[0] = 100;
+score[1] = 99;
+score[2] = 85;
+
+//利用下标输出
+cout &lt;&lt; score[0] &lt;&lt; endl;
+cout &lt;&lt; score[1] &lt;&lt; endl;
+cout &lt;&lt; score[2] &lt;&lt; endl;
+
+
+//第二种定义方式
+//数据类型 数组名[元素个数] =  &#123;值1，值2 ，值3 ...&#125;;
+//如果&#123;&#125;内不足10个数据，剩余数据用0补全
+int score2[10] = &#123; 100, 90,80,70,60,50,40,30,20,10 &#125;;
+
+//逐个输出
+//cout &lt;&lt; score2[0] &lt;&lt; endl;
+//cout &lt;&lt; score2[1] &lt;&lt; endl;
+
+//一个一个输出太麻烦，因此可以利用循环进行输出
+for (int i = 0; i &lt; 10; i++)
+&#123;
+	cout &lt;&lt; score2[i] &lt;&lt; endl;
+&#125;
+
+//定义方式3
+//数据类型 数组名[] =  &#123;值1，值2 ，值3 ...&#125;;
+int score3[] = &#123; 100,90,80,70,60,50,40,30,20,10 &#125;;
+
+for (int i = 0; i &lt; 10; i++)
+&#123;
+	cout &lt;&lt; score3[i] &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>5.2.2 一维数组数组名</p>
+<p>一维数组名称的用途：</p>
+<p>可以统计整个数组在内存中的长度<br>可以获取数组在内存中的首地址<br>示例：</p>
+<p>int main() {</p>
+<pre><code>//数组名用途
+//1、可以获取整个数组占用内存空间大小
+int arr[10] = &#123; 1,2,3,4,5,6,7,8,9,10 &#125;;
+
+cout &lt;&lt; &quot;整个数组所占内存空间为： &quot; &lt;&lt; sizeof(arr) &lt;&lt; endl;
+cout &lt;&lt; &quot;每个元素所占内存空间为： &quot; &lt;&lt; sizeof(arr[0]) &lt;&lt; endl;
+cout &lt;&lt; &quot;数组的元素个数为： &quot; &lt;&lt; sizeof(arr) / sizeof(arr[0]) &lt;&lt; endl;
+
+//2、可以通过数组名获取到数组首地址
+cout &lt;&lt; &quot;数组首地址为： &quot; &lt;&lt; (int)arr &lt;&lt; endl;
+cout &lt;&lt; &quot;数组中第一个元素地址为： &quot; &lt;&lt; (int)&amp;arr[0] &lt;&lt; endl;
+cout &lt;&lt; &quot;数组中第二个元素地址为： &quot; &lt;&lt; (int)&amp;arr[1] &lt;&lt; endl;
+
+//arr = 100; 错误，数组名是常量，因此不可以赋值
+
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>练习案例1：五只小猪称体重</p>
+<p>案例描述：</p>
+<p>在一个数组中记录了五只小猪的体重，如：int arr[5] &#x3D; {300,350,200,400,250};</p>
+<p>找出并打印最重的小猪体重。</p>
+<p>**练习案例2：**数组元素逆置</p>
+<p>**案例描述：**请声明一个5个元素的数组，并且将元素逆置.</p>
+<p>(如原数组元素为：1,3,2,5,4;逆置后输出结果为:4,5,2,3,1);</p>
+<p>5.2.3 冒泡排序</p>
+<p>作用： 最常用的排序算法，对数组内元素进行排序</p>
+<p>比较相邻的元素。如果第一个比第二个大，就交换他们两个。<br>对每一对相邻元素做同样的工作，执行完毕后，找到第一个最大值。<br>重复以上的步骤，每次比较次数-1，直到不需要比较<br>示例： 将数组 { 4,2,8,0,5,7,1,3,9 } 进行升序排序</p>
+<p>int main() {</p>
+<pre><code>int arr[9] = &#123; 4,2,8,0,5,7,1,3,9 &#125;;
+
+for (int i = 0; i &lt; 9 - 1; i++)
+&#123;
+	for (int j = 0; j &lt; 9 - 1 - i; j++)
+	&#123;
+		if (arr[j] &gt; arr[j + 1])
+		&#123;
+			int temp = arr[j];
+			arr[j] = arr[j + 1];
+			arr[j + 1] = temp;
+		&#125;
+	&#125;
+&#125;
+
+for (int i = 0; i &lt; 9; i++)
+&#123;
+	cout &lt;&lt; arr[i] &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>5.3 二维数组<br>二维数组就是在一维数组上，多加一个维度。</p>
+<p>5.3.1 二维数组定义方式</p>
+<p>二维数组定义的四种方式：</p>
+<p>数据类型 数组名[ 行数 ][ 列数 ];<br>数据类型 数组名[ 行数 ][ 列数 ] &#x3D; { {数据1，数据2 } ，{数据3，数据4 } };<br>数据类型 数组名[ 行数 ][ 列数 ] &#x3D; { 数据1，数据2，数据3，数据4};<br>数据类型 数组名[ ][ 列数 ] &#x3D; { 数据1，数据2，数据3，数据4};</p>
+<p>示例：</p>
+<p>int main() {</p>
+<pre><code>//方式1  
+//数组类型 数组名 [行数][列数]
+int arr[2][3];
+arr[0][0] = 1;
+arr[0][1] = 2;
+arr[0][2] = 3;
+arr[1][0] = 4;
+arr[1][1] = 5;
+arr[1][2] = 6;
+
+for (int i = 0; i &lt; 2; i++)
+&#123;
+	for (int j = 0; j &lt; 3; j++)
+	&#123;
+		cout &lt;&lt; arr[i][j] &lt;&lt; &quot; &quot;;
+	&#125;
+	cout &lt;&lt; endl;
+&#125;
+
+//方式2 
+//数据类型 数组名[行数][列数] = &#123; &#123;数据1，数据2 &#125; ，&#123;数据3，数据4 &#125; &#125;;
+int arr2[2][3] =
+&#123;
+	&#123;1,2,3&#125;,
+	&#123;4,5,6&#125;
+&#125;;
+
+//方式3
+//数据类型 数组名[行数][列数] = &#123; 数据1，数据2 ,数据3，数据4  &#125;;
+int arr3[2][3] = &#123; 1,2,3,4,5,6 &#125;; 
+
+//方式4 
+//数据类型 数组名[][列数] = &#123; 数据1，数据2 ,数据3，数据4  &#125;;
+int arr4[][3] = &#123; 1,2,3,4,5,6 &#125;;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>5.3.2 二维数组数组名</p>
+<p>查看二维数组所占内存空间<br>获取二维数组首地址<br>示例：</p>
+<p>int main() {</p>
+<pre><code>//二维数组数组名
+int arr[2][3] =
+&#123;
+	&#123;1,2,3&#125;,
+	&#123;4,5,6&#125;
+&#125;;
+
+cout &lt;&lt; &quot;二维数组大小： &quot; &lt;&lt; sizeof(arr) &lt;&lt; endl;
+cout &lt;&lt; &quot;二维数组一行大小： &quot; &lt;&lt; sizeof(arr[0]) &lt;&lt; endl;
+cout &lt;&lt; &quot;二维数组元素大小： &quot; &lt;&lt; sizeof(arr[0][0]) &lt;&lt; endl;
+
+cout &lt;&lt; &quot;二维数组行数： &quot; &lt;&lt; sizeof(arr) / sizeof(arr[0]) &lt;&lt; endl;
+cout &lt;&lt; &quot;二维数组列数： &quot; &lt;&lt; sizeof(arr[0]) / sizeof(arr[0][0]) &lt;&lt; endl;
+
+//地址
+cout &lt;&lt; &quot;二维数组首地址：&quot; &lt;&lt; arr &lt;&lt; endl;
+cout &lt;&lt; &quot;二维数组第一行地址：&quot; &lt;&lt; arr[0] &lt;&lt; endl;
+cout &lt;&lt; &quot;二维数组第二行地址：&quot; &lt;&lt; arr[1] &lt;&lt; endl;
+
+cout &lt;&lt; &quot;二维数组第一个元素地址：&quot; &lt;&lt; &amp;arr[0][0] &lt;&lt; endl;
+cout &lt;&lt; &quot;二维数组第二个元素地址：&quot; &lt;&lt; &amp;arr[0][1] &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>5.3.3 二维数组应用案例</p>
+<p>考试成绩统计：</p>
+<p>案例描述：有三名同学（张三，李四，王五），在一次考试中的成绩分别如下表，请分别输出三名同学的总成绩</p>
+<p>语文	数学	英语<br>张三	100	100	100<br>李四	90	50	100<br>王五	60	70	80<br>参考答案：</p>
+<p>int main() {</p>
+<pre><code>int scores[3][3] =
+&#123;
+	&#123;100,100,100&#125;,
+	&#123;90,50,100&#125;,
+	&#123;60,70,80&#125;,
+&#125;;
+
+string names[3] = &#123; &quot;张三&quot;,&quot;李四&quot;,&quot;王五&quot; &#125;;
+
+for (int i = 0; i &lt; 3; i++)
+&#123;
+	int sum = 0;
+	for (int j = 0; j &lt; 3; j++)
+	&#123;
+		sum += scores[i][j];
+	&#125;
+	cout &lt;&lt; names[i] &lt;&lt; &quot;同学总成绩为： &quot; &lt;&lt; sum &lt;&lt; endl;
+&#125;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>​</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-5/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="zhuwei290.github.io">
+  </form>
+</div>
+
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2025 Zhu Wei
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+
+
+<script src="/js/gallery.js"></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+<script>
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>c++基础入门笔记(3) | ZW</title>
+  <meta name="author" content="Zhu Wei">
+  
+  <meta name="description" content="​3 运算符**作用：**用于执行代码的运算
+本章我们主要讲解以下几类运算符：
+运算符类型	作用算术运算符	用于处理四则运算赋值运算符	用于将表达式的值赋给变量比较运算符	用于表达式的比较，并返回一个真值或假值逻辑运算符	用于根据表达式的值返回真值或假值3.1 算术运算符作用：用于处理四则运算
+算术">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="c++基础入门笔记(3)"/>
+  <meta property="og:site_name" content="ZW"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">ZW</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/null">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-c-基础入门笔记-3" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2023-01-31T07:13:43.000Z"><a href="/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/">2023-01-31</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">c++基础入门笔记(3)</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p>​<br>3 运算符<br>**作用：**用于执行代码的运算</p>
+<p>本章我们主要讲解以下几类运算符：</p>
+<p>运算符类型	作用<br>算术运算符	用于处理四则运算<br>赋值运算符	用于将表达式的值赋给变量<br>比较运算符	用于表达式的比较，并返回一个真值或假值<br>逻辑运算符	用于根据表达式的值返回真值或假值<br>3.1 算术运算符<br>作用：用于处理四则运算</p>
+<p>算术运算符包括以下符号：</p>
+<p>运算符	术语	示例	结果<br>+	正号	+3	3<br>-	负号	-3	-3<br>+	加	10 + 5	15<br>-	减	10 - 5	5<br>*	乘	10 * 5	50<br>&#x2F;	除	10 &#x2F; 5	2<br>%	取模(取余)	10 % 3	1<br>++	前置递增	a&#x3D;2; b&#x3D;++a;	a&#x3D;3; b&#x3D;3;<br>++	后置递增	a&#x3D;2; b&#x3D;a++;	a&#x3D;3; b&#x3D;2;<br>–	前置递减	a&#x3D;2; b&#x3D;–a;	a&#x3D;1; b&#x3D;1;<br>–	后置递减	a&#x3D;2; b&#x3D;a–;	a&#x3D;1; b&#x3D;2;<br>示例1：</p>
+<p>&#x2F;&#x2F;加减乘除<br>int main() {</p>
+<pre><code>int a1 = 10;
+int b1 = 3;
+
+cout &lt;&lt; a1 + b1 &lt;&lt; endl;
+cout &lt;&lt; a1 - b1 &lt;&lt; endl;
+cout &lt;&lt; a1 * b1 &lt;&lt; endl;
+cout &lt;&lt; a1 / b1 &lt;&lt; endl;  //两个整数相除结果依然是整数
+
+int a2 = 10;
+int b2 = 20;
+cout &lt;&lt; a2 / b2 &lt;&lt; endl; 
+
+int a3 = 10;
+int b3 = 0;
+//cout &lt;&lt; a3 / b3 &lt;&lt; endl; //报错，除数不可以为0
+
+
+//两个小数可以相除
+double d1 = 0.5;
+double d2 = 0.25;
+cout &lt;&lt; d1 / d2 &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>示例2：</p>
+<p>&#x2F;&#x2F;取模<br>int main() {</p>
+<pre><code>int a1 = 10;
+int b1 = 3;
+
+cout &lt;&lt; 10 % 3 &lt;&lt; endl;
+
+int a2 = 10;
+int b2 = 20;
+
+cout &lt;&lt; a2 % b2 &lt;&lt; endl;
+
+int a3 = 10;
+int b3 = 0;
+
+//cout &lt;&lt; a3 % b3 &lt;&lt; endl; //取模运算时，除数也不能为0
+
+//两个小数不可以取模
+double d1 = 3.14;
+double d2 = 1.1;
+
+//cout &lt;&lt; d1 % d2 &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>示例3：</p>
+<p>&#x2F;&#x2F;递增<br>int main() {</p>
+<pre><code>//后置递增
+int a = 10;
+a++; //等价于a = a + 1
+cout &lt;&lt; a &lt;&lt; endl; // 11
+
+//前置递增
+int b = 10;
+++b;
+cout &lt;&lt; b &lt;&lt; endl; // 11
+
+//区别
+//前置递增先对变量进行++，再计算表达式
+int a2 = 10;
+int b2 = ++a2 * 10;
+cout &lt;&lt; b2 &lt;&lt; endl;
+
+//后置递增先计算表达式，后对变量进行++
+int a3 = 10;
+int b3 = a3++ * 10;
+cout &lt;&lt; b3 &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>3.2 赋值运算符<br>**作用：**用于将表达式的值赋给变量</p>
+<p>赋值运算符包括以下几个符号：</p>
+<p>运算符	术语	示例	结果<br>&#x3D;	赋值	a&#x3D;2; b&#x3D;3;	a&#x3D;2; b&#x3D;3;<br>+&#x3D;	加等于	a&#x3D;0; a+&#x3D;2;	a&#x3D;2;<br>-&#x3D;	减等于	a&#x3D;5; a-&#x3D;3;	a&#x3D;2;<br><em>&#x3D;	乘等于	a&#x3D;2; a</em>&#x3D;2;	a&#x3D;4;<br>&#x2F;&#x3D;	除等于	a&#x3D;4; a&#x2F;&#x3D;2;	a&#x3D;2;<br>%&#x3D;	模等于	a&#x3D;3; a%2;	a&#x3D;1;<br>示例：</p>
+<p>int main() {</p>
+<pre><code>//赋值运算符
+
+// =
+int a = 10;
+a = 100;
+cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
+
+// +=
+a = 10;
+a += 2; // a = a + 2;
+cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
+
+// -=
+a = 10;
+a -= 2; // a = a - 2
+cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
+
+// *=
+a = 10;
+a *= 2; // a = a * 2
+cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
+
+// /=
+a = 10;
+a /= 2;  // a = a / 2;
+cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
+
+// %=
+a = 10;
+a %= 2;  // a = a % 2;
+cout &lt;&lt; &quot;a = &quot; &lt;&lt; a &lt;&lt; endl;
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}<br>3.3 比较运算符<br>**作用：**用于表达式的比较，并返回一个真值或假值</p>
+<p>比较运算符有以下符号：</p>
+<p>运算符	术语	示例	结果<br>&#x3D;&#x3D;	相等于	4 &#x3D;&#x3D; 3	0<br>!&#x3D;	不等于	4 !&#x3D; 3	1<br>&lt;	小于	4 &lt; 3	0</p>
+<blockquote>
+<p>大于	4 &gt; 3	1<br>&lt;&#x3D;	小于等于	4 &lt;&#x3D; 3	0<br>&#x3D;	大于等于	4 &gt;&#x3D; 1	1<br>示例：</p>
+</blockquote>
+<p>int main() {</p>
+<pre><code>int a = 10;
+int b = 20;
+
+cout &lt;&lt; (a == b) &lt;&lt; endl; // 0 
+
+cout &lt;&lt; (a != b) &lt;&lt; endl; // 1
+
+cout &lt;&lt; (a &gt; b) &lt;&lt; endl; // 0
+
+cout &lt;&lt; (a &lt; b) &lt;&lt; endl; // 1
+
+cout &lt;&lt; (a &gt;= b) &lt;&lt; endl; // 0
+
+cout &lt;&lt; (a &lt;= b) &lt;&lt; endl; // 1
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>3.4 逻辑运算符<br>**作用：**用于根据表达式的值返回真值或假值</p>
+<p>逻辑运算符有以下符号：</p>
+<p>运算符	术语	示例	结果<br>!	非	!a	如果a为假，则!a为真； 如果a为真，则!a为假。<br>&amp;&amp;	与	a &amp;&amp; b	如果a和b都为真，则结果为真，否则为假。<br>||	或	a || b	如果a和b有一个为真，则结果为真，二者都为假时，结果为假。<br>**示例1：**逻辑非</p>
+<p>&#x2F;&#x2F;逻辑运算符  — 非<br>int main() {</p>
+<pre><code>int a = 10;
+
+cout &lt;&lt; !a &lt;&lt; endl; // 0
+
+cout &lt;&lt; !!a &lt;&lt; endl; // 1
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>**示例2：**逻辑与</p>
+<p>&#x2F;&#x2F;逻辑运算符  — 与<br>int main() {</p>
+<pre><code>int a = 10;
+int b = 10;
+
+cout &lt;&lt; (a &amp;&amp; b) &lt;&lt; endl;// 1
+
+a = 10;
+b = 0;
+
+cout &lt;&lt; (a &amp;&amp; b) &lt;&lt; endl;// 0 
+
+a = 0;
+b = 0;
+
+cout &lt;&lt; (a &amp;&amp; b) &lt;&lt; endl;// 0
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>**示例3：**逻辑或</p>
+<p>&#x2F;&#x2F;逻辑运算符  — 或<br>int main() {</p>
+<pre><code>int a = 10;
+int b = 10;
+
+cout &lt;&lt; (a || b) &lt;&lt; endl;// 1
+
+a = 10;
+b = 0;
+
+cout &lt;&lt; (a || b) &lt;&lt; endl;// 1 
+
+a = 0;
+b = 0;
+
+cout &lt;&lt; (a || b) &lt;&lt; endl;// 0
+
+system(&quot;pause&quot;);
+
+return 0;
+</code></pre>
+<p>}</p>
+<p>​</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://zhuwei290.github.io/c-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-3/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="zhuwei290.github.io">
+  </form>
+</div>
+
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2025 Zhu Wei
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+
+
+<script src="/js/gallery.js"></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+<script>
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

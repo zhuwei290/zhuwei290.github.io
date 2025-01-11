@@ -1,0 +1,487 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>校验框架 | ZW</title>
+  <meta name="author" content="Zhu Wei">
+  
+  <meta name="description" content="1 校验框架
+ 1.1 校验框架入门
+ 1.1.1 表单校验的重要性
+
+表单校验保障了数据有效性、安全性
+
+
+数据可以随意输入，导致错误的结果。后端表单校验的重要性。
+ 1.1.2 表单校验分类  
+
+校验位置：
+
+客户端校验
+服务端校验
+
+
+校验内容与对应方式：
+
+格式校验
+客户端：使用Js技术，">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="校验框架"/>
+  <meta property="og:site_name" content="ZW"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">ZW</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/null">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-校验框架" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2024-05-11T02:59:23.000Z"><a href="/%E6%A0%A1%E9%AA%8C%E6%A1%86%E6%9E%B6/">2024-05-11</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">校验框架</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p> 1 校验框架</p>
+<p> 1.1 校验框架入门</p>
+<p> 1.1.1 表单校验的重要性</p>
+<ul>
+<li>表单校验保障了数据有效性、安全性</li>
+</ul>
+<p><img src="/img/image-20200505144306747.png"></p>
+<p>数据可以随意输入，导致错误的结果。后端表单校验的重要性。</p>
+<p> 1.1.2 表单校验分类  </p>
+<ul>
+<li><p>校验位置：</p>
+<ul>
+<li>客户端校验</li>
+<li>服务端校验</li>
+</ul>
+</li>
+<li><p>校验内容与对应方式：</p>
+<ul>
+<li>格式校验<ul>
+<li>客户端：使用Js技术，利用正则表达式校验</li>
+<li>服务端：使用校验框架</li>
+</ul>
+</li>
+<li>逻辑校验<ul>
+<li>客户端：使用ajax发送要校验的数据，在服务端完成逻辑校验，返回校验结果</li>
+<li>服务端：接收到完整的请求后，在执行业务操作前，完成逻辑校验</li>
+</ul>
+</li>
+</ul>
+<p>1.1.3 表单校验规则</p>
+</li>
+<li><p>长度：例如用户名长度，评论字符数量</p>
+</li>
+<li><p>非法字符：例如用户名组成</p>
+</li>
+<li><p>数据格式：例如Email格式、 IP地址格式</p>
+</li>
+<li><p>边界值：例如转账金额上限，年龄上下限</p>
+</li>
+<li><p>重复性：例如用户名是否重复</p>
+</li>
+</ul>
+<p> 1.1.4 表单校验框架</p>
+<ul>
+<li><p>JSR（Java Specification Requests）：Java 规范提案  </p>
+<p>  303：提供bean属性相关校验规则  </p>
+</li>
+<li><p>JSR规范列表</p>
+<ul>
+<li>企业应用技术<br> Contexts and Dependency Injection for Java (Web Beans 1.0) (JSR 299)<br> Dependency Injection for Java 1.0 (JSR 330)@postConstruct, @PreDestroy<br> Bean Validation 1.0 (JSR 303)<br> Enterprise JavaBeans 3.1 (includes Interceptors 1.1) (JSR 318)<br> Java EE Connector Architecture 1.6 (JSR 322)<br> Java Persistence 2.0 (JSR 317)<br> Common Annotations for the Java Platform 1.1 (JSR 250)<br> Java Message Service API 1.1 (JSR 914)<br> Java Transaction API (JTA) 1.1 (JSR 907)<br> JavaMail 1.4 (JSR 919)</li>
+<li>Web应用技术<br> Java Servlet 3.0 (JSR 315)<br> JavaServer Faces 2.0 (JSR 314)<br> JavaServer Pages 2.2&#x2F;Expression Language 2.2 (JSR 245)<br> Standard Tag Library for JavaServer Pages (JSTL) 1.2 (JSR 52)<br> Debugging Support for Other Languages 1.0 (JSR 45)<br> 模块化 (JSR 294)<br> Swing应用框架 (JSR 296)<br> JavaBeans Activation Framework (JAF) 1.1 (JSR 925)<br> Streaming API for XML (StAX) 1.0 (JSR 173)</li>
+<li>管理与安全技术<br> Java Authentication Service Provider Interface for Containers (JSR 196)<br> Java Authorization Contract for Containers 1.3 (JSR 115)<br> Java EE Application Deployment 1.2 (JSR 88)<br> J2EE Management 1.1 (JSR 77)<br> Java SE中与Java EE有关的规范<br> JCache API (JSR 107)<br> Java Memory Model (JSR 133)<br> Concurrency Utilitie (JSR 166)<br> Java API for XML Processing (JAXP) 1.3 (JSR 206)<br> Java Database Connectivity 4.0 (JSR 221)<br> Java Management Extensions (JMX) 2.0 (JSR 255)<br> Java Portlet API (JSR 286)</li>
+</ul>
+</li>
+<li><p>Web Service技术<br> Java Date与Time API (JSR 310)<br> Java API for RESTful Web Services (JAX-RS) 1.1 (JSR 311)<br> Implementing Enterprise Web Services 1.3 (JSR 109)<br> Java API for XML-Based Web Services (JAX-WS) 2.2 (JSR 224)<br> Java Architecture for XML Binding (JAXB) 2.2 (JSR 222)<br> Web Services Metadata for the Java Platform (JSR 181)<br> Java API for XML-Based RPC (JAX-RPC) 1.1 (JSR 101)<br> Java APIs for XML Messaging 1.3 (JSR 67)<br> Java API for XML Registries (JAXR) 1.0 (JSR 93)</p>
+</li>
+<li><p>JCP（Java Community Process）：Java社区</p>
+</li>
+<li><p>Hibernate框架中包含一套独立的校验框架hibernate-validator  </p>
+<p>  导入坐标</p>
+</li>
+</ul>
+  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.hibernate<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hibernate-validator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>6.1.0.Final<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>  <strong>注意：</strong><br>  tomcat7 ：搭配hibernate-validator版本5.<em>.</em>.Final<br>  tomcat8.5↑ ：搭配hibernate-validator版本6.<em>.</em>.Final  </p>
+<p> 1.2 快速使用</p>
+<p><strong>1. 开启校验</strong></p>
+<p> 名称：@Valid 、 @Validated<br> 类型：形参注解<br> 位置：处理器类中的实体类类型的方法形参前方<br> 作用：设定对当前实体类类型参数进行校验<br> 范例：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/addemployee&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">addEmployee</span><span class="params">(<span class="meta">@Valid</span> Employee employee)</span> &#123;</span><br><span class="line">    System.out.println(employee);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.设置校验规则</strong></p>
+<p> 名称：@NotNull<br> 类型：属性注解 等<br> 位置：实体类属性上方<br> 作用：设定当前属性校验规则<br> 范例：<br>    每个校验规则所携带的参数不同，根据校验规则进行相应的调整<br>    具体的校验规则查看对应的校验框架进行获取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Employee</span>&#123;</span><br><span class="line">    <span class="meta">@NotNull(message = &quot;姓名不能为空&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String name;<span class="comment">//员工姓名</span></span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p><strong>3.获取错误信息</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/addemployee&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">addEmployee</span><span class="params">(<span class="meta">@Valid</span> Employee employee, Errors errors, Model model)</span>&#123;</span><br><span class="line">    System.out.println(employee);</span><br><span class="line">    <span class="keyword">if</span>(errors.hasErrors())&#123;</span><br><span class="line">        <span class="keyword">for</span>(FieldError error : errors.getFieldErrors())&#123;</span><br><span class="line">            model.addAttribute(error.getField(),error.getDefaultMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;addemployee.jsp&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success.jsp&quot;</span>;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>  通过形参Errors获取校验结果数据，通过Model接口将数据封装后传递到页面显示  </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/addemployee&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">    员工姓名：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">style</span>=<span class="string">&quot;color:red&quot;</span>&gt;</span>$&#123;name&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">    员工年龄：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">style</span>=<span class="string">&quot;color:red&quot;</span>&gt;</span>$&#123;age&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;提交&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>通过形参Errors获取校验结果数据，通过Model接口将数据封装后传递到页面显示<br>页面获取后台封装的校验结果信息  </p>
+<p> 1.3 多规则校验</p>
+<ul>
+<li>同一个属性可以添加多个校验器</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NotNull(message = &quot;请输入您的年龄&quot;)</span></span><br><span class="line"><span class="meta">@Max(value = 60,message = &quot;年龄最大值不允许超过60岁&quot;)</span></span><br><span class="line"><span class="meta">@Min(value = 18,message = &quot;年龄最小值不允许低于18岁&quot;)</span></span><br><span class="line"><span class="keyword">private</span> Integer age;<span class="comment">//员工年龄</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>3种判定空校验器的区别</li>
+</ul>
+<p><img src="/img/image-20200506160725709.png"></p>
+<p> 1.4 嵌套校验</p>
+<p> 名称：@Valid<br> 类型：属性注解<br> 位置：实体类中的引用类型属性上方<br> 作用：设定当前应用类型属性中的属性开启校验<br> 范例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Employee</span> &#123;</span><br><span class="line">    <span class="comment">//实体类中的引用类型通过标注@Valid注解，设定开启当前引用类型字段中的属性参与校验</span></span><br><span class="line">    <span class="meta">@Valid</span></span><br><span class="line">    <span class="keyword">private</span> Address address;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 注意：开启嵌套校验后，被校验对象内部需要添加对应的校验规则  </p>
+<p> 1.5 分组校验</p>
+<ul>
+<li>同一个模块，根据执行的业务不同，需要校验的属性会有不同<ul>
+<li>新增用户</li>
+<li>修改用户</li>
+</ul>
+</li>
+<li>对不同种类的属性进行分组，在校验时可以指定参与校验的字段所属的组类别<ul>
+<li>定义组（通用）</li>
+<li>为属性设置所属组，可以设置多个</li>
+<li>开启组校验</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">GroupOne</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">addEmployee</span><span class="params">(<span class="meta">@Validated(&#123;GroupOne.class&#125;)</span> Employee employee)</span>&#123;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NotEmpty(message = &quot;姓名不能为空&quot;,groups = &#123;GroupOne.class&#125;)</span></span><br><span class="line"><span class="keyword">private</span> String name;<span class="comment">//员工姓名</span></span><br></pre></td></tr></table></figure>
+
+<p> 2 ssm整合</p>
+<p> 2.1 整合流程简介</p>
+<p>整合步骤分析</p>
+<p>SSM（Spring+SpringMVC+MyBatis）</p>
+<ul>
+<li><p>Spring</p>
+<ul>
+<li>框架基础</li>
+</ul>
+</li>
+<li><p>MyBatis</p>
+<ul>
+<li>mysql+druid+pagehelper</li>
+</ul>
+</li>
+<li><p>Spring整合MyBatis</p>
+</li>
+<li><p>junit测试业务层接口</p>
+</li>
+<li><p>SpringMVC</p>
+<ul>
+<li>rest风格（postman测试请求结果）</li>
+<li>数据封装json（jackson）</li>
+</ul>
+</li>
+<li><p>Spring整合SpringMVC</p>
+<ul>
+<li>Controller调用Service</li>
+</ul>
+</li>
+<li><p>其他</p>
+<ul>
+<li><p>表现层数据封装</p>
+</li>
+<li><p>自定义异常</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>表结构</strong></p>
+<p><img src="/img/image-20200506093609697.png"></p>
+<p>​    最重要的5个步骤</p>
+<ol>
+<li><p>Spring</p>
+</li>
+<li><p>MyBatis</p>
+</li>
+<li><p>Spring整合MyBatis</p>
+</li>
+<li><p>SpringMVC</p>
+</li>
+<li><p>Spring整合SpringMVC</p>
+</li>
+</ol>
+<p> 2.2 项目结构搭建</p>
+<p><strong>Part0：</strong>   项目基础结构搭建</p>
+<ul>
+<li><p>创建项目，组织项目结构，创建包</p>
+</li>
+<li><p>创建表与实体类</p>
+</li>
+<li><p>创建三层架构对应的模块、接口与实体类，建立关联关系</p>
+</li>
+<li><p>数据层接口（代理自动创建实现类）</p>
+<ul>
+<li>业务层接口+业务层实现类</li>
+<li>表现层类</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/image-20200506094053535.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserDao</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">save</span><span class="params">(User user)</span>;  <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">update</span><span class="params">(User user)</span>;  </span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">delete</span><span class="params">(Integer uuid)</span>;  <span class="keyword">public</span> User <span class="title function_">get</span><span class="params">(Integer uuid)</span>;</span><br><span class="line">    <span class="keyword">public</span> List&lt;User&gt; <span class="title function_">getAll</span><span class="params">(<span class="type">int</span> page,<span class="type">int</span> size)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserService</span> &#123;  </span><br><span class="line">        <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">save</span><span class="params">(User user)</span>;  <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">update</span><span class="params">(User user)</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">delete</span><span class="params">(Integer uuid)</span>;</span><br><span class="line">        <span class="keyword">public</span> User <span class="title function_">get</span><span class="params">(Integer uuid)</span>;</span><br><span class="line">        <span class="keyword">public</span> List&lt;User&gt; <span class="title function_">getAll</span><span class="params">(<span class="type">int</span> page, <span class="type">int</span> size)</span>;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">        用户登录</span></span><br><span class="line"><span class="comment">        <span class="doctag">@param</span> userName 用户名</span></span><br><span class="line"><span class="comment">        <span class="doctag">@param</span> password 密码信息</span></span><br><span class="line"><span class="comment">        <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">public</span> User <span class="title function_">login</span><span class="params">(String userName,String password)</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 2.3 Spring整合Mybatis（复习）</p>
+<p><strong>Part1 :</strong>  Spring环境配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  <span class="attr">xmlns:context</span>=<span class="string">&quot;http://www.springframework.org/schema/context&quot;</span>  <span class="attr">xmlns:tx</span>=<span class="string">&quot;http://www.springframework.org/schema/tx&quot;</span>  <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd  http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd  http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--开启bean注解扫描--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">&quot;com.itheima&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>Part1 :</strong>  Mybatis配置事务</p>
+<ul>
+<li><p>MyBatis映射</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">mapper</span></span></span><br><span class="line"><span class="meta">        <span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">        <span class="string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.itheima.dao.UserDao&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--添加--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;save&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;user&quot;</span>&gt;</span></span><br><span class="line">        insert into user(userName,password,realName,gender,birthday)values(&#123;userName&#125;,&#123;password&#125;,&#123;realName&#125;,&#123;gender&#125;,&#123;birthday&#125;)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--删除--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">&quot;delete&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span>&gt;</span></span><br><span class="line">        delete from user where uuid = &#123;uuid&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--修改--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">&quot;update&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;user&quot;</span>&gt;</span></span><br><span class="line">        update user set userName=&#123;userName&#125;,password=&#123;password&#125;,realName=&#123;realName&#125;,gender=&#123;gender&#125;,birthday=&#123;birthday&#125; where uuid=&#123;uuid&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--查询单个--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;get&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;user&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span>&gt;</span></span><br><span class="line">        select * from user where uuid = &#123;uuid&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--分页查询--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getAll&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;user&quot;</span>&gt;</span></span><br><span class="line">        select * from user</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--登录--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getByUserNameAndPassword&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;user&quot;</span> &gt;</span></span><br><span class="line">        select * from user where userName=&#123;userName&#125; and password=&#123;password&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>Mybatis核心配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--开启注解式事务--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tx:annotation-driven</span> <span class="attr">transaction-manager</span>=<span class="string">&quot;txManager&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--加载properties文件--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">&quot;classpath*:jdbc.properties&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--数据源--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;dataSource&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.alibaba.druid.pool.DruidDataSource&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driverClassName&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.driver&#125;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.url&#125;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.username&#125;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.password&#125;&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--整合mybatis到spring中--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dataSource&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;dataSource&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;typeAliasesPackage&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.itheima.domain&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--分页插件--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;plugins&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;com.github.pagehelper.PageInterceptor&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;properties&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;helperDialect&quot;</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;reasonable&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--映射扫描--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;basePackage&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.itheima.dao&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--事务管理器--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;txManager&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dataSource&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;dataSource&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p> 2.4 整合junit</p>
+<p>**Part2：**单元测试整合junit</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith(SpringJUnit4ClassRunner.class)</span>  </span><br><span class="line"><span class="meta">@ContextConfiguration(locations = &quot;classpath:applicationContext.xml&quot;)</span>  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testDelete</span><span class="params">()</span>&#123;  </span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();  userService.delete(<span class="number">3</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p> 2.5 Spring整合SpringMVC</p>
+<p>**Part3：**SpringMVC</p>
+<ul>
+<li><p>web.xml配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>classpath*:spring-mvc.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>spring-mvc.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">&quot;http://www.springframework.org/schema/context&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:mvc</span>=<span class="string">&quot;http://www.springframework.org/schema/mvc&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:annotation-driven</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">&quot;com.itheima.controller&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>controller层</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span>  </span><br><span class="line"><span class="meta">@RequestMapping(&quot;/user&quot;)</span>  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">save</span><span class="params">(User user)</span> &#123;  </span><br><span class="line">        System.out.println(<span class="string">&quot;save ...&quot;</span> + user);  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@PostMapping(&quot;/login&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">login</span><span class="params">(String userName,String password)</span>&#123;  </span><br><span class="line">        System.out.println(<span class="string">&quot;login ...&quot;</span> + userName + <span class="string">&quot; ,&quot;</span> +password);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>**Part4：**Spring整合SpringMVC</p>
+<ul>
+<li><p>web.xml加载Spring环境</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">context-param</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>classpath*:applicationContext.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--启动服务器时，通过监听器加载spring运行环境--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Controller调用Service</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">save</span><span class="params">(User user)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userService.save(user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p> 2.6 表现层数据封装</p>
+<p>**Part5-1：**表现层数据封装</p>
+<ul>
+<li>前端接收表现层返回的数据种类</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>u操作是否成功</th>
+<th>true&#x2F;false</th>
+<th>格式A</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u单个数据</td>
+<td>1,100,true</td>
+<td>格式B</td>
+</tr>
+<tr>
+<td>u对象数据</td>
+<td>json对象</td>
+<td>格式C</td>
+</tr>
+<tr>
+<td>u集合数据</td>
+<td>json数组</td>
+<td>格式D</td>
+</tr>
+</tbody></table>
+<p><img src="/img/image-20200506103851845.png"></p>
+<ul>
+<li>返回数据格式设计</li>
+</ul>
+<p><img src="/img/image-20200506104339019.png"></p>
+<ul>
+<li><p>代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Result</span> &#123;</span><br><span class="line">    <span class="comment">// 操作结果编码</span></span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line">    <span class="comment">// 操作数据结果</span></span><br><span class="line">    <span class="keyword">private</span> Object data;</span><br><span class="line">    <span class="comment">// 消息</span></span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">(Integer code)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">(Integer code, Object data)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">        <span class="built_in">this</span>.data = data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>状态码常量可以根据自己的业务需求设定</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Code</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">SAVE_OK</span> <span class="operator">=</span> <span class="number">20011</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">SAVE_ERROR</span> <span class="operator">=</span> <span class="number">20010</span>;</span><br><span class="line">    <span class="comment">//其他编码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>controller 调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">save</span><span class="params">(User user)</span>&#123;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> userService.save(user);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(flag ? Code.SAVE_OK:Code.SAVE_ERROR);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@GetMapping(&quot;/&#123;uuid&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">get</span><span class="params">(<span class="meta">@PathVariable</span> Integer uuid)</span>&#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userService.get(uuid);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">null</span> != user ?Code.GET_OK: Code.GET_ERROR,user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p> 2.7 自定义异常</p>
+<p>**Part5-2：**自定义异常</p>
+<ul>
+<li><p>设定自定义异常，封装程序执行过程中出现的问题，便于表现层进行统一的异常拦截并进行处理</p>
+<ul>
+<li>BusinessException</li>
+<li>SystemException</li>
+</ul>
+</li>
+<li><p>自定义异常消息返回时需要与业务正常执行的消息按照统一的格式进行处理</p>
+</li>
+</ul>
+<p><strong>定义BusinessException</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BusinessException</span> <span class="keyword">extends</span> <span class="title class_">RuntimeException</span> &#123;</span><br><span class="line">    <span class="comment">//自定义异常中封装对应的错误编码，用于异常处理时获取对应的操作编码</span></span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Integer <span class="title function_">getCode</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setCode</span><span class="params">(Integer code)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(Integer code)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(String message, Integer code)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message);</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(String message, Throwable cause,Integer code)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message, cause);</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(Throwable cause,Integer code)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(cause);</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(String message, Throwable cause, <span class="type">boolean</span> enableSuppression, <span class="type">boolean</span> writableStackTrace,Integer code)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message, cause, enableSuppression, writableStackTrace);</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/&#123;uuid&#125;&quot;)</span></span><br><span class="line"><span class="keyword">public</span> Result <span class="title function_">get</span><span class="params">(<span class="meta">@PathVariable</span> Integer uuid)</span>&#123;</span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userService.get(uuid);</span><br><span class="line">    <span class="comment">//模拟出现异常，使用条件控制，便于测试结果</span></span><br><span class="line">    <span class="keyword">if</span> (uuid == <span class="number">10</span> ) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">BusinessException</span>(<span class="string">&quot;查询出错啦，请重试！&quot;</span>,Code.GET_ERROR);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">null</span> != user ?Code.GET_OK: Code.GET_ERROR,user);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> <strong>2.8 返回消息兼容异常信息</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProjectExceptionAdivce</span> &#123;</span><br><span class="line">    <span class="meta">@ExceptionHandler(BusinessException.class)</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="comment">//对出现异常的情况进行拦截，并将其处理成统一的页面数据结果格式</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">doBusinessException</span><span class="params">(BusinessException e)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(e.getCode(),e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 3 纯注解开发SSM</p>
+<p> 3.1 用注解替代applicationContext.xml</p>
+<p>同前期设置，添加事务注解驱动<br>@Configuration</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//扫描组件，排除SpringMVC对应的bean，等同于&lt;context:component-scan /&gt;</span></span><br><span class="line"><span class="meta">@ComponentScan(value = &quot;com.itheima&quot;,excludeFilters = &#123;</span></span><br><span class="line"><span class="meta">    @ComponentScan.Filter(type= FilterType.ANNOTATION,classes = &#123;Controller.class&#125;)&#125;)</span></span><br><span class="line"><span class="meta">@PropertySource(&quot;classpath:jdbc.properties&quot;)</span></span><br><span class="line"><span class="meta">@Import(&#123;JdbcConfig.class,MyBatisConfig.class&#125;)</span></span><br><span class="line"><span class="comment">//等同于&lt;tx:annotation-driven transaction-manager=&quot;txManager&quot;/&gt;，导入的默认名称为transactionManager</span></span><br><span class="line"><span class="meta">@EnableTransactionManagement</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringConfig</span> &#123;</span><br><span class="line">    <span class="comment">//等同于&lt;bean   class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;&gt;</span></span><br><span class="line">    <span class="meta">@Bean(&quot;transactionManager&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> DataSourceTransactionManager <span class="title function_">getDataSourceTxManager</span><span class="params">(<span class="meta">@Autowired</span> DataSource dataSource)</span>&#123;</span><br><span class="line">        <span class="type">DataSourceTransactionManager</span> <span class="variable">dtm</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DataSourceTransactionManager</span>();</span><br><span class="line">        <span class="comment">//等同于&lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;</span></span><br><span class="line">        dtm.setDataSource(dataSource);</span><br><span class="line">        <span class="keyword">return</span> dtm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p> 3.2 用注解替代spring-mvc.xml  </p>
+<ul>
+<li>同前期设置，添加@EnableWebMvc注解</li>
+</ul>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan(&quot;com.itheima.controller&quot;)</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringMvcConfig</span> <span class="keyword">implements</span> <span class="title class_">WebMvcConfigurer</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>EnableWebMvc</li>
+</ul>
+<ol>
+<li>支持ConversionService的配置，可以方便配置自定义类型转换器</li>
+<li>支持@NumberFormat注解格式化数字类型</li>
+<li>支持@DateTimeFormat注解格式化日期数据，日期包括Date,Calendar,JodaTime（JodaTime要导包）</li>
+<li>支持@Valid的参数校验(需要导入JSR-303规范)</li>
+<li>配合第三方jar包和SpringMVC提供的注解读写XML和JSON格式数据</li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://zhuwei290.github.io/%E6%A0%A1%E9%AA%8C%E6%A1%86%E6%9E%B6/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="zhuwei290.github.io">
+  </form>
+</div>
+
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2025 Zhu Wei
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+
+
+<script src="/js/gallery.js"></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+<script>
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

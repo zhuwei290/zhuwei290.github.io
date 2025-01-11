@@ -1,0 +1,365 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>2 SpringMVC | ZW</title>
+  <meta name="author" content="Zhu Wei">
+  
+  <meta name="description" content="1 异步调用
+ 1.1 发送异步请求（回顾）  
+123456789101112131415&amp;lt;a href=&amp;quot;javascript:void(0);&amp;quot; id=&amp;quot;testAjax&amp;quot;&amp;gt;访问controller&amp;lt;/a&amp;gt;&amp;lt;script t">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="2 SpringMVC"/>
+  <meta property="og:site_name" content="ZW"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">ZW</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/null">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-2-SpringMVC" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2024-05-01T11:07:20.000Z"><a href="/2-SpringMVC/">2024-05-01</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">2 SpringMVC</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <p> 1 异步调用</p>
+<p> 1.1 发送异步请求（回顾）  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=<span class="string">&quot;javascript:void(0);&quot;</span> id=<span class="string">&quot;testAjax&quot;</span>&gt;访问controller&lt;/a&gt;</span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;/js/jquery-3.3.1.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="language-javascript"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    $(<span class="keyword">function</span>(<span class="params"></span>)&#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    $(<span class="string">&quot;testAjax&quot;</span>).<span class="title function_">click</span>(<span class="keyword">function</span>(<span class="params"></span>)&#123; <span class="comment">//为id=&quot;testAjax&quot;的组件绑定点击事件</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">        $.<span class="title function_">ajax</span>(&#123; <span class="comment">//发送异步调用</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">            <span class="attr">type</span>:<span class="string">&quot;POST&quot;</span>, <span class="comment">//请求方式： POST请求</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">            <span class="attr">url</span>:<span class="string">&quot;ajaxController&quot;</span>, <span class="comment">//请求参数（也就是请求内容）</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">            <span class="attr">data</span>:<span class="string">&#x27;ajax message&#x27;</span>, <span class="comment">//请求参数（也就是请求内容）</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">            <span class="attr">dataType</span>:<span class="string">&quot;text&quot;</span>, <span class="comment">//响应正文类型</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">            <span class="attr">contentType</span>:<span class="string">&quot;application/text&quot;</span>, <span class="comment">//请求正文的MIME类型</span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">        &#125;);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    &#125;);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">&#125;);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p> 1.2 接受异步请求参数</p>
+<p> 名称： @RequestBody<br> 类型： 形参注解<br> 位置：处理器类中的方法形参前方<br> 作用：将异步提交数据组织成标准请求参数格式，并赋值给形参<br> 范例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/ajaxController&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">ajaxController</span><span class="params">(<span class="meta">@RequestBody</span> String message)</span>&#123;</span><br><span class="line">    System.out.println(message);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>注解添加到Pojo参数前方时，封装的异步提交数据按照Pojo的属性格式进行关系映射</li>
+<li>注解添加到集合参数前方时，封装的异步提交数据按照集合的存储结构进行关系映射</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/ajaxPojoToController&quot;)</span></span><br><span class="line"><span class="comment">//如果处理参数是POJO，且页面发送的请求数据格式与POJO中的属性对应，@RequestBody注解可以自动映射对应请求数据到POJO中</span></span><br><span class="line"><span class="comment">//注意：POJO中的属性如果请求数据中没有，属性值为null，POJO中没有的属性如果请求数据中有，不进行映射</span></span><br><span class="line"><span class="keyword">public</span> String  <span class="title function_">ajaxPojoToController</span><span class="params">(<span class="meta">@RequestBody</span> User user)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;controller pojo :&quot;</span>+user);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/ajaxListToController&quot;)</span></span><br><span class="line"><span class="comment">//如果处理参数是List集合且封装了POJO，且页面发送的数据是JSON格式的对象数组，数据将自动映射到集合参数中</span></span><br><span class="line"><span class="keyword">public</span> String  <span class="title function_">ajaxListToController</span><span class="params">(<span class="meta">@RequestBody</span> List&lt;User&gt; userList)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;controller list :&quot;</span>+userList);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 1.3 异步请求接受响应数据</p>
+<ul>
+<li>方法返回值为Pojo时，自动封装数据成json对象数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/ajaxReturnJson&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> User <span class="title function_">ajaxReturnJson</span><span class="params">()</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;controller return json pojo...&quot;</span>);</span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user.setName(<span class="string">&quot;Jockme&quot;</span>);</span><br><span class="line">    user.setAge(<span class="number">40</span>);</span><br><span class="line">    <span class="keyword">return</span> user;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>方法返回值为List时，自动封装数据成json对象数组数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/ajaxReturnJsonList&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="comment">//基于jackon技术，使用@ResponseBody注解可以将返回的保存POJO对象的集合转成json数组格式数据</span></span><br><span class="line"><span class="keyword">public</span> List <span class="title function_">ajaxReturnJsonList</span><span class="params">()</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;controller return json list...&quot;</span>);</span><br><span class="line">    <span class="type">User</span> <span class="variable">user1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user1.setName(<span class="string">&quot;Tom&quot;</span>);</span><br><span class="line">    user1.setAge(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user2.setName(<span class="string">&quot;Jerry&quot;</span>);</span><br><span class="line">    user2.setAge(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">ArrayList</span> <span class="variable">al</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>();</span><br><span class="line">    al.add(user1);</span><br><span class="line">    al.add(user2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> al;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 2 异步请求-跨域访问</p>
+<p> 2.1 跨域访问介绍</p>
+<ul>
+<li>当通过域名A下的操作访问域名B下的资源时，称为跨域访问</li>
+<li>跨域访问时，会出现无法访问的现象</li>
+</ul>
+<p><img src="/img/image-20200427162623591.png" alt="image-20200427162623591"></p>
+<p> 2.2 跨域环境搭建</p>
+<ul>
+<li>为当前主机添加备用域名<ul>
+<li>修改windows安装目录中的host文件</li>
+<li>格式： ip 域名</li>
+</ul>
+</li>
+<li>动态刷新DNS<ul>
+<li>命令： ipconfig &#x2F;displaydns</li>
+<li>命令： ipconfig &#x2F;flushdns</li>
+</ul>
+</li>
+</ul>
+<p> 2.3 跨域访问支持  </p>
+<p> 名称： @CrossOrigin<br> 类型： 方法注解 、 类注解<br> 位置：处理器类中的方法上方 或 类上方<br> 作用：设置当前处理器方法&#x2F;处理器类中所有方法支持跨域访问<br> 范例：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/cross&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="comment">//使用@CrossOrigin开启跨域访问</span></span><br><span class="line"><span class="comment">//标注在处理器方法上方表示该方法支持跨域访问</span></span><br><span class="line"><span class="comment">//标注在处理器类上方表示该处理器类中的所有处理器方法均支持跨域访问</span></span><br><span class="line"><span class="meta">@CrossOrigin</span></span><br><span class="line"><span class="keyword">public</span> User <span class="title function_">cross</span><span class="params">(HttpServletRequest request)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;controller cross...&quot;</span>+request.getRequestURL());</span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user.setName(<span class="string">&quot;Jockme&quot;</span>);</span><br><span class="line">    user.setAge(<span class="number">39</span>);</span><br><span class="line">    <span class="keyword">return</span> user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 3 拦截器</p>
+<p> 3.1 拦截器概念</p>
+<ul>
+<li>请求处理过程解析</li>
+</ul>
+<p><img src="/img/image-20200427164038103.png" alt="image-20200427164038103"></p>
+<p> 拦截器（ Interceptor）是一种动态拦截方法调用的机制<br> 作用：<br>   	1. 在指定的方法调用前后执行预先设定后的的代码<br> 	2. 阻止原始方法的执行</p>
+<p> 核心原理： AOP思想<br> 拦截器链：多个拦截器按照一定的顺序，对原始被调用功能进行增强  </p>
+<ul>
+<li><p><strong>拦截器VS过滤器</strong><br> 归属不同： Filter属于Servlet技术， Interceptor属于SpringMVC技术<br> 拦截内容不同： Filter对所有访问进行增强， Interceptor仅针对SpringMVC的访问进行增强  </p>
+<p><img src="/img/image-20200427164512745.png" alt="image-20200427164512745"></p>
+</li>
+</ul>
+<p> 3.2 自定义拦截器开发过程</p>
+<ul>
+<li><p>实现HandlerInterceptor接口  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自定义拦截器需要实现HandleInterceptor接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HandlerInterceptor</span> &#123;</span><br><span class="line">    <span class="comment">//处理器运行之前执行</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">preHandle</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                             HttpServletResponse response,</span></span><br><span class="line"><span class="params">                             Object handler)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;前置运行----a1&quot;</span>);</span><br><span class="line">        <span class="comment">//返回值为false将拦截原始处理器的运行</span></span><br><span class="line">        <span class="comment">//如果配置多拦截器，返回值为false将终止当前拦截器后面配置的拦截器的运行</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//处理器运行之后执行</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">postHandle</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                           HttpServletResponse response,</span></span><br><span class="line"><span class="params">                           Object handler,</span></span><br><span class="line"><span class="params">                           ModelAndView modelAndView)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;后置运行----b1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//所有拦截器的后置执行全部结束后，执行该操作</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterCompletion</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                                HttpServletResponse response,</span></span><br><span class="line"><span class="params">                                Object handler,</span></span><br><span class="line"><span class="params">                                Exception ex)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;完成运行----c1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//三个方法的运行顺序为    preHandle -&gt; postHandle -&gt; afterCompletion</span></span><br><span class="line">    <span class="comment">//如果preHandle返回值为false，三个方法仅运行preHandle</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>配置拦截器</p>
+</li>
+</ul>
+<p>  配置拦截器  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:interceptors</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:interceptor</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:mapping</span> <span class="attr">path</span>=<span class="string">&quot;/showPage&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;com.itheima.interceptor.MyInterceptor&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mvc:interceptor</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:interceptors</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>  <u>注意：配置顺序为先配置执行位置，后配置执行类</u>  </p>
+<p> 3.3 拦截器执行流程</p>
+<p><img src="/img/image-20200427164840131.png" alt="image-20200427164840131"></p>
+<p> 3.4 拦截器配置与方法参数</p>
+<p> 3.4.1 前置处理方法</p>
+<p>原始方法之前运行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">preHandle</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                         HttpServletResponse response,</span></span><br><span class="line"><span class="params">                         Object handler)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;preHandle&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>参数<br> request:请求对象<br> response:响应对象<br> handler:被调用的处理器对象，本质上是一个方法对象，对反射中的Method对象进行了再包装</li>
+<li>返回值<br> 返回值为false，被拦截的处理器将不执行</li>
+</ul>
+<p> 3.4.2   后置处理方法</p>
+<p>原始方法运行后运行，如果原始方法被拦截，则不执行  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">postHandle</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                       HttpServletResponse response,</span></span><br><span class="line"><span class="params">                       Object handler,</span></span><br><span class="line"><span class="params">                       ModelAndView modelAndView)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;postHandle&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 参数<br> modelAndView:如果处理器执行完成具有返回结果，可以读取到对应数据与页面信息，并进行调整  </p>
+<p> 3.4.3 完成处理方法</p>
+<p>  拦截器最后执行的方法，无论原始方法是否执行  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterCompletion</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                            HttpServletResponse response,</span></span><br><span class="line"><span class="params">                            Object handler,</span></span><br><span class="line"><span class="params">                            Exception ex)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;afterCompletion&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 参数<br> ex:如果处理器执行过程中出现异常对象，可以针对异常情况进行单独处理  </p>
+<p> 3.5 拦截器配置项  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:interceptors</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--开启具体的拦截器的使用，可以配置多个--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:interceptor</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--设置拦截器的拦截路径，支持*通配--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--/**         表示拦截所有映射--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--/*          表示拦截所有/开头的映射--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--/user/*     表示拦截所有/user/开头的映射--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--/user/add*  表示拦截所有/user/开头，且具体映射名称以add开头的映射--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--/user/*All  表示拦截所有/user/开头，且具体映射名称以All结尾的映射--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:mapping</span> <span class="attr">path</span>=<span class="string">&quot;/*&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:mapping</span> <span class="attr">path</span>=<span class="string">&quot;/**&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:mapping</span> <span class="attr">path</span>=<span class="string">&quot;/handleRun*&quot;</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--设置拦截排除的路径，配置/**或/*，达到快速配置的目的--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:exclude-mapping</span> <span class="attr">path</span>=<span class="string">&quot;/b*&quot;</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--指定具体的拦截器类--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;MyInterceptor&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mvc:interceptor</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:interceptors</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p> 3.6 多拦截器配置</p>
+<p><img src="/img/image-20200427171422781.png" alt="image-20200427171422781"></p>
+<p><strong>责任链模式</strong><br> 责任链模式是一种行为模式<br> 特征：<br>沿着一条预先设定的任务链顺序执行，每个节点具有独立的工作任务<br> 优势：<br>独立性：只关注当前节点的任务，对其他任务直接放行到下一节点<br>隔离性：具备链式传递特征，无需知晓整体链路结构，只需等待请求到达后进行处理即可<br>灵活性：可以任意修改链路结构动态新增或删减整体链路责任<br>解耦：将动态任务与原始任务解耦<br> 弊端：<br>链路过长时，处理效率低下<br>可能存在节点上的循环引用现象，造成死循环，导致系统崩溃  </p>
+<p> 4 异常处理</p>
+<p> 4.1 异常处理器</p>
+<p>  <strong>HandlerExceptionResolver</strong>接口（异常处理器）  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExceptionResolver</span> <span class="keyword">implements</span> <span class="title class_">HandlerExceptionResolver</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> ModelAndView <span class="title function_">resolveException</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                                         HttpServletResponse response,</span></span><br><span class="line"><span class="params">                                         Object handler,</span></span><br><span class="line"><span class="params">                                         Exception ex)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;异常处理器正在执行中&quot;</span>);</span><br><span class="line">        <span class="type">ModelAndView</span> <span class="variable">modelAndView</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ModelAndView</span>();</span><br><span class="line">        <span class="comment">//定义异常现象出现后，反馈给用户查看的信息</span></span><br><span class="line">        modelAndView.addObject(<span class="string">&quot;msg&quot;</span>,<span class="string">&quot;出错啦！ &quot;</span>);</span><br><span class="line">        <span class="comment">//定义异常现象出现后，反馈给用户查看的页面</span></span><br><span class="line">        modelAndView.setViewName(<span class="string">&quot;error.jsp&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> modelAndView;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  根据异常的种类不同，进行分门别类的管理，返回不同的信息  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExceptionResolver</span> <span class="keyword">implements</span> <span class="title class_">HandlerExceptionResolver</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> ModelAndView <span class="title function_">resolveException</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                                         HttpServletResponse response,</span></span><br><span class="line"><span class="params">                                         Object handler,</span></span><br><span class="line"><span class="params">                                         Exception ex)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;my exception is running ....&quot;</span>+ex);</span><br><span class="line">        <span class="type">ModelAndView</span> <span class="variable">modelAndView</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ModelAndView</span>();</span><br><span class="line">        <span class="keyword">if</span>( ex <span class="keyword">instanceof</span> NullPointerException)&#123;</span><br><span class="line">            modelAndView.addObject(<span class="string">&quot;msg&quot;</span>,<span class="string">&quot;空指针异常&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> ( ex <span class="keyword">instanceof</span>  ArithmeticException)&#123;</span><br><span class="line">            modelAndView.addObject(<span class="string">&quot;msg&quot;</span>,<span class="string">&quot;算数运算异常&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            modelAndView.addObject(<span class="string">&quot;msg&quot;</span>,<span class="string">&quot;未知的异常&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        modelAndView.setViewName(<span class="string">&quot;error.jsp&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> modelAndView;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 4.2 注解开发异常处理器</p>
+<ul>
+<li>使用注解实现异常分类管理<br> 名称： @ControllerAdvice<br> 类型： 类注解<br> 位置：异常处理器类上方<br> 作用：设置当前类为异常处理器类<br> 范例：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExceptionAdvice</span> &#123;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用注解实现异常分类管理<br> 名称： @ExceptionHandler<br> 类型： 方法注解<br> 位置：异常处理器类中针对指定异常进行处理的方法上方<br> 作用：设置指定异常的处理方式<br> 范例：<br> 说明：处理器方法可以设定多个</li>
+</ul>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExceptionHandler(Exception.class)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">doOtherException</span><span class="params">(Exception ex)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;出错啦，请联系管理员！ &quot;</span>;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p> 4.3 异常处理解决方案</p>
+<ul>
+<li>异常处理方案<ul>
+<li>业务异常：<br> 发送对应消息传递给用户，提醒规范操作</li>
+<li>系统异常：<br> 发送固定消息传递给用户，安抚用户<br> 发送特定消息给运维人员，提醒维护<br> 记录日志</li>
+<li>其他异常：<br> 发送固定消息传递给用户，安抚用户<br> 发送特定消息给编程人员，提醒维护<br> 纳入预期范围内<br> 记录日志</li>
+</ul>
+</li>
+</ul>
+<p> 4.4 自定义异常</p>
+<ul>
+<li><p>异常定义格式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自定义异常继承RuntimeException，覆盖父类所有的构造方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BusinessException</span> <span class="keyword">extends</span> <span class="title class_">RuntimeException</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(String message, Throwable cause)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message, cause);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(Throwable cause)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(cause);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">BusinessException</span><span class="params">(String message, Throwable cause, <span class="type">boolean</span> enableSuppression, <span class="type">boolean</span> writableStackTrace)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message, cause, enableSuppression, writableStackTrace);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>异常触发方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(user.getName().trim().length()&lt;<span class="number">4</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">BusinessException</span>(<span class="string">&quot;用户名长度必须在2-4位之间，请重新输入！ &quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过自定义异常将所有的异常现象进行分类管理，以统一的格式对外呈现异常消息</p>
+</li>
+</ul>
+<p> 5 实用技术</p>
+<p> 5.1 文件上传下载</p>
+<ul>
+<li><p>上传文件过程分析  </p>
+<p><img src="/img/image-20200427174442939.png" alt="image-20200427174442939"></p>
+</li>
+<li><p>MultipartResolver接口  </p>
+</li>
+<li><p>MultipartResolver接口定义了文件上传过程中的相关操作，并对通用性操作进行了封装</p>
+</li>
+<li><p>MultipartResolver接口底层实现类CommonsMultipartResovler</p>
+</li>
+<li><p>CommonsMultipartResovler并未自主实现文件上传下载对应的功能，而是调用了apache的文件上传下载组件</p>
+</li>
+</ul>
+  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-fileupload<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-fileupload<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>文件上传下载实现</p>
+<ul>
+<li>页面表单</li>
+</ul>
+  <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/fileupload&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span><br><span class="line">    上传LOGO： <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">name</span>=<span class="string">&quot;file&quot;</span>/&gt;</span><span class="tag">&lt;<span class="name">br</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;上传&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>SpringMVC配置</li>
+</ul>
+  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;multipartResolver&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">class</span>=<span class="string">&quot;org.springframework.web.multipart.commons.CommonsMultipartResolver&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>控制器</li>
+</ul>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/fileupload&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">fileupload</span><span class="params">(MultipartFile file)</span>&#123;</span><br><span class="line">    file.transferTo(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;file.png&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p> 5.2 文件上传注意事项</p>
+<ol>
+<li>文件命名问题， 获取上传文件名，并解析文件名与扩展名</li>
+<li>文件名过长问题</li>
+<li>文件保存路径</li>
+<li>重名问题</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/fileupload&quot;)</span></span><br><span class="line"><span class="comment">//参数中定义MultipartFile参数，用于接收页面提交的type=file类型的表单，要求表单名称与参数名相同</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">fileupload</span><span class="params">(MultipartFile file,MultipartFile file1,MultipartFile file2, HttpServletRequest request)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;file upload is running ...&quot;</span>+file);</span><br><span class="line">    <span class="comment">//        MultipartFile参数中封装了上传的文件的相关信息</span></span><br><span class="line">    <span class="comment">//        System.out.println(file.getSize());</span></span><br><span class="line">    <span class="comment">//        System.out.println(file.getBytes().length);</span></span><br><span class="line">    <span class="comment">//        System.out.println(file.getContentType());</span></span><br><span class="line">    <span class="comment">//        System.out.println(file.getName());</span></span><br><span class="line">    <span class="comment">//        System.out.println(file.getOriginalFilename());</span></span><br><span class="line">    <span class="comment">//        System.out.println(file.isEmpty());</span></span><br><span class="line">    <span class="comment">//首先判断是否是空文件，也就是存储空间占用为0的文件</span></span><br><span class="line">    <span class="keyword">if</span>(!file.isEmpty())&#123;</span><br><span class="line">        <span class="comment">//如果大小在范围要求内正常处理，否则抛出自定义异常告知用户（未实现）</span></span><br><span class="line">        <span class="comment">//获取原始上传的文件名，可以作为当前文件的真实名称保存到数据库中备用</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> file.getOriginalFilename();</span><br><span class="line">        <span class="comment">//设置保存的路径</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">realPath</span> <span class="operator">=</span> request.getServletContext().getRealPath(<span class="string">&quot;/images&quot;</span>);</span><br><span class="line">        <span class="comment">//保存文件的方法，指定保存的位置和文件名即可，通常文件名使用随机生成策略产生，避免文件名冲突问题</span></span><br><span class="line">        file.transferTo(<span class="keyword">new</span> <span class="title class_">File</span>(realPath,file.getOriginalFilename()));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//测试一次性上传多个文件</span></span><br><span class="line">    <span class="keyword">if</span>(!file1.isEmpty())&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> file1.getOriginalFilename();</span><br><span class="line">        <span class="comment">//可以根据需要，对不同种类的文件做不同的存储路径的区分，修改对应的保存位置即可</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">realPath</span> <span class="operator">=</span> request.getServletContext().getRealPath(<span class="string">&quot;/images&quot;</span>);</span><br><span class="line">        file1.transferTo(<span class="keyword">new</span> <span class="title class_">File</span>(realPath,file1.getOriginalFilename()));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(!file2.isEmpty())&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> file2.getOriginalFilename();</span><br><span class="line">        <span class="type">String</span> <span class="variable">realPath</span> <span class="operator">=</span> request.getServletContext().getRealPath(<span class="string">&quot;/images&quot;</span>);</span><br><span class="line">        file2.transferTo(<span class="keyword">new</span> <span class="title class_">File</span>(realPath,file2.getOriginalFilename()));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 5.4 Restful风格配置</p>
+<p> 5.4.1 Rest</p>
+<ul>
+<li>Rest（ REpresentational State Transfer） 一种网络资源的访问风格，定义了网络资源的访问方式<ul>
+<li>传统风格访问路径<br> <a target="_blank" rel="noopener" href="http://localhost/user/get?id=1">http://localhost/user/get?id=1</a><br> <a target="_blank" rel="noopener" href="http://localhost/deleteUser?id=1">http://localhost/deleteUser?id=1</a></li>
+<li>Rest风格访问路径<br> <a target="_blank" rel="noopener" href="http://localhost/user/1">http://localhost/user/1</a></li>
+</ul>
+</li>
+<li>Restful是按照Rest风格访问网络资源</li>
+<li>优点<br> 隐藏资源的访问行为，通过地址无法得知做的是何种操作<br> 书写简化</li>
+</ul>
+<p> 5.4.2 Rest行为约定方式  </p>
+<p> GET（查询） <a target="_blank" rel="noopener" href="http://localhost/user/1">http://localhost/user/1</a> GET<br> POST（保存） <a target="_blank" rel="noopener" href="http://localhost/user">http://localhost/user</a> POST<br> PUT（更新） <a target="_blank" rel="noopener" href="http://localhost/user">http://localhost/user</a> PUT<br> DELETE（删除） <a target="_blank" rel="noopener" href="http://localhost/user">http://localhost/user</a> DELETE<br>**注意：**上述行为是约定方式，约定不是规范，可以打破，所以称Rest风格，而不是Rest规范  </p>
+<p> 5.4.3 Restful开发入门  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置rest风格的控制器</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="comment">//设置公共访问路径，配合下方访问路径使用</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/user/&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//rest风格访问路径完整书写方式</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/user/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="comment">//使用@PathVariable注解获取路径上配置的具名变量，该配置可以使用多次</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">restLocation</span><span class="params">(<span class="meta">@PathVariable</span> Integer id)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;restful is running ....&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success.jsp&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//rest风格访问路径简化书写方式，配合类注解@RequestMapping使用</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">restLocation2</span><span class="params">(<span class="meta">@PathVariable</span> Integer id)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;restful is running ....get:&quot;</span>+id);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success.jsp&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接收GET请求配置方式</span></span><br><span class="line">    <span class="meta">@RequestMapping(value = &quot;&#123;id&#125;&quot;,method = RequestMethod.GET)</span></span><br><span class="line">    <span class="comment">//接收GET请求简化配置方式</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">get</span><span class="params">(<span class="meta">@PathVariable</span> Integer id)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;restful is running ....get:&quot;</span>+id);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success.jsp&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接收POST请求配置方式</span></span><br><span class="line">    <span class="meta">@RequestMapping(value = &quot;&#123;id&#125;&quot;,method = RequestMethod.POST)</span></span><br><span class="line">    <span class="comment">//接收POST请求简化配置方式</span></span><br><span class="line">    <span class="meta">@PostMapping(&quot;&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">post</span><span class="params">(<span class="meta">@PathVariable</span> Integer id)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;restful is running ....post:&quot;</span>+id);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success.jsp&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接收PUT请求简化配置方式</span></span><br><span class="line">    <span class="meta">@RequestMapping(value = &quot;&#123;id&#125;&quot;,method = RequestMethod.PUT)</span></span><br><span class="line">    <span class="comment">//接收PUT请求简化配置方式</span></span><br><span class="line">    <span class="meta">@PutMapping(&quot;&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">put</span><span class="params">(<span class="meta">@PathVariable</span> Integer id)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;restful is running ....put:&quot;</span>+id);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success.jsp&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接收DELETE请求简化配置方式</span></span><br><span class="line">    <span class="meta">@RequestMapping(value = &quot;&#123;id&#125;&quot;,method = RequestMethod.DELETE)</span></span><br><span class="line">    <span class="comment">//接收DELETE请求简化配置方式</span></span><br><span class="line">    <span class="meta">@DeleteMapping(&quot;&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">delete</span><span class="params">(<span class="meta">@PathVariable</span> Integer id)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;restful is running ....delete:&quot;</span>+id);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success.jsp&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--配置拦截器，解析请求中的参数_method，否则无法发起PUT请求与DELETE请求，配合页面表单使用--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>org.springframework.web.filter.HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p> 开启SpringMVC对Restful风格的访问支持过滤器，即可通过页面表单提交PUT与DELETE请求<br> 页面表单使用隐藏域提交请求类型，参数名称固定为_method，必须配合提交类型method&#x3D;post使用</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/user/1&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;_method&quot;</span> <span class="attr">value</span>=<span class="string">&quot;PUT&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Restful请求路径简化配置方式</li>
+</ul>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    <span class="meta">@RequestMapping(value = &quot;/user/&#123;id&#125;&quot;,method = RequestMethod.DELETE)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">restDelete</span><span class="params">(<span class="meta">@PathVariable</span> String id)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;restful is running ....delete:&quot;</span>+id);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success.jsp&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p> 5.5 postman工具安装与使用</p>
+<p><strong>postman</strong> 是  一款可以发送Restful风格请求的工具，方便开发调试。首次运行需要联网注册  </p>
+<p><img src="/img/image-20200427180851880.png" alt="image-20200427180851880"></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://zhuwei290.github.io/2-SpringMVC/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="zhuwei290.github.io">
+  </form>
+</div>
+
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2025 Zhu Wei
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+
+
+<script src="/js/gallery.js"></script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+<script>
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
